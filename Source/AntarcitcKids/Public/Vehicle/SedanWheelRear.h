@@ -14,4 +14,8 @@ class ANTARCITCKIDS_API USedanWheelRear : public UVehicleWheelRear
 {
 	GENERATED_BODY()
 	
+public:
+	
+	USedanWheelRear();
+	
 };
