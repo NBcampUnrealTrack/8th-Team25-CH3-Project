@@ -21,54 +21,40 @@ void ASplineRoadActor::OnConstruction(const FTransform& Transform)
 		return;
 	}
 
-	const float SplineLength = SplineComp->GetSplineLength();
+	const int32 PointCount = SplineComp->GetNumberOfSplinePoints();
 
-	if (SplineLength <= 0.f || SectionLength <= 0.f)
+	for (int32 i = 0; i < PointCount - 1; ++i)
 	{
-		return;
-	}
-
-	const int32 SectionCount = FMath::CeilToInt(SplineLength / SectionLength);
-	
-	for (int32 i = 0; i < SectionCount; ++i)
-	{
-		const float StartDistance = i * SectionLength;
-		const float EndDistance = FMath::Min((i + 1) * SectionLength, SplineLength);
-
-		FVector StartLocation = SplineComp->GetLocationAtDistanceAlongSpline(
-			StartDistance,
-			ESplineCoordinateSpace::Local
-		);
-
-		FVector StartTangent = SplineComp->GetTangentAtDistanceAlongSpline(
-			StartDistance,
-			ESplineCoordinateSpace::Local
-		);
-
-		FVector EndLocation = SplineComp->GetLocationAtDistanceAlongSpline(
-			EndDistance,
-			ESplineCoordinateSpace::Local
-		);
-
-		FVector EndTangent = SplineComp->GetTangentAtDistanceAlongSpline(
-			EndDistance,
-			ESplineCoordinateSpace::Local
-		);
-		
 		USplineMeshComponent* RoadPart = NewObject<USplineMeshComponent>(this);
-		
-		RoadPart->SetWorldLocation(GetActorLocation());
-		RoadPart->SetWorldRotation(GetActorRotation());
-		RoadPart->SetWorldScale3D(GetActorScale3D());
+
+		AddInstanceComponent(RoadPart);
 
 		RoadPart->SetStaticMesh(RoadMesh);
-		
 		RoadPart->SetForwardAxis(ESplineMeshAxis::X);
-		
 
-		// 스플라인 기준 좌우 오프셋
-		RoadPart->SetStartOffset(FVector2D(0.f, RoadOffset));
-		RoadPart->SetEndOffset(FVector2D(0.f, RoadOffset));
+		// 컴포넌트 자체는 월드 원점 기준으로 둠
+		RoadPart->SetWorldLocation(FVector::ZeroVector);
+		RoadPart->SetWorldRotation(FRotator::ZeroRotator);
+		RoadPart->SetWorldScale3D(FVector::OneVector);
+
+		FVector StartLocation;
+		FVector StartTangent;
+		FVector EndLocation;
+		FVector EndTangent;
+
+		SplineComp->GetLocationAndTangentAtSplinePoint(
+			i,
+			StartLocation,
+			StartTangent,
+			ESplineCoordinateSpace::World
+		);
+
+		SplineComp->GetLocationAndTangentAtSplinePoint(
+			i + 1,
+			EndLocation,
+			EndTangent,
+			ESplineCoordinateSpace::World
+		);
 
 		RoadPart->SetStartAndEnd(
 			StartLocation,
@@ -82,13 +68,13 @@ void ASplineRoadActor::OnConstruction(const FTransform& Transform)
 
 		RoadPart->RegisterComponent();
 
-		RoadMeshComps.Add(RoadPart);
+		SplineMeshComps.Add(RoadPart);
 	}
 }
 
 void ASplineRoadActor::ClearRoad()
 {
-	for (TObjectPtr<USplineMeshComponent> RoadPart : RoadMeshComps)
+	for (TObjectPtr<USplineMeshComponent> RoadPart : SplineMeshComps)
 	{
 		if (RoadPart)
 		{
@@ -96,5 +82,5 @@ void ASplineRoadActor::ClearRoad()
 		}
 	}
 
-	RoadMeshComps.Empty();
+	SplineMeshComps.Empty();
 }

@@ -19,22 +19,14 @@ public:
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Road")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Road")
 	TObjectPtr<USplineComponent> SplineComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Road")
 	TObjectPtr<UStaticMesh> RoadMesh;
 
-	// 도로 메쉬 한 조각의 길이
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Road")
-	float SectionLength = 1000.f;
-
-	// 도로를 스플라인 기준으로 좌우 이동시키고 싶을 때 사용
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Road")
-	float RoadOffset = 0.f;
-
 	UPROPERTY()
-	TArray<TObjectPtr<USplineMeshComponent>> RoadMeshComps;
+	TArray<TObjectPtr<USplineMeshComponent>> SplineMeshComps;
 
 	void ClearRoad();
 };
