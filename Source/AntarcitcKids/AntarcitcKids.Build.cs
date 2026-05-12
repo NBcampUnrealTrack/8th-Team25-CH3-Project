@@ -12,7 +12,7 @@ public class AntarcitcKids : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[]
 		{
-			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "ChaosVehicles"
+			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "ChaosVehicles", "Landscape"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
