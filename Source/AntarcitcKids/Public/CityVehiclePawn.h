@@ -102,13 +102,13 @@ private:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> BackCamera;
-	/*
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UCameraSensorComponent> CameraSensor;
+	
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
+	//TObjectPtr<UCameraSceneComponent> CameraSensor;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<ULidarSensorComponent> LidarSensor; 
-	*/
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
+	//TObjectPtr<ULidarSceneComponent> LidarSensor;  
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAgentDataLogger> DataLogger;
 	

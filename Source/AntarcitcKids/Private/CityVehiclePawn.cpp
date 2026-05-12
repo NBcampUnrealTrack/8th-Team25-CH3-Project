@@ -46,14 +46,16 @@ ACityVehiclePawn::ACityVehiclePawn()
 	GetMesh()->SetCollisionProfileName(FName("Vehicle"));
 	
 	ChaosVehicleMovement = CastChecked<UChaosWheeledVehicleMovementComponent>(GetVehicleMovement());
+	
 	/*
-	CameraSensor = CreateDefaultSubobject<UCameraSensorComponent>(TEXT("CameraSensor"));
+	CameraSensor = CreateDefaultSubobject<UCameraSceneComponent>(TEXT("CameraSensor"));
 	CameraSensor->SetupAttachment(GetMesh());
 	
-	LidarSensor = CreateDefaultSubobject<ULidarSensorComponent>(TEXT("LidarSensor"));
+	LidarSensor = CreateDefaultSubobject<ULidarSceneComponent>(TEXT("LidarSensor"));
 	LidarSensor->SetupAttachment(GetMesh());
 	LidarSensor->SetRelativeLocation(FVector(0.0f, 0.0f, 180.0f));
 	*/
+	
 	SplineFollower = CreateDefaultSubobject<USplineFollowerComponent>(TEXT("SplineFollower"));
 	
 	DataLogger = CreateDefaultSubobject<UAgentDataLogger>(TEXT("DataLogger"));
