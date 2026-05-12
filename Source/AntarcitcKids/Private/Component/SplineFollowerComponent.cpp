@@ -513,7 +513,7 @@ void USplineFollowerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	// Offset에서 SegDir 방향 성분을 빼면 수직 성분(이탈 거리)만 남음
 	const float CrossErr = FVector::DotProduct(
 		Offset - SegDir * FVector::DotProduct(Offset, SegDir), // 수직 벡터
-		FVector::CrossProduct(FVector::UpVector, SegDir) // 경로의 왼쪽 방향 단위벡터
+		FVector::CrossProduct(FVector::UpVector, SegDir) // 경로의 오른쪽 방향 단위벡터
 	);
 
 	// (1)~(3) 블렌딩 : heading (anticipation) + position (tracking) + crosstrack (centerline)
@@ -529,8 +529,8 @@ void USplineFollowerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	const float YawCmd = PosDelta * (1.f - HdgW) + HdgDelta * HdgW;
 	
 	// YawCmd를 MaxYawDelta로 정규화하고 CrossErr 보정을 더해 -1~1로 클램핑
-		// 차량이 왼쪽으로 이탈이면 → CrossErr > 0
-		// Steer에 양수를 더해, 오른쪽으로 조향해야 함
+		// 차량이 오른쪽으로 이탈이면 → CrossErr > 0
+		// Steer에서 값을 빼서, 왼쪽으로 조향해야 함
 	const float Steer = FMath::Clamp(
 		YawCmd / MaxYawDelta - CrossErr * CrosstrackGain,
 		-1.f, 1.f
