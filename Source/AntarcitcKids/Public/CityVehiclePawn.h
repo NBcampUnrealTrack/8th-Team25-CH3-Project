@@ -63,6 +63,8 @@ protected:
 	virtual void EndPlay(EEndPlayReason::Type EndPlayReason) override;
 	virtual void Tick(float Delta) override;
 	
+	void UpdateWheelSteerAngleLog(); //로그로 값을 보내기 위한 값 추가
+	
 private:
 	void LookAround(const FInputActionValue& Value);
 	void ToggleCamera(const FInputActionValue& Value);
@@ -102,13 +104,13 @@ private:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> BackCamera;
-	/*
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UCameraSensorComponent> CameraSensor;
+	
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
+	//TObjectPtr<UCameraSceneComponent> CameraSensor;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<ULidarSensorComponent> LidarSensor; 
-	*/
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
+	//TObjectPtr<ULidarSceneComponent> LidarSensor;  
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAgentDataLogger> DataLogger;
 	

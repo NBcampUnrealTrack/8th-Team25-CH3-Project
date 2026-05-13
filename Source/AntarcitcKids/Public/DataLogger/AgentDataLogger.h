@@ -13,14 +13,59 @@ class ANTARCITCKIDS_API UAgentDataLogger : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	UAgentDataLogger(); //생성자 
+	UAgentDataLogger(); //생성자
+	void SetSteeringInputLog(double FrontLeftAngle, double FrontRightAngle); //외부에서도 값을 받을 수 있도록 하는 함수, 핸들 회전값
+
+
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(EEndPlayReason::Type EndPlayReason) override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override; //핵심
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override; 
+
+
 
 private:
+	
+	//============비하클 참/거짓 체크용===================
+	bool IsValidVehicleOwner() const;
+	
+	//====================================조향값 관련=========================================
+	double CurrentSteeringRightInput = 0.0; //현제의 회전값을 넣을 함수
+	double CurrentSteeringLeftInput = 0.0; //현제의 회전 값 넣을 함수
+	
+	double GetSteeringRightValue() const; //오른쪽 앞 바퀴
+	double GetSteeringLeftValue() const; //왼쪽 앞 바퀴
+	//=============================================================
+	
+	
+	// =============================총 이동거리 계산 관련=============================
+	
+	FVector StartWorldLocation = FVector::ZeroVector; //첫 출발위치를 저장
+	bool bHasStartedLocation = false; //이미 저장을 했는가 물어보는 여부
+	
+	FVector PreviousWorldLocation = FVector::ZeroVector; 
+	bool bHasPreviousWorldLocation = false;
+	
+	double GetDistanceFromStartM() const; //첫 시작점은 바뀌지 않을거니까
+	double TotalDistanceM = 0.0; //달리는 값을 실시간으로 저장함
+	double GetTotalDistanceM() const; //왜 컨스트냐? 얘는 여태껏 달리던 값을 그저 출력하는 함수에 불과함
+	// =================================================================================================
+	
+	
+	//=====================================가속/감속 관련====================================================
+	
+	double PreviousSpeedMps = 0.0; //이전 속도 저장
+	bool bHasPreviousSpeed = false; 
+	
+	double CurrentAccelerationMps2 = 0.0; //현제 가속도
+	double GetAccelerationsMps2() const; //가속
+	
+	double CurrentDecelerationMps2 = 0.0;//현제 감속도
+	double GetDecelerationMps2() const; //감속
+	//===================================================================================================
+	
+	
 	static int32 GetUtmZone(double Longitude); //UTM은 지구를 세로 구역으로 나누는 좌표계, 경도 기준으로 UTM Zone 번호를 구하는 함수
 	static void LatLonToUtm(double Lat, double Lon, int32 Zone, double& OutEasting, double& OutNorthing); //위도, 경도를 UTM 좌표로 변환하는 함수
 	void WorldToUtm(const FVector& WorldLocation, double& OutEasting, double& OutNorthing) const;
@@ -35,6 +80,8 @@ private:
 
 	UFUNCTION(BlueprintPure, Category = "Data Logger")
 	bool IsRecording() const { return bIsRecording; } //레코딩중, 녹화중인지 확인
+
+
 
 private:
 

@@ -46,14 +46,16 @@ ACityVehiclePawn::ACityVehiclePawn()
 	GetMesh()->SetCollisionProfileName(FName("Vehicle"));
 	
 	ChaosVehicleMovement = CastChecked<UChaosWheeledVehicleMovementComponent>(GetVehicleMovement());
+	
 	/*
-	CameraSensor = CreateDefaultSubobject<UCameraSensorComponent>(TEXT("CameraSensor"));
+	CameraSensor = CreateDefaultSubobject<UCameraSceneComponent>(TEXT("CameraSensor"));
 	CameraSensor->SetupAttachment(GetMesh());
 	
-	LidarSensor = CreateDefaultSubobject<ULidarSensorComponent>(TEXT("LidarSensor"));
+	LidarSensor = CreateDefaultSubobject<ULidarSceneComponent>(TEXT("LidarSensor"));
 	LidarSensor->SetupAttachment(GetMesh());
 	LidarSensor->SetRelativeLocation(FVector(0.0f, 0.0f, 180.0f));
 	*/
+	
 	SplineFollower = CreateDefaultSubobject<USplineFollowerComponent>(TEXT("SplineFollower"));
 	
 	DataLogger = CreateDefaultSubobject<UAgentDataLogger>(TEXT("DataLogger"));
@@ -145,7 +147,51 @@ void ACityVehiclePawn::Tick(float Delta)
 	CameraYaw = FMath::FInterpTo(CameraYaw, 0.0f, Delta, 1.0f);
 
 	BackSpringArm->SetRelativeRotation(FRotator(0.0f, CameraYaw, 0.0f));
+	
+	
+	UpdateWheelSteerAngleLog(); //실시간으로 바뀌는 바퀴 각 계산 
 }
+
+
+void ACityVehiclePawn::UpdateWheelSteerAngleLog()
+{
+	UE_LOG(LogTemp, Warning, TEXT("UpdateWheelSteerAngleLog called")); //불러와지는지 체크용
+	
+	if (!ChaosVehicleMovement)
+	{
+		return;
+	}//비하클 무브먼트가 존재해?
+	
+	if (ChaosVehicleMovement->Wheels.Num() < 2)
+	{
+		return;
+	}//바퀴가 2개 미만이야?
+	
+	const UChaosVehicleWheel* FrontLeftWheel = ChaosVehicleMovement->Wheels[0]; //앞, 왼쪽 바퀴 가져오기
+	const UChaosVehicleWheel* FrontRightWheel = ChaosVehicleMovement->Wheels[1]; //앞, 오른쪽 바퀴 가져오기
+	
+	if (!FrontLeftWheel || !FrontRightWheel)
+	{
+		return;
+	} //바퀴 있어?
+	
+	const double FrontLeftAngle = FrontLeftWheel->GetSteerAngle();
+	const double FrontRightAngle = FrontRightWheel->GetSteerAngle(); 
+	//실제 조향각 읽기, GetSteerAngle로  값 이동
+	
+	if (UAgentDataLogger* Logger = FindComponentByClass<UAgentDataLogger>())
+	{
+		Logger->SetSteeringInputLog(FrontLeftAngle, FrontRightAngle);
+	} //로거 찾았어? 몾찼았으면 쓰지마
+	
+}
+
+//바퀴 조형각을 읽어, 데이터 로그에 전달해주는 함수
+//=================================================================================================
+
+//=================================================================================================
+
+
 
 void ACityVehiclePawn::LookAround(const FInputActionValue& Value)
 {
