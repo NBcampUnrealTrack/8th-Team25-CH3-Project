@@ -63,6 +63,8 @@ protected:
 	virtual void EndPlay(EEndPlayReason::Type EndPlayReason) override;
 	virtual void Tick(float Delta) override;
 	
+	void UpdateWheelSteerAngleLog(); //로그로 값을 보내기 위한 값 추가
+	
 private:
 	void LookAround(const FInputActionValue& Value);
 	void ToggleCamera(const FInputActionValue& Value);

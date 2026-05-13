@@ -4,6 +4,8 @@
 #include "HAL/PlatformFileManager.h" //파일을 다루는 헤더
 #include "Misc/FileHelper.h" //저장과 읽기를 도와주는 헬퍼 헤더
 #include "Misc/Paths.h" //프로젝트 경로 가져오기
+#include "CityVehiclePawn.h"
+#include "Vehicle/CyberTruckWheelFront.h"
 
 //결국 최종 목표는 언리얼과 현실세계를 잇기 위한 실제 위도, 경도를 값으로 추출하는 과정
 
@@ -68,6 +70,7 @@ void UAgentDataLogger::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 }
 
 
+
 void UAgentDataLogger::StartRecording()
 {
 	if (bIsRecording) 
@@ -84,12 +87,97 @@ void UAgentDataLogger::StartRecording()
 
 
 
-
 void UAgentDataLogger::StopRecording()
 {
 	bIsRecording = false;
 }
 //기록을 멈추는 함수
+
+//============공통 검증함수==================================
+bool UAgentDataLogger::IsValidVehicleOwner() const
+{
+	const AActor* Owner = GetOwner();
+	
+	if (!Owner)
+	{
+		return false;
+	}
+	
+	return Owner->IsA<AWheeledVehiclePawn>();
+}
+//=========================================================
+
+
+//===========================================자동차 핸들 회전===============================================
+
+
+void UAgentDataLogger::SetSteeringInputLog(double FrontLeftAngle, double FrontRightAngle)
+{
+
+	if (!IsValidVehicleOwner())
+	{
+		return;
+	}
+	
+	CurrentSteeringLeftInput = FrontLeftAngle; //여기에 값이 저장
+	CurrentSteeringRightInput = FrontRightAngle; //여기에 값이 저장
+}
+//Owner가 진짜 차량인지 아닌지 확인후, 앞바퀴의 왼쪽, 오른쪽 각도를 부르는 함수
+
+
+double UAgentDataLogger::GetSteeringLeftValue() const
+{
+	return CurrentSteeringLeftInput;
+}
+
+
+double UAgentDataLogger::GetSteeringRightValue() const
+{
+	return CurrentSteeringRightInput;
+}
+
+//외부에서 이미 저장해둔 값을 읽어서 반환하는 함수
+//조회하는 통로라서, 아직 아무런 값도 뜨지 않음
+//===================================================================================================
+
+//===========================================총 이동거리===================================================
+
+
+double UAgentDataLogger::GetDistanceFromStartM() const
+{
+	if (!GetOwner())
+	{
+		return 0.0;
+	}
+	
+	return FVector::Dist(
+		StartWorldLocation,
+		GetOwner()->GetActorLocation()
+		)*0.01; //언리얼 내부에서 자동차가 이동한 거리의 값을 추출, 값을 보낸 후 m변환
+}
+
+
+double UAgentDataLogger::GetTotalDistanceM() const
+{
+	return TotalDistanceM;
+} //총 이동거리 기억
+
+//====================================================================================================
+
+//=====================가속도 관련====================================================
+double UAgentDataLogger::GetAccelerationsMps2() const
+{
+	return CurrentAccelerationMps2;
+}
+
+double UAgentDataLogger::GetDecelerationMps2() const
+{
+	return CurrentDecelerationMps2;
+}
+
+//================================================================================
+
+
 
 void UAgentDataLogger::CreateCsvFile()
 {
@@ -109,7 +197,7 @@ void UAgentDataLogger::CreateCsvFile()
 	//여기까지가 csv경로를 제작하는 과정
 
 	const FString Header =
-		TEXT("Timestamp,World_X,World_Y,World_Z,UTM_Easting,UTM_Northing,UTM_Zone,Velocity_kmh,Yaw\n"
+		TEXT("Timestamp,World_X,World_Y,World_Z,UTM_Easting,UTM_Northing,UTM_Zone,Velocity_kmh,Yaw,pitch,Roll,F_LeftValue,F_RightValue,Total_M,Start_M,CurrentSpeed,Acceleration,Deceleration\n"
 		); //CSV 파일 내부에 작성 될 순서와 작성돨 것, 차례대로 시간 경과, 언리얼 월드 X,Y,Z, 실제 UTM기반 좌표,, UTM 구역 번호를 나타냄, 속도, 회전각
 	FFileHelper::SaveStringToFile(Header, *CsvFilePath,
 		FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM
@@ -120,6 +208,7 @@ void UAgentDataLogger::CreateCsvFile()
 //CSV 파일을 제작하는 함수 
 
 
+
 void UAgentDataLogger::AppendRow()
 {
 	const AActor* Owner = GetOwner(); //컴포넌트가 붙어있는 엑터 들고오기
@@ -127,14 +216,74 @@ void UAgentDataLogger::AppendRow()
 		return; //없으면 종료
 
 	const FVector WorldLoc = Owner->GetActorLocation(); // 언리얼 상에선 cm단위이며 월드 위치를 들고옴
+	
+	//====================첫 출발위치 저장================================
+	if (!bHasStartedLocation)
+	{
+		StartWorldLocation = WorldLoc;
+		bHasStartedLocation = true;
+	}
+	const double DistanceFromStartM = FVector::Dist(StartWorldLocation, WorldLoc) * 0.01; 
+	//=================================================================
+	//첫 출발점 기준에서 차량이 얼마나 멀어졌는지 확인하는 값	
+	
+	//====================================총 이동관련=======================================
+	if (bHasPreviousWorldLocation)
+	{
+		const double DeltaDistanceM =
+			FVector::Dist(PreviousWorldLocation, WorldLoc)*0.01; //이전 프레임에서 얼마나 이동했는지, cm->m로 변환하는 값
+		
+		TotalDistanceM += DeltaDistanceM; //누적거리 계산
+	}
+	
+	PreviousWorldLocation = WorldLoc; //다음 프레임의 이전 위치
+	bHasPreviousWorldLocation = true; // 거리계산 가능, 최초위치 저장완료
+	//====================================================================================
+	
+	
 	const FRotator WorldRot = Owner->GetActorRotation(); // 회전값
 	const FVector Velocity = Owner->GetVelocity(); // 엑터의 속도를 가져오며 언리얼 단위는 cm이므로 cm/s임
 
-	const double SpeedKmh = Velocity.Size() * 0.01 * 3.6; //엑터의 속도를 벡터의 크기로 계산함
+	const double CurrentSpeedMps = Velocity.Size() * 0.01;
+	const double SpeedKmh = Velocity.Size() * 3.6;
 	// 0.01은 cm/s -> m/s로, 3.6은 m/s -> km/h로 변환함
+	
+	//=====================현제 가속도 계산=========================================================
+
+	if (bHasPreviousSpeed)
+	{
+		const double DeltaSpeedM = CurrentSpeedMps - PreviousSpeedMps;
+		const double DeltaTimeSeconds = 1.0 / FMath::Max(SaveFrequencyHz, 0.1f);
+		
+		CurrentAccelerationMps2 = DeltaSpeedM / DeltaTimeSeconds;
+	}
+	
+	PreviousSpeedMps = CurrentSpeedMps;
+	bHasPreviousSpeed = true;
+	
+	//====감속도 계산========
+	
+	if (CurrentAccelerationMps2 < 0.0)
+	{
+		CurrentDecelerationMps2 = FMath::Abs(CurrentAccelerationMps2);
+	}
+
+	else
+	{
+		CurrentDecelerationMps2 = 0.0;
+	}
+	
+	//===========================================================================================
 
 	const double Yaw = WorldRot.Yaw; //차량의 방향을 저장
-
+	const double Pitch = WorldRot.Pitch;
+	const double Roll = WorldRot.Roll;
+	
+	const double FrontLeftSteering = GetSteeringLeftValue(); //조향값
+	const double FrontRightSteering = GetSteeringRightValue(); //조향값
+	
+	
+	
 	double UtmEasting = 0.0;
 	double UtmNorthing = 0.0;
 	//UTM 좌표 결과를 받을 변수
@@ -142,12 +291,21 @@ void UAgentDataLogger::AppendRow()
 	//언리얼 월드 좌표를 UTM 좌표로 변환함, UtmEasting, UtmNorthing로 값이 들어감
 
 	const FString Row = FString::Printf(
-		TEXT("%.3f,%.2f,%.2f,%.2f,%.4f,%.4f,%d,%.2f,%.4f\n"),
+	TEXT("%.3f,%.2f,%.2f,%.2f,%.4f,%.4f,%d,%.2f,%.4f,%.4f,%.4f,%.4f,%.4f,%.3f,%.3f,%.4f,%.4f,%.4f\n"),
 		ElapsedRecordingTime,
 		WorldLoc.X, WorldLoc.Y, WorldLoc.Z,
 		UtmEasting, UtmNorthing, OriginUtmZone,
 		SpeedKmh,
-		Yaw
+		Yaw,
+		Pitch,
+	    Roll,
+	    FrontLeftSteering,
+	    FrontRightSteering,
+	    GetTotalDistanceM(),
+	    DistanceFromStartM,
+	    CurrentSpeedMps,
+	    GetAccelerationsMps2(),
+	    GetDecelerationMps2()
 	);
 	//CSV에 들어갈 한 줄 문자열을 제작
 
@@ -186,7 +344,7 @@ int32 UAgentDataLogger::GetUtmZone(double Longitude)
 //왜 6인가? UTM은 경도를 기준으로 6도씩 나눔
 
 
-void UAgentDataLogger::LatLonToUtm(double Lat, double Lon, int32 Zone, double& OutEasting, double& OutNorthing) //지구 좌표를 평면 좌표UTM으로 변환
+void UAgentDataLogger::LatLonToUtm(double Lat, double Lon, int32 Zone, double& OutEasting, double& OutNorthing) //지구 좌표를 평면 좌표UTM으로 변환, 절때 언리얼 상이 아님 
 {
 	//실제 지구 위 좌표를 UTM이라는 2차원상의 좌표로 변환시키는 과정임
 	//WGS84: 위도, 경도로 표현하는 gps좌표(구 기준)
