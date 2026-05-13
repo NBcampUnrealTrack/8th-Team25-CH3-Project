@@ -1,7 +1,9 @@
 #include "Actor/TrafficLightActor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneComponent.h"
+#include "Components/BoxComponent.h"
 #include "TimerManager.h"
+#include "Manager/TrafficLightQuest.h"
 
 ATrafficLightActor::ATrafficLightActor()
 {
@@ -21,6 +23,16 @@ ATrafficLightActor::ATrafficLightActor()
 
 	GreenLight = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GreenLight"));
 	GreenLight->SetupAttachment(SceneRoot);
+	
+	Collision = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision"));
+	Collision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+	Collision->SetupAttachment(SceneRoot);
+	Collision->SetGenerateOverlapEvents(true);
+	
+	Collision->OnComponentBeginOverlap.AddDynamic(this, &ATrafficLightActor::OnItemOverlap);
+	Collision->OnComponentEndOverlap.AddDynamic(this, &ATrafficLightActor::OnItemEndOverlap);
+
+	
 
 	CurrentState = ETrafficLightState::Red;
 }
@@ -30,6 +42,32 @@ void ATrafficLightActor::BeginPlay()
 	Super::BeginPlay();
 
 	SwitchToRed();
+	Quest = NewObject<UTrafficLightQuest>(this);
+	Quest->OnInitialized(TrafficLightQuestInfo);	
+
+}
+
+void ATrafficLightActor::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor->ActorHasTag("Player"))
+	{
+		if (CurrentState == ETrafficLightState::Red)
+		{
+			Quest->OnFailed();
+		}
+		else
+		{
+			Quest->OnSuccess();
+		}
+	}
+	
+}
+
+void ATrafficLightActor::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	
 }
 
 void ATrafficLightActor::SetTrafficLightState(ETrafficLightState NewState)
