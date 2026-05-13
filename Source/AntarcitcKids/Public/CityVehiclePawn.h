@@ -135,6 +135,7 @@ private:
 	UPROPERTY(EditAnywhere, Category="Flip Check")
 	float FlipCheckMinDot = -0.2f;
 	
+	
 private:
 	bool bFrontCameraActive = false;
 	bool bPreviousFlipCheck = false;
