@@ -7,7 +7,22 @@
 #include "SplineFollowerComponent.generated.h"
 
 class ACityVehiclePawn;
-class ULandscapeSplineControlPoint;
+class ASplineRoadActor;
+class USplineComponent;
+
+/*
+ * 차량이 ASplineRoadActor의 스플라인을 따라 자율 주행하도록 제어하는 컴포넌트.
+ * 
+ * 책임:
+ *   - 주어진 스플라인을 안정적으로 추종 (조향 + 속도 제어)
+ *   - 도로 끝 도달 시 정차
+ *   - 외부(AI Controller)의 정지/재개 명령 수신
+ * 
+ * 책임이 아닌 것:
+ *   - 시나리오 의사결정 (← ACityVehicleAIController가 담당)
+ *   - 도로 간 전환 라우팅 (← ACityVehicleAIController가 담당)
+ *   - 직접 물리 입력 (← ACityVehiclePawn이 담당)
+ */
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ANTARCITCKIDS_API USplineFollowerComponent : public UActorComponent
@@ -15,32 +30,81 @@ class ANTARCITCKIDS_API USplineFollowerComponent : public UActorComponent
 	GENERATED_BODY()
 public:
 	USplineFollowerComponent();
+	
+	
+	// 언리얼 컨벤션: Request~는 "외부에서 요청"을 의미
+	// 즉시 정차
+	UFUNCTION(BlueprintCallable, Category = "SplineFollower|Commands")
+	void HaltDriving();
+
+	// 주행 재개
+	UFUNCTION(BlueprintCallable, Category = "SplineFollower|Commands")
+	void ResumeDriving();
+
+	// 현재 추종 상태 조회
+	UFUNCTION(BlueprintPure, Category = "SplineFollower|State")
+	bool IsDrivingHalted() const { return FollowState == ESplineFollowState::Stopped; }
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
 	
-	// 월드에서 LandscapeSpline을 찾아 경로 포인트 배열(PathPoints)을 구성
+	// ────────────────────────────────────────────────────────────
+	// 초기화 (BeginPlay에서 호출)
+	// ────────────────────────────────────────────────────────────
+	
+	// 추종할 도로를 결정하고 초기 진행 거리를 설정
 	void BuildPath();
 	
-	// 기존 경로 포인트들을 Catmull-Rom 스플라인으로 부드럽게 보간하여 일정 간격으로 재샘플링
-	void ResampleCatmullRom();
+	// CurrentRoad가 미지정이면 가장 가까운 ASplineRoadActor를 찾아 반환
+	ASplineRoadActor* FindNearestRoad() const;
 	
-	// 현재 위치에서 경로를 따라 Distance만큼 앞의 위치와 그 방향(OutDirection)을 반환
-	FVector GetPointAhead(FVector& OutDirection, float Distance) const;
+	// 차량의 현재 위치를 스플라인 상의 거리로 변환하여 ProgressDistance 초기화
+	void InitializeProgress();
 	
-	// AheadOffset 거리 앞 지점의 곡률(꺾임 정도)을 각도(라디안)로 추정
-	float EstimateCurvature(float AheadOffset) const;
+	
+	// ────────────────────────────────────────────────────────────
+	// 매 프레임 단계 (TickComponent에서 호출)
+	// ────────────────────────────────────────────────────────────
+	
+	// 차량의 실제 위치를 기반으로 ProgressDistance 갱신, 끝 도달 시 true 반환
+	bool UpdateProgress(float DeltaTime);
+
+	// 3-way 블렌드(전방주시 + 경로방향 + 중앙선보정)로 조향 입력값(-1~1) 산출
+	float ComputeSteeringInput(float CurvHere) const;
+
+	// 곡률 기반 안전속도와 현재속도 차이로 스로틀/브레이크 명령(-1~1) 산출
+	// 양수면 스로틀, 음수면 브레이크
+	float ComputeThrottleBrakeCommand(float DeltaTime, float CurvHere, float CurvAhead);
+
+	// 산출된 명령값을 Pawn에 전달
+	void ApplyControls(float Steering, float ThrottleBrakeCmd);
+	
+	
+	// ────────────────────────────────────────────────────────────
+	// 계산 보조 함수
+	// ────────────────────────────────────────────────────────────
+
+	// 현재 위치에서 OffsetAhead 거리 앞 지점의 곡률(라디안)을 추정
+	float EstimateCurvatureAt(float OffsetAhead) const;
 	
 	// 곡률을 기반으로 물리적으로 안전한 최대 속도를 계산 (원심력 = 횡 마찰력 공식)
 	float ComputeCurveSpeedLimit(float Curvature) const;
 
 private:
 
-	//================= Speed 카테고리 =================
+	//────── Path ──────────────────────────────────────────────────
+    
+	// 시작 시 추종할 도로 (미지정 시 가장 가까운 도로 자동 탐색)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Path", meta=(AllowPrivateAccess="true"))
+	TObjectPtr<ASplineRoadActor> StartingRoad;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Path", meta=(AllowPrivateAccess="true"))
+	float EndDetectionThreshold;
+	
+	//────── Speed ─────────────────────────────────────────────────
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Speed", meta=(AllowPrivateAccess="true"))
 	float MaxSpeed;
@@ -48,26 +112,25 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Speed", meta=(AllowPrivateAccess="true"))
 	float MinSpeed;
 
-	// 스로틀(Throttle): 엔진이나 모터로 유입되는 공기, 연료, 혹은 전력의 양을 조절하여 기기의 속도나 출력을 제어하는 장치
+	// (목표속도 - 현재속도) × ThrottleGain → 명령값
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Speed", meta=(AllowPrivateAccess="true"))
 	float ThrottleGain;
 
-	// 감속 시 보간 속도
+	// 감속 시 목표 속도 보간 속도 (빠르게)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Speed", meta=(AllowPrivateAccess="true"))
 	float DecelRate;
 
+	// 가속 시 목표 속도 보간 속도 (천천히)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Speed", meta=(AllowPrivateAccess="true"))
 	float AccelRate;
 
-	
-	
-	//================= Steering 카테고리 =================
-	
+	//────── Steering ──────────────────────────────────────────────
+    
 	// 기본 전방 주시 거리 (cm)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Steering", meta=(AllowPrivateAccess="true"))
 	float LookAheadBase;
 	
-	// 속도에 따라 주시 거리를 늘리는 비율
+	// 속도에 비례하여 전방 주시 거리를 늘리는 비율 (빠를수록 멀리 봄)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Steering", meta=(AllowPrivateAccess="true"))
 	float LookAheadSpeedFactor;
 
@@ -75,56 +138,61 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Steering", meta=(AllowPrivateAccess="true"))
 	float MaxYawDelta;
 
-	// 경로 방향(heading) vs 위치 추종(position)의 블렌딩 비율
+	// 경로 방향(heading) vs 위치 추종(position)의 블렌딩 비율 (0=위치만, 1=방향만)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Steering", meta=(ClampMin="0", ClampMax="1", AllowPrivateAccess="true"))
 	float HeadingWeight;
 
-	// 중앙선 이탈 오차를 보정하는 게인
+	// 중앙선 이탈 거리(cm) → 조향 보정량 변환 게인
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Steering", meta=(AllowPrivateAccess="true"))
 	float CrosstrackGain;
 
-
-
-	//================= Curvature 카테고리 =================
-	
-	// 횡 마찰 계수 (속도 제한 계산용)
+	//────── Curvature ─────────────────────────────────────────────
+    
+	// 횡 마찰 계수 (0.8 = 마른 아스팔트 근사)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Curvature", meta=(ClampMin="0.1", ClampMax="2.0", AllowPrivateAccess="true"))
 	float LateralFriction;
 
-	// 곡률 측정 시 샘플 포인트 간격 (cm)
+	// 곡률 측정 시 두 샘플 사이 간격 (cm)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Curvature", meta=(AllowPrivateAccess="true"))
 	float CurvatureSampleSpan;
 
-	// 커브가 멀리 있어도 미리 감속을 시작하기 위한 거리
+	// 커브 진입 전 미리 감속을 시작하기 위한 전방 거리 (cm)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Curvature", meta=(AllowPrivateAccess="true"))
 	float BrakePreviewDist;
 
-
-
-	//================= Path 카테고리 =================
+private:
 	
-	// 에디터에서 경로의 시작 CP를 직접 지정 - 기존 코드의 역방향 탐색 제거 (Connections[0]/[1] 방향 혼용 문제 원천 차단)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Path", meta=(AllowPrivateAccess="true"))
-	TObjectPtr<ULandscapeSplineControlPoint> StartControlPoint;
+	enum class ESplineFollowState : uint8
+	{
+		Driving,    // 정상 주행
+		Stopped,    // 외부 요청 또는 도로 끝 도달로 정차
+		
+		//SlowingDown,        // 감속 중 (스쿨존 진입, 신호등 노란불)
+		//Paused,             // 일시 정지 후 재개 대기 (긴급 장애물 사라짐 기다리기)
+		//Yielding,           // 양보 (교차로 다른 차량 통과 대기)
+		//Reversing,          // 후진 (주차 시나리오)
+		//Parking,            // 주차 동작 중
+	};
 	
-	// 재샘플링 후 포인트 간 목표 간격
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Path", meta=(AllowPrivateAccess="true"))
-	float ResampleSpacing;
+	ESplineFollowState FollowState;
 
-	// 약한 포인터: 객체가 삭제되어도 크래시 없이 IsValid()로 체크 가능
+	// 캐시된 소유 Pawn
 	UPROPERTY()
 	TWeakObjectPtr<ACityVehiclePawn> OwnerPawn;
 	
-private:
-	// 경로를 구성하는 3D 포인트 배열
-	TArray<FVector> PathPoints;
+	// 현재 추종 중인 도로의 스플라인 컴포넌트 캐시
+	UPROPERTY()
+	TWeakObjectPtr<USplineComponent> CurrentSpline;
 	
-	// 현재 차량이 통과 중인 포인트 인덱스
-	int32 CurrentPointIndex;
+	// 스플라인 상의 현재 진행 거리 (cm, 시작점 기준)
+	float ProgressDistance;
 	
-	// 경로가 루프인지 여부
-	bool  bClosedLoop;
+	// 스플라인 전체 길이 캐시 (BuildPath에서 계산, 도로 변경 전엔 불변)
+	float SplineTotalLength;
 	
-	// 보간된 목표 속도
+	// 닫힌 루프 여부 캐시
+	bool bSplineIsClosedLoop;
+	
+	// 보간된 목표 속도 (감속/가속 보간용)
 	float SmoothedTargetSpeed;
 };
