@@ -70,6 +70,9 @@ public:
 	void DoFullStop();
 	
 	UFUNCTION(BlueprintCallable, Category="Input")
+	void ResumeMovement();
+	
+	UFUNCTION(BlueprintCallable, Category="Input")
 	void DoBrake(float BrakeValue);
 
 	UFUNCTION(BlueprintCallable, Category="Input")
@@ -181,6 +184,7 @@ private:
 private:
 	bool bFrontCameraActive = false;
 	bool bPreviousFlipCheck = false;
+	bool bIsManuallyStopped = false;
 	
 	UFUNCTION()
 	void TickMissionTimer();
