@@ -82,11 +82,41 @@ void ACityVehiclePawn::DoThrottle(float ThrottleValue)
 
 void ACityVehiclePawn::DoFullStop()
 {
+	bIsManuallyStopped = true;
+	
 	ChaosVehicleMovement->SetThrottleInput(0.0f);
 	ChaosVehicleMovement->SetBrakeInput(1.0f);
+	ChaosVehicleMovement->SetHandbrakeInput(true);
 	BrakeLights(true);
+	
+	// 기어 자동 변환을 수동으로
+	ChaosVehicleMovement->SetUseAutomaticGears(false);
+	ChaosVehicleMovement->SetTargetGear(0, true); // 기어 중립
+	
+	// 강제로 속도를 0으로 만듬
+	if (UPrimitiveComponent* VehicleMesh = Cast<UPrimitiveComponent>(GetRootComponent()))
+	{
+		VehicleMesh->SetPhysicsLinearVelocity(FVector::ZeroVector);
+		VehicleMesh->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector);
+	}
 }
 
+void ACityVehiclePawn::ResumeMovement()
+{
+	// 강제 정지 상태 해제
+	bIsManuallyStopped = false;
+
+	// 브레이크 및 핸드브레이크 해제
+	ChaosVehicleMovement->SetBrakeInput(0.0f);
+	ChaosVehicleMovement->SetHandbrakeInput(false);
+	BrakeLights(false);
+
+	// 자동 변속기 다시 활성화
+	ChaosVehicleMovement->SetUseAutomaticGears(true);
+    
+	// 즉시 출발을 돕기 위해 스로틀 살짝 건듬
+	ChaosVehicleMovement->SetThrottleInput(0.1f);
+}
 
 void ACityVehiclePawn::DoBrake(float BrakeValue)
 {
@@ -173,23 +203,29 @@ void ACityVehiclePawn::Tick(float Delta)
 	const float CurrentRPM = ChaosVehicleMovement->GetEngineRotationSpeed();
 	OnHUDRPMUpdated.Broadcast(CurrentRPM);
 
-	// 기어 브로드캐스트 (바뀔 때만)
-	const int32 CurrentGear = ChaosVehicleMovement->GetCurrentGear();
-	const int32 TargetGear  = ChaosVehicleMovement->GetTargetGear();
-	const int32 DisplayGear = (CurrentGear == 0) ? TargetGear : CurrentGear;
-
 	FText GearText;
-	if (DisplayGear < 0)
+	
+	if (bIsManuallyStopped)
 	{
-		GearText = FText::FromString(TEXT("R"));
-	}
-	else if(DisplayGear == 0)
-	{
+		// 강제 정지 중이면 물리 상태와 상관없이 N 고정
 		GearText = FText::FromString(TEXT("N"));
 	}
 	else
 	{
-		GearText = FText::AsNumber(DisplayGear);
+		const int32 CurrentGear = ChaosVehicleMovement->GetCurrentGear();
+        
+		if (CurrentGear < 0)
+		{
+			GearText = FText::FromString(TEXT("R"));
+		}
+		else if (CurrentGear == 0)
+		{
+			GearText = FText::FromString(TEXT("N"));
+		}
+		else
+		{
+			GearText = FText::AsNumber(CurrentGear);
+		}
 	}
 
 	OnHUDGearUpdated.Broadcast(GearText);
