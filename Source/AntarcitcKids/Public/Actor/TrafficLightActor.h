@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TriggerMissionBase.h"
 #include "GameFramework/Actor.h"
 #include "Manager/QuestsTypes.h"
 #include "TrafficLightActor.generated.h"
@@ -18,7 +19,7 @@ enum class ETrafficLightState : uint8
 };
 
 UCLASS()
-class ANTARCITCKIDS_API ATrafficLightActor : public AActor
+class ANTARCITCKIDS_API ATrafficLightActor : public ATriggerMissionBase
 {
 	GENERATED_BODY()
 
@@ -28,27 +29,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	
-	UFUNCTION()
-	virtual void OnItemOverlap(
-		UPrimitiveComponent* OverlappedComp,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult& SweepResult);
-
-	UFUNCTION()
-	virtual void OnItemEndOverlap(
-		UPrimitiveComponent* OverlappedComp,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex);
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traffic Light")
-	USceneComponent* SceneRoot;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traffic Light")
-	UStaticMeshComponent* TrafficLightBody;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traffic Light")
 	UStaticMeshComponent* RedLight;
@@ -59,15 +39,20 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traffic Light")
 	UStaticMeshComponent* GreenLight;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision")
-	UBoxComponent* Collision;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Niagara")
-	UNiagaraSystem* SuccessEffect;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Niagara")
-	USceneComponent* NiagaraAnchor;
-	
+	virtual void OnItemOverlap(
+		UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult) override;
+
+
+	virtual void OnItemEndOverlap(
+		UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex) override;
 	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Traffic Light")
@@ -79,17 +64,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Traffic Light")
 	float GreenDuration = 5.0f;
 
-	UTrafficLightQuest* Quest;
-	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Quest")
-	FQuestInfo TrafficLightQuestInfo;
 private:
 	FTimerHandle TrafficLightTimerHandle;
 
 	ETrafficLightState CurrentState;
 
 	void SetTrafficLightState(ETrafficLightState NewState);
-	void SetQuestInfo();
+	void SetQuestInfo() override;
 	void SwitchToRed();
 	void SwitchToYellow();
 	void SwitchToGreen();
