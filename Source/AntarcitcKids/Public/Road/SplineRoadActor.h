@@ -49,10 +49,7 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Road|Properties")
 	ERoadCategory Category = ERoadCategory::Unspecified;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Road|Properties", meta=(Bitmask, BitmaskEnum="/Script/AntarcitcKids.ERoadZoneFlags"))
-	uint8 ZoneFlags = 0;
-	
+
 	// 카테고리 기본 속도 무시하고 특정 값(cm/s) 강제 적용이 필요한 경우 
 	// -1 디폴트 값 의미: 카테고리 기본값 사용
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Road|Properties", meta=(ClampMin="-1", UIMin="-1"))
