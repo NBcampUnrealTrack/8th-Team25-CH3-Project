@@ -60,4 +60,26 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<USensorViewrWidget> SensorViewWidget;
+	
+	// CyberHUD담당
+	UPROPERTY(EditAnywhere, Category="Vehicle|UI")
+	TSubclassOf<UUserWidget> CyberHUDWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<UUserWidget> CyberHUDWidget;
+
+	void CreateAndBindCyberHUD();
+
+	UFUNCTION() 
+	void OnHUDSpeedUpdated(float SpeedKMH);
+	UFUNCTION() 
+	void OnHUDSteeringUpdated(float LeftAngle, float RightAngle);
+	UFUNCTION() 
+	void OnHUDMissionUpdated(int32 MissionIndex, bool bCompleted);
+	UFUNCTION() 
+	void OnHUDTimerUpdated(float RemainingSeconds);
+	UFUNCTION() 
+	void OnHUDGearUpdated(FText GearText);
+	UFUNCTION() 
+	void OnHUDRPMUpdated(float CurrentRPM);
 };
