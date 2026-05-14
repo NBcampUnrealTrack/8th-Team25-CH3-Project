@@ -15,7 +15,7 @@ class ANTARCITCKIDS_API ULidarNiagaraComponent : public UNiagaraComponent
 	
 public:
 	ULidarNiagaraComponent();
-	/*void RenderPointCloudNiagara(const FLidarPointCloudData& PointCloud);*/
+	void RenderPointCloudNiagara(const FLidarPointCloudData& PointCloud);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Niagara")
 	UNiagaraSystem* NiagaraAsset;

@@ -13,7 +13,7 @@ ULidarNiagaraComponent::ULidarNiagaraComponent()
 
 }
 
-/*void ULidarNiagaraComponent::RenderPointCloudNiagara(const FLidarPointCloudData& PointCloud)
+void ULidarNiagaraComponent::RenderPointCloudNiagara(const FLidarPointCloudData& PointCloud)
 {
 	if (!GetSystemInstance()) return;
 	DeactivateImmediate(); 
@@ -50,12 +50,12 @@ ULidarNiagaraComponent::ULidarNiagaraComponent()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Color: R=%.2f G=%.2f B=%.2f A=%.2f"),
 	Color.R, Color.G, Color.B, Color.A);
-	}#1#
+	}*/
 	
 	PendingCount = PointCount;
 	SetIntParameter(TEXT("CloudPointCount"),PointCount);
 	Activate(true);
-}*/
+}
 
 void ULidarNiagaraComponent::BeginPlay()
 {

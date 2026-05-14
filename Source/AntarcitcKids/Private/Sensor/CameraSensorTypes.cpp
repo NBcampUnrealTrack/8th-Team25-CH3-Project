@@ -3,10 +3,4 @@
 
 #include "Sensor/CameraSensorTypes.h"
 
-CameraSensorTypes::CameraSensorTypes()
-{
-}
 
-CameraSensorTypes::~CameraSensorTypes()
-{
-}

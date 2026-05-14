@@ -1,8 +1,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TriggerMissionBase.h"
 #include "GameFramework/Actor.h"
+#include "Manager/QuestsTypes.h"
 #include "TrafficLightActor.generated.h"
+
+class UBoxComponent;
+class UTrafficLightQuest;
+class UNiagaraSystem;
 
 UENUM(BlueprintType)
 enum class ETrafficLightState : uint8
@@ -13,7 +19,7 @@ enum class ETrafficLightState : uint8
 };
 
 UCLASS()
-class ANTARCITCKIDS_API ATrafficLightActor : public AActor
+class ANTARCITCKIDS_API ATrafficLightActor : public ATriggerMissionBase
 {
 	GENERATED_BODY()
 
@@ -22,12 +28,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traffic Light")
-	USceneComponent* SceneRoot;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traffic Light")
-	UStaticMeshComponent* TrafficLightBody;
+	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traffic Light")
 	UStaticMeshComponent* RedLight;
@@ -37,6 +38,22 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traffic Light")
 	UStaticMeshComponent* GreenLight;
+	
+	virtual void OnItemOverlap(
+		UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult) override;
+
+
+	virtual void OnItemEndOverlap(
+		UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex) override;
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Traffic Light")
 	float RedDuration = 5.0f;
@@ -53,8 +70,11 @@ private:
 	ETrafficLightState CurrentState;
 
 	void SetTrafficLightState(ETrafficLightState NewState);
-
+	void SetQuestInfo() override;
 	void SwitchToRed();
 	void SwitchToYellow();
 	void SwitchToGreen();
+	
+	
+
 };

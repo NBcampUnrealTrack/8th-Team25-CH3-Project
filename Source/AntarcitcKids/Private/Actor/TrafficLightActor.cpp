@@ -1,18 +1,18 @@
 #include "Actor/TrafficLightActor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneComponent.h"
+#include "Components/BoxComponent.h"
 #include "TimerManager.h"
+#include "Manager/TrafficLightQuest.h"
+#include "CityVehiclePawn.h"
+#include "NiagaraSystem.h"
+#include "Manager/QuestsTypes.h"
+#include "WorldPartition/ContentBundle/ContentBundleLog.h"
 
 ATrafficLightActor::ATrafficLightActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
-
-	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
-	SetRootComponent(SceneRoot);
-
-	TrafficLightBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TrafficLightBody"));
-	TrafficLightBody->SetupAttachment(SceneRoot);
-
+	
 	RedLight = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RedLight"));
 	RedLight->SetupAttachment(SceneRoot);
 
@@ -21,15 +21,42 @@ ATrafficLightActor::ATrafficLightActor()
 
 	GreenLight = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GreenLight"));
 	GreenLight->SetupAttachment(SceneRoot);
-
+	
 	CurrentState = ETrafficLightState::Red;
 }
 
 void ATrafficLightActor::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	SwitchToRed();
+	SetQuestInfo();
+
+}
+
+void ATrafficLightActor::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (ACityVehiclePawn* Player = Cast<ACityVehiclePawn>(OtherActor))
+	{
+		if (CurrentState == ETrafficLightState::Red)
+		{
+			if (Quest)
+				Quest->OnFailed();
+		}
+		else
+		{
+			if (Quest)
+				Quest->OnSuccess();
+		}
+	}
+	
+}
+
+void ATrafficLightActor::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	
 }
 
 void ATrafficLightActor::SetTrafficLightState(ETrafficLightState NewState)
@@ -39,6 +66,18 @@ void ATrafficLightActor::SetTrafficLightState(ETrafficLightState NewState)
 	RedLight->SetVisibility(NewState == ETrafficLightState::Red);
 	YellowLight->SetVisibility(NewState == ETrafficLightState::Yellow);
 	GreenLight->SetVisibility(NewState == ETrafficLightState::Green);
+}
+
+void ATrafficLightActor::SetQuestInfo()
+{
+	if (NiagaraAnchor)
+	{
+		QuestInfo.QuestLocation = NiagaraAnchor->GetComponentLocation();	
+	}
+	
+
+	QuestInfo.QuestName = TEXT("신호등 준수 퀘스트");
+	QuestInfo.Description = TEXT("신호등 알맞게 진행");
 }
 
 void ATrafficLightActor::SwitchToRed()
