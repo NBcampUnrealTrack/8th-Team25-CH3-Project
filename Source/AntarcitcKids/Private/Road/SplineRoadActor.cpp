@@ -56,6 +56,10 @@ void ASplineRoadActor::OnConstruction(const FTransform& Transform)
 			ESplineCoordinateSpace::World
 		);
 
+		// 도로 메쉬만 Z 오프셋 적용
+		StartLocation.Z += MeshZOffset;
+		EndLocation.Z += MeshZOffset;
+
 		RoadPart->SetStartAndEnd(
 			StartLocation,
 			StartTangent,
@@ -77,10 +81,12 @@ TArray<ASplineRoadActor*> ASplineRoadActor::GetNextRoads() const
 	// TObjectPtr 배열은 ToRawPtrTArrayUnsafe 또는 명시적 변환 필요
 	TArray<ASplineRoadActor*> Result;
 	Result.Reserve(NextRoads.Num());
+
 	for (const TObjectPtr<ASplineRoadActor>& Ptr : NextRoads)
 	{
 		Result.Add(Ptr.Get());
 	}
+
 	return Result;
 }
 

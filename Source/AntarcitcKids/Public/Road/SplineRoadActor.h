@@ -1,3 +1,5 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -30,7 +32,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Road|Routing")
 	TArray<ASplineRoadActor*> GetNextRoads() const;
 
-
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Road")
 	TObjectPtr<USplineComponent> SplineComp;
@@ -40,6 +41,10 @@ protected:
 
 	UPROPERTY()
 	TArray<TObjectPtr<USplineMeshComponent>> SplineMeshComps;
+
+	// 도로 메쉬를 스플라인보다 아래로 오프셋
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Road")
+	float MeshZOffset = -100.f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Road|Identity")
 	FName RoadID;
