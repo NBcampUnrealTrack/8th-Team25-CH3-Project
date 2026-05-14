@@ -132,6 +132,7 @@ void ACityVehiclePawn::BeginPlay()
 void ACityVehiclePawn::EndPlay(EEndPlayReason::Type EndPlayReason)
 {
 	GetWorld()->GetTimerManager().ClearTimer(FlipCheckTimer);
+	GetWorld()->GetTimerManager().ClearTimer(MissionTimerHandle);
 	
 	Super::EndPlay(EndPlayReason);
 }
@@ -148,8 +149,12 @@ void ACityVehiclePawn::Tick(float Delta)
 
 	BackSpringArm->SetRelativeRotation(FRotator(0.0f, CameraYaw, 0.0f));
 	
+	// 속도 브로드캐스트 (cm/s → km/h)
+	const float SpeedKMH = FMath::Abs(ChaosVehicleMovement->GetForwardSpeed()) * 0.036f;
+	OnHUDSpeedUpdated.Broadcast(SpeedKMH);
 	
 	UpdateWheelSteerAngleLog(); //실시간으로 바뀌는 바퀴 각 계산 
+	
 }
 
 
@@ -184,6 +189,10 @@ void ACityVehiclePawn::UpdateWheelSteerAngleLog()
 		Logger->SetSteeringInputLog(FrontLeftAngle, FrontRightAngle);
 	} //로거 찾았어? 몾찼았으면 쓰지마
 	
+	// HUD 브로드캐스트
+	OnHUDSteeringUpdated.Broadcast(
+		static_cast<float>(FrontLeftAngle),
+		static_cast<float>(FrontRightAngle));
 }
 
 //바퀴 조형각을 읽어, 데이터 로그에 전달해주는 함수
@@ -282,4 +291,34 @@ void ACityVehiclePawn::FlippedCheck()
 			LidarSensor->StopScan();
 	}
 	*/
+}
+
+void ACityVehiclePawn::CompleteMission(int32 MissionIndex)
+{
+	OnHUDMissionUpdated.Broadcast(MissionIndex, true);
+}
+
+void ACityVehiclePawn::StartMissionTimer(float TotalSeconds)
+{
+	MissionTimeRemaining = TotalSeconds;
+	GetWorld()->GetTimerManager().ClearTimer(MissionTimerHandle);
+	GetWorld()->GetTimerManager().SetTimer(
+		MissionTimerHandle,
+		this,
+		&ACityVehiclePawn::TickMissionTimer,
+		1.0f,
+		true);
+	OnHUDTimerUpdated.Broadcast(MissionTimeRemaining);
+}
+
+void ACityVehiclePawn::TickMissionTimer()
+{
+	MissionTimeRemaining = FMath::Max(0.f, MissionTimeRemaining - 1.f);
+	OnHUDTimerUpdated.Broadcast(MissionTimeRemaining);
+
+	if (MissionTimeRemaining <= 0.f)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(MissionTimerHandle);
+		UE_LOG(LogTemp, Warning, TEXT("[CyberHUD] Mission timer expired!"));
+	}
 }

@@ -6,6 +6,11 @@
 #include "WheeledVehiclePawn.h"
 #include "CityVehiclePawn.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDSpeedUpdated, float, SpeedKMH);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHUDSteeringUpdated, float, LeftAngle, float, RightAngle);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHUDMissionUpdated, int32, MissionIndex, bool, bCompleted);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDTimerUpdated, float, RemainingSeconds);
+
 class UCameraComponent;
 class USpringArmComponent;
 class UInputAction;
@@ -23,6 +28,28 @@ class ANTARCITCKIDS_API ACityVehiclePawn : public AWheeledVehiclePawn
 	
 public:
 	ACityVehiclePawn();
+	
+	// HUD 델리게이트
+	UPROPERTY(BlueprintAssignable, Category="HUD")
+	FOnHUDSpeedUpdated OnHUDSpeedUpdated;
+
+	UPROPERTY(BlueprintAssignable, Category="HUD")
+	FOnHUDSteeringUpdated OnHUDSteeringUpdated;
+
+	UPROPERTY(BlueprintAssignable, Category="HUD")
+	FOnHUDMissionUpdated OnHUDMissionUpdated;
+
+	UPROPERTY(BlueprintAssignable, Category="HUD")
+	FOnHUDTimerUpdated OnHUDTimerUpdated;
+
+	// HUD API
+	UFUNCTION(BlueprintCallable, Category="HUD|Mission")
+	void CompleteMission(int32 MissionIndex);
+
+	UFUNCTION(BlueprintCallable, Category="HUD|Timer")
+	void StartMissionTimer(float TotalSeconds);
+	
+	//======================================================
 	
 	UFUNCTION(BlueprintCallable, Category="Input")
 	void DoSteering(float SteeringValue);
@@ -139,6 +166,12 @@ private:
 private:
 	bool bFrontCameraActive = false;
 	bool bPreviousFlipCheck = false;
+	
+	UFUNCTION()
+	void TickMissionTimer();
+
+	FTimerHandle MissionTimerHandle;
+	float MissionTimeRemaining = 0.f;
 	
 	FTimerHandle FlipCheckTimer;
 };

@@ -46,6 +46,9 @@ void AAntarcitcKidsPlayerController::OnPossess(APawn* InPawn)
 
 	VehiclePawn = CastChecked<ACityVehiclePawn>(InPawn);
 	VehiclePawn->OnDestroyed.AddDynamic(this, &AAntarcitcKidsPlayerController::OnPawnDestroyed);
+	
+	//HUD 생성
+	CreateAndBindCyberHUD();
 }
 
 void AAntarcitcKidsPlayerController::OnPawnDestroyed(AActor* DestroyedPawn)
@@ -94,3 +97,45 @@ bool AAntarcitcKidsPlayerController::IsLidarViewVisible() const
 {
 	return SensorViewWidget && SensorViewWidget->IsLidarViewVisible();
 }*/
+
+
+//=======================CyberHUD=========================
+
+void AAntarcitcKidsPlayerController::CreateAndBindCyberHUD()
+{
+	if (!CyberHUDWidgetClass || !VehiclePawn) return;
+
+	if (CyberHUDWidget)
+	{
+		CyberHUDWidget->RemoveFromParent();
+		CyberHUDWidget = nullptr;
+	}
+
+	CyberHUDWidget = CreateWidget<UUserWidget>(this, CyberHUDWidgetClass);
+	if (CyberHUDWidget)
+	{
+		CyberHUDWidget->AddToViewport();
+	}
+
+	VehiclePawn->OnHUDSpeedUpdated.AddDynamic(this,    &AAntarcitcKidsPlayerController::OnHUDSpeedUpdated);
+	VehiclePawn->OnHUDSteeringUpdated.AddDynamic(this, &AAntarcitcKidsPlayerController::OnHUDSteeringUpdated);
+	VehiclePawn->OnHUDMissionUpdated.AddDynamic(this,  &AAntarcitcKidsPlayerController::OnHUDMissionUpdated);
+	VehiclePawn->OnHUDTimerUpdated.AddDynamic(this,    &AAntarcitcKidsPlayerController::OnHUDTimerUpdated);
+}
+
+void AAntarcitcKidsPlayerController::OnHUDSpeedUpdated(float SpeedKMH)
+{
+	
+}
+void AAntarcitcKidsPlayerController::OnHUDSteeringUpdated(float LeftAngle, float RightAngle)
+{
+	
+}
+void AAntarcitcKidsPlayerController::OnHUDMissionUpdated(int32 MissionIndex, bool bCompleted)
+{
+	
+}
+void AAntarcitcKidsPlayerController::OnHUDTimerUpdated(float RemainingSeconds)
+{
+	
+}
