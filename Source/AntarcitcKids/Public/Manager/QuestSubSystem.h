@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "Manager/QuestsTypes.h"
 #include "QuestSubSystem.generated.h"
 
 /**
@@ -11,6 +12,8 @@
  */
 
 class UQuestBase;
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnQuestCompletedNotify, FQuestCompletedEvent)
+
 
 UCLASS()
 class ANTARCITCKIDS_API UQuestSubSystem : public UGameInstanceSubsystem
@@ -18,9 +21,13 @@ class ANTARCITCKIDS_API UQuestSubSystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 	
 public:
+	//서브 시스템의 UI 변화
+	FOnQuestCompletedNotify OnQuestCompletedNotify;
+	
 	UQuestSubSystem();
 	void OnRegisterQuest( UQuestBase* RegisterQuest);
 	void OnQuestsCompleted( UQuestBase* RegisterQuest);
+	void OnQuestAborted();
 	void OnLoadQuest();
 	
 	TArray<UQuestBase*> GetQuestList() { return QuestsList;}

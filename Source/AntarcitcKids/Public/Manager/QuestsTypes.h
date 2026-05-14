@@ -29,6 +29,32 @@ enum class EQuestAchivmentType : uint8
 
 };
 
+UENUM(BlueprintType)
+enum class EQuestClass : uint8
+{
+	SpeedTrap UMETA(DisplayName = "SpeedTrap"),
+	TrafficSignal UMETA(DisplayName = "TrafficSignal"),
+	EmergencyStop UMETA(DisplayName = "EmergencyStop"),
+	Parking UMETA(DisplayName = "Parking")
+
+};
+
+USTRUCT(BlueprintType)
+struct FQuestCompletedEvent
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Quest")
+	EQuestClass QuestClass; 
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Quest")
+	FName QuestID;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Quest")
+	EQuestAchivmentType QuestProgress;
+	
+	
+};
 
 USTRUCT(BlueprintType)
 struct FQuestInfo : public FTableRowBase
@@ -42,7 +68,7 @@ struct FQuestInfo : public FTableRowBase
 	FName QuestID;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Quest")
-	FText QuestName;
+	FName QuestName;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Quest")
 	FString Description;
@@ -55,6 +81,10 @@ struct FQuestInfo : public FTableRowBase
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Quest")
 	TArray<FName> FreqQuest;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Quest")
+	FVector QuestLocation;
+	
 	
 	
 };

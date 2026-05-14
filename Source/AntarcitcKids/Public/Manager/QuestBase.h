@@ -11,6 +11,8 @@
 /**
  * 
  */
+class UNiagaraSystem;
+
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnQuestCompleted,  UQuestBase*)
 
 
@@ -22,14 +24,23 @@ class ANTARCITCKIDS_API UQuestBase : public UObject
 public:
 	FOnQuestCompleted OnQuestCompleted;
 	
-	virtual void OnInitialized(FQuestInfo QuestInfo);
+	virtual void OnInitialized(const FQuestInfo& QuestInfo);
 	virtual void OnProgress();
 	virtual void OnCompletetd();
 	virtual void OnPaused();
 	virtual void OnSuccess();
 	virtual void OnFailed();
-	virtual bool bIsSuccess();
+	virtual void SetEffect(UNiagaraSystem* Effect);
+	virtual void PlayEffect();
+	
+	FQuestCompletedEvent GetQuestCompletedEvent() { return QuestCompletedEvent;}
 	
 protected:
+	EQuestClass QuestClass;
 	FQuestInfo CurrentQuestInfo;
+	FQuestCompletedEvent QuestCompletedEvent;
+	
+	UNiagaraSystem* SuccessEffect;
+	
+	
 };

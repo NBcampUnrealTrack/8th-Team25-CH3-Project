@@ -4,6 +4,9 @@
 #include "Components/BoxComponent.h"
 #include "TimerManager.h"
 #include "Manager/TrafficLightQuest.h"
+#include "NiagaraSystem.h"
+#include "Manager/QuestsTypes.h"
+#include "WorldPartition/ContentBundle/ContentBundleLog.h"
 
 ATrafficLightActor::ATrafficLightActor()
 {
@@ -29,6 +32,9 @@ ATrafficLightActor::ATrafficLightActor()
 	Collision->SetupAttachment(SceneRoot);
 	Collision->SetGenerateOverlapEvents(true);
 	
+	NiagaraAnchor = CreateDefaultSubobject<USceneComponent>(TEXT("Anchor"));
+	NiagaraAnchor->SetupAttachment(SceneRoot);
+	
 	Collision->OnComponentBeginOverlap.AddDynamic(this, &ATrafficLightActor::OnItemOverlap);
 	Collision->OnComponentEndOverlap.AddDynamic(this, &ATrafficLightActor::OnItemEndOverlap);
 
@@ -40,10 +46,16 @@ ATrafficLightActor::ATrafficLightActor()
 void ATrafficLightActor::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	SwitchToRed();
+	
+	
+	SetQuestInfo();
+	UE_LOG(LogTemp,Warning,TEXT("TrafficLightActor Activate"));
 	Quest = NewObject<UTrafficLightQuest>(this);
 	Quest->OnInitialized(TrafficLightQuestInfo);	
+	Quest->SetEffect(SuccessEffect);
+	Quest->OnSuccess();
 
 }
 
@@ -77,6 +89,17 @@ void ATrafficLightActor::SetTrafficLightState(ETrafficLightState NewState)
 	RedLight->SetVisibility(NewState == ETrafficLightState::Red);
 	YellowLight->SetVisibility(NewState == ETrafficLightState::Yellow);
 	GreenLight->SetVisibility(NewState == ETrafficLightState::Green);
+}
+
+void ATrafficLightActor::SetQuestInfo()
+{
+	if (NiagaraAnchor)
+	{
+		TrafficLightQuestInfo.QuestLocation = NiagaraAnchor->GetComponentLocation();	
+	}
+	
+	TrafficLightQuestInfo.Description = TEXT("신호등 알맞게 진행");
+	TrafficLightQuestInfo.QuestName = TEXT("신호등 준수 퀘스트");
 }
 
 void ATrafficLightActor::SwitchToRed()

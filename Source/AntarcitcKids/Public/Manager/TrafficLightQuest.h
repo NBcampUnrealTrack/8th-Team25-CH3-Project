@@ -16,8 +16,7 @@ class ANTARCITCKIDS_API UTrafficLightQuest : public UQuestBase
 	
 public:
 	UTrafficLightQuest();
-	
-	virtual bool bIsSuccess() override;
+
 	
 
 	

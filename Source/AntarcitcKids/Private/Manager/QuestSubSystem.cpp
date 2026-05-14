@@ -8,6 +8,7 @@
 #include "EntitySystem/MovieSceneEntitySystemRunner.h"
 #include "Manager/QuestBase.h"
 
+
 UQuestSubSystem::UQuestSubSystem()
 {
 	OnLoadQuest();
@@ -30,6 +31,13 @@ void UQuestSubSystem::OnQuestsCompleted(UQuestBase* CompletedQuest)
 	QuestsList.Remove(CompletedQuest);
 	CompletedQuestsList.Add(CompletedQuest);
 	
+	FQuestCompletedEvent QuestCompletedEvent = CompletedQuest->GetQuestCompletedEvent();
+	OnQuestCompletedNotify.Broadcast(QuestCompletedEvent);
+	
+}
+
+void UQuestSubSystem::OnQuestAborted()
+{
 }
 
 void UQuestSubSystem::OnLoadQuest()

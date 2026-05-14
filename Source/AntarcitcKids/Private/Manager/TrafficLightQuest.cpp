@@ -9,7 +9,3 @@ UTrafficLightQuest::UTrafficLightQuest()
 
 
 
-bool UTrafficLightQuest::bIsSuccess()
-{
-	return false;
-}
