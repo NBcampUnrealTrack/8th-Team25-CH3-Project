@@ -15,7 +15,6 @@ class ANTARCITCKIDS_API ASpeedTrap : public ATriggerMissionBase
 	GENERATED_BODY()
 	
 public:
-	ASpeedTrap();
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Speed")
 	float SpeedUpperLimit;
@@ -32,7 +31,7 @@ protected:
 	
 	virtual void BeginPlay() override;
 	
-	UFUNCTION()
+
 	virtual void OnItemOverlap(
 		UPrimitiveComponent* OverlappedComp,
 		AActor* OtherActor,
@@ -41,7 +40,7 @@ protected:
 		bool bFromSweep,
 		const FHitResult& SweepResult) override;
 
-	UFUNCTION()
+
 	virtual void OnItemEndOverlap(
 		UPrimitiveComponent* OverlappedComp,
 		AActor* OtherActor,

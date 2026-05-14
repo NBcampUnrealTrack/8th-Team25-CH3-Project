@@ -12,10 +12,12 @@ void ASpeedTrap::BeginPlay()
 
 bool ASpeedTrap::IsSpeedOver()
 {
+	return false;
 }
 
 bool ASpeedTrap::IsSpeedLower()
 {
+	return false;
 }
 
 
@@ -43,5 +45,5 @@ void ASpeedTrap::SetQuestInfo()
 
 void ASpeedTrap::PersistentSpeedCheck()
 {
-	if (IsSpeed)
+	/*if (IsSpeed)*/
 }
