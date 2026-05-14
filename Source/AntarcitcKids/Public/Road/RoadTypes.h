@@ -19,18 +19,3 @@ enum class ERoadCategory : uint8
 	Parking      UMETA(DisplayName = "Parking"),           // 주차장 내부 (~15 km/h)
 	Service      UMETA(DisplayName = "Service Road"),      // 진입로/연결도로 (~30 km/h)
 };
-
-
-// 도로에 중첩 가능한 보호/특수 구역 플래그.
-// 하나의 도로에 여러 플래그 동시 적용 가능. - 예: SchoolZone | ConstructionZone = 어린이보호구역인데 공사 중.
-UENUM(BlueprintType, meta=(Bitflags, UseEnumValuesAsMaskValuesInEditor="true"))
-enum class ERoadZoneFlags : uint8
-{
-	None             = 0       UMETA(Hidden),
-	SchoolZone       = 1 << 0  UMETA(DisplayName = "School Zone (어린이보호)"),
-	SeniorZone       = 1 << 1  UMETA(DisplayName = "Senior Zone (노인보호)"),
-	DisabledZone     = 1 << 2  UMETA(DisplayName = "Disabled Zone (장애인보호)"),
-	ConstructionZone = 1 << 3  UMETA(DisplayName = "Construction"),
-	AccidentProne    = 1 << 4  UMETA(DisplayName = "Accident-Prone Area"),
-};
-ENUM_CLASS_FLAGS(ERoadZoneFlags);	//  비트 연산자 오버로딩 매크로 (비트마스크 UENUM 만들 때 항상 같이 써야 하는 짝꿍)
