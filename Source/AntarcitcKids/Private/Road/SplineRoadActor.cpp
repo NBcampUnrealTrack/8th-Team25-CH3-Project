@@ -72,6 +72,18 @@ void ASplineRoadActor::OnConstruction(const FTransform& Transform)
 	}
 }
 
+TArray<ASplineRoadActor*> ASplineRoadActor::GetNextRoads() const
+{
+	// TObjectPtr 배열은 ToRawPtrTArrayUnsafe 또는 명시적 변환 필요
+	TArray<ASplineRoadActor*> Result;
+	Result.Reserve(NextRoads.Num());
+	for (const TObjectPtr<ASplineRoadActor>& Ptr : NextRoads)
+	{
+		Result.Add(Ptr.Get());
+	}
+	return Result;
+}
+
 void ASplineRoadActor::ClearRoad()
 {
 	for (TObjectPtr<USplineMeshComponent> RoadPart : SplineMeshComps)

@@ -13,6 +13,7 @@
 #include "Sensor/CameraSceneComponent.h"
 #include "Sensor/LidarSceneComponent.h"
 #include "DataLogger/AgentDataLogger.h"
+#include "AI/CityVehicleAIController.h"
 
 ACityVehiclePawn::ACityVehiclePawn()
 {
@@ -47,6 +48,9 @@ ACityVehiclePawn::ACityVehiclePawn()
 	
 	ChaosVehicleMovement = CastChecked<UChaosWheeledVehicleMovementComponent>(GetVehicleMovement());
 	
+	PreviousGear = ChaosVehicleMovement->GetCurrentGear();
+	OnHUDGearUpdated.Broadcast(FText::FromString(TEXT("N")));
+	
 	/*
 	CameraSensor = CreateDefaultSubobject<UCameraSceneComponent>(TEXT("CameraSensor"));
 	CameraSensor->SetupAttachment(GetMesh());
@@ -59,6 +63,10 @@ ACityVehiclePawn::ACityVehiclePawn()
 	SplineFollower = CreateDefaultSubobject<USplineFollowerComponent>(TEXT("SplineFollower"));
 	
 	DataLogger = CreateDefaultSubobject<UAgentDataLogger>(TEXT("DataLogger"));
+	
+	//AIControllerClass = ACityVehicleAIController::StaticClass();
+	//AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	
 }
 
 void ACityVehiclePawn::DoSteering(float SteeringValue)
@@ -71,6 +79,14 @@ void ACityVehiclePawn::DoThrottle(float ThrottleValue)
 	ChaosVehicleMovement->SetThrottleInput(ThrottleValue);
 	ChaosVehicleMovement->SetBrakeInput(0.0f);
 }
+
+void ACityVehiclePawn::DoFullStop()
+{
+	ChaosVehicleMovement->SetThrottleInput(0.0f);
+	ChaosVehicleMovement->SetBrakeInput(1.0f);
+	BrakeLights(true);
+}
+
 
 void ACityVehiclePawn::DoBrake(float BrakeValue)
 {
@@ -132,6 +148,7 @@ void ACityVehiclePawn::BeginPlay()
 void ACityVehiclePawn::EndPlay(EEndPlayReason::Type EndPlayReason)
 {
 	GetWorld()->GetTimerManager().ClearTimer(FlipCheckTimer);
+	GetWorld()->GetTimerManager().ClearTimer(MissionTimerHandle);
 	
 	Super::EndPlay(EndPlayReason);
 }
@@ -148,8 +165,37 @@ void ACityVehiclePawn::Tick(float Delta)
 
 	BackSpringArm->SetRelativeRotation(FRotator(0.0f, CameraYaw, 0.0f));
 	
+	// 속도 브로드캐스트 (cm/s → km/h)
+	const float SpeedKMH = FMath::Abs(ChaosVehicleMovement->GetForwardSpeed()) * 0.036f;
+	OnHUDSpeedUpdated.Broadcast(SpeedKMH);
 	
-	UpdateWheelSteerAngleLog(); //실시간으로 바뀌는 바퀴 각 계산 
+	// RPM 브로드캐스트 (매 프레임)
+	const float CurrentRPM = ChaosVehicleMovement->GetEngineRotationSpeed();
+	OnHUDRPMUpdated.Broadcast(CurrentRPM);
+
+	// 기어 브로드캐스트 (바뀔 때만)
+	const int32 CurrentGear = ChaosVehicleMovement->GetCurrentGear();
+	const int32 TargetGear  = ChaosVehicleMovement->GetTargetGear();
+	const int32 DisplayGear = (CurrentGear == 0) ? TargetGear : CurrentGear;
+
+	FText GearText;
+	if (DisplayGear < 0)
+	{
+		GearText = FText::FromString(TEXT("R"));
+	}
+	else if(DisplayGear == 0)
+	{
+		GearText = FText::FromString(TEXT("N"));
+	}
+	else
+	{
+		GearText = FText::AsNumber(DisplayGear);
+	}
+
+	OnHUDGearUpdated.Broadcast(GearText);
+	
+	UpdateWheelSteerAngleLog(); //실시간으로 바뀌는 바퀴 계산 
+	
 }
 
 
@@ -184,6 +230,10 @@ void ACityVehiclePawn::UpdateWheelSteerAngleLog()
 		Logger->SetSteeringInputLog(FrontLeftAngle, FrontRightAngle);
 	} //로거 찾았어? 몾찼았으면 쓰지마
 	
+	// HUD 브로드캐스트
+	OnHUDSteeringUpdated.Broadcast(
+		static_cast<float>(FrontLeftAngle),
+		static_cast<float>(FrontRightAngle));
 }
 
 //바퀴 조형각을 읽어, 데이터 로그에 전달해주는 함수
@@ -282,4 +332,34 @@ void ACityVehiclePawn::FlippedCheck()
 			LidarSensor->StopScan();
 	}
 	*/
+}
+
+void ACityVehiclePawn::CompleteMission(int32 MissionIndex)
+{
+	OnHUDMissionUpdated.Broadcast(MissionIndex, true);
+}
+
+void ACityVehiclePawn::StartMissionTimer(float TotalSeconds)
+{
+	MissionTimeRemaining = TotalSeconds;
+	GetWorld()->GetTimerManager().ClearTimer(MissionTimerHandle);
+	GetWorld()->GetTimerManager().SetTimer(
+		MissionTimerHandle,
+		this,
+		&ACityVehiclePawn::TickMissionTimer,
+		1.0f,
+		true);
+	OnHUDTimerUpdated.Broadcast(MissionTimeRemaining);
+}
+
+void ACityVehiclePawn::TickMissionTimer()
+{
+	MissionTimeRemaining = FMath::Max(0.f, MissionTimeRemaining - 1.f);
+	OnHUDTimerUpdated.Broadcast(MissionTimeRemaining);
+
+	if (MissionTimeRemaining <= 0.f)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(MissionTimerHandle);
+		UE_LOG(LogTemp, Warning, TEXT("[CyberHUD] Mission timer expired!"));
+	}
 }
