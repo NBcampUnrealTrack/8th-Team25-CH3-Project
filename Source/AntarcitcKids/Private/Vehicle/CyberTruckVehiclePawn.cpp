@@ -5,8 +5,8 @@
 
 ACyberTruckVehiclePawn::ACyberTruckVehiclePawn()
 {
-	GetChaosVehicleMovement()->ChassisHeight = 144.0f;
-	GetChaosVehicleMovement()->DragCoefficient = 0.31f;
+	GetChaosVehicleMovement()->ChassisHeight = 180.0f;
+	GetChaosVehicleMovement()->DragCoefficient = 0.39f;
 	
 	GetChaosVehicleMovement()->bLegacyWheelFrictionPosition = true;
 	GetChaosVehicleMovement()->WheelSetups.SetNum(4);
@@ -27,18 +27,18 @@ ACyberTruckVehiclePawn::ACyberTruckVehiclePawn()
 	GetChaosVehicleMovement()->WheelSetups[3].BoneName = FName("Phys_Wheel_BR");
 	GetChaosVehicleMovement()->WheelSetups[3].AdditionalOffset = FVector(0.0f, 0.0f, 0.0f);
 	
-	GetChaosVehicleMovement()->EngineSetup.MaxTorque = 550.0f;
-	GetChaosVehicleMovement()->EngineSetup.MaxRPM = 6500.0f;
+	GetChaosVehicleMovement()->EngineSetup.MaxTorque = 800.0f;
+	GetChaosVehicleMovement()->EngineSetup.MaxRPM = 5500.0f;
 	GetChaosVehicleMovement()->EngineSetup.EngineIdleRPM = 900.0f;
-	GetChaosVehicleMovement()->EngineSetup.EngineBrakeEffect = 0.3f;
+	GetChaosVehicleMovement()->EngineSetup.EngineBrakeEffect = 0.4f;
 	GetChaosVehicleMovement()->EngineSetup.EngineRevUpMOI = 5.0f;
 	GetChaosVehicleMovement()->EngineSetup.EngineRevDownRate = 600.0f;
 	
 	GetChaosVehicleMovement()->TransmissionSetup.bUseAutomaticGears = true;
 	GetChaosVehicleMovement()->TransmissionSetup.bUseAutoReverse = true;
 	GetChaosVehicleMovement()->TransmissionSetup.FinalRatio = 2.81f;
-	GetChaosVehicleMovement()->TransmissionSetup.ChangeUpRPM = 5500.0f;
-	GetChaosVehicleMovement()->TransmissionSetup.ChangeDownRPM = 2000.0f;
+	GetChaosVehicleMovement()->TransmissionSetup.ChangeUpRPM = 4500.0f;
+	GetChaosVehicleMovement()->TransmissionSetup.ChangeDownRPM = 1500.0f;
 	GetChaosVehicleMovement()->TransmissionSetup.GearChangeTime = 0.2f;
 	GetChaosVehicleMovement()->TransmissionSetup.TransmissionEfficiency = 0.9f;
 	
