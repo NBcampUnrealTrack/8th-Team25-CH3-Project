@@ -57,6 +57,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Input")
 	void DoThrottle(float ThrottleValue);
 	
+	// 완전 정차
+	UFUNCTION(BlueprintCallable, Category="Input")
+	void DoFullStop();
+	
 	UFUNCTION(BlueprintCallable, Category="Input")
 	void DoBrake(float BrakeValue);
 
@@ -83,6 +87,9 @@ public:
 	//FORCEINLINE UCameraSensorComponent* GetCameraSensor() const { return CameraSensor; }
 	//FORCEINLINE ULidarSensorComponent* GetLidarSensor() const { return LidarSensor; }
 	FORCEINLINE UAgentDataLogger* GetDataLogger() const { return DataLogger; }
+	
+	UFUNCTION(BlueprintPure, Category="Vehicle")
+	float GetForwardSpeed() const{ return FVector::DotProduct(GetVelocity(), GetActorForwardVector()); }
 	
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
