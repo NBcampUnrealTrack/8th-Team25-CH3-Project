@@ -10,6 +10,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDSpeedUpdated, float, SpeedKMH)
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHUDSteeringUpdated, float, LeftAngle, float, RightAngle);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHUDMissionUpdated, int32, MissionIndex, bool, bCompleted);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDTimerUpdated, float, RemainingSeconds);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDGearUpdated, FText, GearText);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDRPMUpdated, float, CurrentRPM);
 
 class UCameraComponent;
 class USpringArmComponent;
@@ -42,6 +44,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="HUD")
 	FOnHUDTimerUpdated OnHUDTimerUpdated;
 
+	UPROPERTY(BlueprintAssignable, Category="HUD")
+	FOnHUDGearUpdated OnHUDGearUpdated;
+
+	UPROPERTY(BlueprintAssignable, Category="HUD")
+	FOnHUDRPMUpdated OnHUDRPMUpdated;
+	
 	// HUD API
 	UFUNCTION(BlueprintCallable, Category="HUD|Mission")
 	void CompleteMission(int32 MissionIndex);
@@ -181,4 +189,6 @@ private:
 	float MissionTimeRemaining = 0.f;
 	
 	FTimerHandle FlipCheckTimer;
+	
+	int32 PreviousGear = 0;
 };

@@ -70,8 +70,16 @@ private:
 
 	void CreateAndBindCyberHUD();
 
-	UFUNCTION() void OnHUDSpeedUpdated(float SpeedKMH);
-	UFUNCTION() void OnHUDSteeringUpdated(float LeftAngle, float RightAngle);
-	UFUNCTION() void OnHUDMissionUpdated(int32 MissionIndex, bool bCompleted);
-	UFUNCTION() void OnHUDTimerUpdated(float RemainingSeconds);
+	UFUNCTION() 
+	void OnHUDSpeedUpdated(float SpeedKMH);
+	UFUNCTION() 
+	void OnHUDSteeringUpdated(float LeftAngle, float RightAngle);
+	UFUNCTION() 
+	void OnHUDMissionUpdated(int32 MissionIndex, bool bCompleted);
+	UFUNCTION() 
+	void OnHUDTimerUpdated(float RemainingSeconds);
+	UFUNCTION() 
+	void OnHUDGearUpdated(FText GearText);
+	UFUNCTION() 
+	void OnHUDRPMUpdated(float CurrentRPM);
 };

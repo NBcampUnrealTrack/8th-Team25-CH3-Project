@@ -121,6 +121,8 @@ void AAntarcitcKidsPlayerController::CreateAndBindCyberHUD()
 	VehiclePawn->OnHUDSteeringUpdated.AddDynamic(this, &AAntarcitcKidsPlayerController::OnHUDSteeringUpdated);
 	VehiclePawn->OnHUDMissionUpdated.AddDynamic(this,  &AAntarcitcKidsPlayerController::OnHUDMissionUpdated);
 	VehiclePawn->OnHUDTimerUpdated.AddDynamic(this,    &AAntarcitcKidsPlayerController::OnHUDTimerUpdated);
+	VehiclePawn->OnHUDGearUpdated.AddDynamic(this, &AAntarcitcKidsPlayerController::OnHUDGearUpdated);
+	VehiclePawn->OnHUDRPMUpdated.AddDynamic(this,  &AAntarcitcKidsPlayerController::OnHUDRPMUpdated);
 }
 
 void AAntarcitcKidsPlayerController::OnHUDSpeedUpdated(float SpeedKMH)
@@ -136,6 +138,14 @@ void AAntarcitcKidsPlayerController::OnHUDMissionUpdated(int32 MissionIndex, boo
 	
 }
 void AAntarcitcKidsPlayerController::OnHUDTimerUpdated(float RemainingSeconds)
+{
+	
+}
+void AAntarcitcKidsPlayerController::OnHUDGearUpdated(FText GearText)
+{
+	
+}
+void AAntarcitcKidsPlayerController::OnHUDRPMUpdated(float CurrentRPM)
 {
 	
 }

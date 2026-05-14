@@ -48,6 +48,9 @@ ACityVehiclePawn::ACityVehiclePawn()
 	
 	ChaosVehicleMovement = CastChecked<UChaosWheeledVehicleMovementComponent>(GetVehicleMovement());
 	
+	PreviousGear = ChaosVehicleMovement->GetCurrentGear();
+	OnHUDGearUpdated.Broadcast(FText::FromString(TEXT("N")));
+	
 	/*
 	CameraSensor = CreateDefaultSubobject<UCameraSceneComponent>(TEXT("CameraSensor"));
 	CameraSensor->SetupAttachment(GetMesh());
@@ -166,7 +169,32 @@ void ACityVehiclePawn::Tick(float Delta)
 	const float SpeedKMH = FMath::Abs(ChaosVehicleMovement->GetForwardSpeed()) * 0.036f;
 	OnHUDSpeedUpdated.Broadcast(SpeedKMH);
 	
-	UpdateWheelSteerAngleLog(); //실시간으로 바뀌는 바퀴 각 계산 
+	// RPM 브로드캐스트 (매 프레임)
+	const float CurrentRPM = ChaosVehicleMovement->GetEngineRotationSpeed();
+	OnHUDRPMUpdated.Broadcast(CurrentRPM);
+
+	// 기어 브로드캐스트 (바뀔 때만)
+	const int32 CurrentGear = ChaosVehicleMovement->GetCurrentGear();
+	const int32 TargetGear  = ChaosVehicleMovement->GetTargetGear();
+	const int32 DisplayGear = (CurrentGear == 0) ? TargetGear : CurrentGear;
+
+	FText GearText;
+	if (DisplayGear < 0)
+	{
+		GearText = FText::FromString(TEXT("R"));
+	}
+	else if(DisplayGear == 0)
+	{
+		GearText = FText::FromString(TEXT("N"));
+	}
+	else
+	{
+		GearText = FText::AsNumber(DisplayGear);
+	}
+
+	OnHUDGearUpdated.Broadcast(GearText);
+	
+	UpdateWheelSteerAngleLog(); //실시간으로 바뀌는 바퀴 계산 
 	
 }
 
