@@ -13,6 +13,7 @@
 #include "Sensor/CameraSceneComponent.h"
 #include "Sensor/LidarSceneComponent.h"
 #include "DataLogger/AgentDataLogger.h"
+#include "AI/CityVehicleAIController.h"
 
 ACityVehiclePawn::ACityVehiclePawn()
 {
@@ -59,6 +60,10 @@ ACityVehiclePawn::ACityVehiclePawn()
 	SplineFollower = CreateDefaultSubobject<USplineFollowerComponent>(TEXT("SplineFollower"));
 	
 	DataLogger = CreateDefaultSubobject<UAgentDataLogger>(TEXT("DataLogger"));
+	
+	//AIControllerClass = ACityVehicleAIController::StaticClass();
+	//AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	
 }
 
 void ACityVehiclePawn::DoSteering(float SteeringValue)
@@ -71,6 +76,14 @@ void ACityVehiclePawn::DoThrottle(float ThrottleValue)
 	ChaosVehicleMovement->SetThrottleInput(ThrottleValue);
 	ChaosVehicleMovement->SetBrakeInput(0.0f);
 }
+
+void ACityVehiclePawn::DoFullStop()
+{
+	ChaosVehicleMovement->SetThrottleInput(0.0f);
+	ChaosVehicleMovement->SetBrakeInput(1.0f);
+	BrakeLights(true);
+}
+
 
 void ACityVehiclePawn::DoBrake(float BrakeValue)
 {
