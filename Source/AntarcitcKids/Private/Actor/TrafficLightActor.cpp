@@ -4,6 +4,7 @@
 #include "Components/BoxComponent.h"
 #include "TimerManager.h"
 #include "Manager/TrafficLightQuest.h"
+#include "CityVehiclePawn.h"
 #include "NiagaraSystem.h"
 #include "Manager/QuestsTypes.h"
 #include "WorldPartition/ContentBundle/ContentBundleLog.h"
@@ -11,13 +12,7 @@
 ATrafficLightActor::ATrafficLightActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
-
-	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
-	SetRootComponent(SceneRoot);
-
-	TrafficLightBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TrafficLightBody"));
-	TrafficLightBody->SetupAttachment(SceneRoot);
-
+	
 	RedLight = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RedLight"));
 	RedLight->SetupAttachment(SceneRoot);
 
@@ -27,19 +22,6 @@ ATrafficLightActor::ATrafficLightActor()
 	GreenLight = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GreenLight"));
 	GreenLight->SetupAttachment(SceneRoot);
 	
-	Collision = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision"));
-	Collision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
-	Collision->SetupAttachment(SceneRoot);
-	Collision->SetGenerateOverlapEvents(true);
-	
-	NiagaraAnchor = CreateDefaultSubobject<USceneComponent>(TEXT("Anchor"));
-	NiagaraAnchor->SetupAttachment(SceneRoot);
-	
-	Collision->OnComponentBeginOverlap.AddDynamic(this, &ATrafficLightActor::OnItemOverlap);
-	Collision->OnComponentEndOverlap.AddDynamic(this, &ATrafficLightActor::OnItemEndOverlap);
-
-	
-
 	CurrentState = ETrafficLightState::Red;
 }
 
@@ -48,29 +30,24 @@ void ATrafficLightActor::BeginPlay()
 	Super::BeginPlay();
 	
 	SwitchToRed();
-	
-	
 	SetQuestInfo();
-	UE_LOG(LogTemp,Warning,TEXT("TrafficLightActor Activate"));
-	Quest = NewObject<UTrafficLightQuest>(this);
-	Quest->OnInitialized(TrafficLightQuestInfo);	
-	Quest->SetEffect(SuccessEffect);
-	Quest->OnSuccess();
 
 }
 
 void ATrafficLightActor::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor->ActorHasTag("Player"))
+	if (ACityVehiclePawn* Player = Cast<ACityVehiclePawn>(OtherActor))
 	{
 		if (CurrentState == ETrafficLightState::Red)
 		{
-			Quest->OnFailed();
+			if (Quest)
+				Quest->OnFailed();
 		}
 		else
 		{
-			Quest->OnSuccess();
+			if (Quest)
+				Quest->OnSuccess();
 		}
 	}
 	
@@ -95,11 +72,12 @@ void ATrafficLightActor::SetQuestInfo()
 {
 	if (NiagaraAnchor)
 	{
-		TrafficLightQuestInfo.QuestLocation = NiagaraAnchor->GetComponentLocation();	
+		QuestInfo.QuestLocation = NiagaraAnchor->GetComponentLocation();	
 	}
 	
-	TrafficLightQuestInfo.Description = TEXT("신호등 알맞게 진행");
-	TrafficLightQuestInfo.QuestName = TEXT("신호등 준수 퀘스트");
+
+	QuestInfo.QuestName = TEXT("신호등 준수 퀘스트");
+	QuestInfo.Description = TEXT("신호등 알맞게 진행");
 }
 
 void ATrafficLightActor::SwitchToRed()

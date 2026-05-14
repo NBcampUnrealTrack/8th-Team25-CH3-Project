@@ -4,36 +4,26 @@
 
 #include "CoreMinimal.h"
 #include "Actor/TriggerMissionBase.h"
-#include "Manager/QuestBase.h"
-#include "SpeedTrap.generated.h"
+#include "Parking.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ANTARCITCKIDS_API ASpeedTrap : public ATriggerMissionBase
+class ANTARCITCKIDS_API AParking : public ATriggerMissionBase
 {
 	GENERATED_BODY()
 	
 public:
-	ASpeedTrap();
+	AParking();
 	
-	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Speed")
-	float SpeedUpperLimit;
-	
-	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	bool bIsPersistence; //구간단속 여부 확인
-	
-	UFUNCTION()
-	void SetPawnSpeed(float SpeedKMH);
+
+
 	
 protected:
 	
 	virtual void BeginPlay() override;
 	
-	float PawnSpeed;
 
 	virtual void OnItemOverlap(
 		UPrimitiveComponent* OverlappedComp,
@@ -51,8 +41,11 @@ protected:
 		int32 OtherBodyIndex) override;
 	
 	virtual void SetQuestInfo() override;
-	virtual void PersistentSpeedCheck();	
-	FTimerHandle PersistenceSpeedCheckTimer;
-private:
 	
+	void CheckParking(AActor* Actor);
+	void StartParkingCheck(AActor* Actor);
+	
+protected:
+	FTimerHandle IsCorrectParking;
+	float LimitAngle;
 };

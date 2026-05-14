@@ -2,29 +2,63 @@
 
 
 #include "Actor/SpeedTrap.h"
+#include "CityVehiclePawn.h"
+#include "Manager/QuestBase.h"
 
 
+
+ASpeedTrap::ASpeedTrap()
+{
+	bIsPersistence = false;
+	PawnSpeed = 0;
+	
+}
+
+
+
+
+void ASpeedTrap::SetPawnSpeed(float SpeedKMH)
+{
+	PawnSpeed = SpeedKMH;
+}
 
 void ASpeedTrap::BeginPlay()
 {
 	Super::BeginPlay();
+
 }
 
-bool ASpeedTrap::IsSpeedOver()
-{
-	return false;
-}
 
-bool ASpeedTrap::IsSpeedLower()
-{
-	return false;
-}
+
 
 
 void ASpeedTrap::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	Super::OnItemOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+	if (ACityVehiclePawn* Player = Cast<ACityVehiclePawn>(OtherActor))
+	{
+		Player->OnHUDSpeedUpdated.AddDynamic(this,&ASpeedTrap::SetPawnSpeed);
+		
+	
+		
+		if (bIsPersistence)
+		{
+			GetWorld()->GetTimerManager().SetTimer(
+				PersistenceSpeedCheckTimer,
+				this,
+				&ASpeedTrap::PersistentSpeedCheck,
+				0.5f,
+				true
+				);
+		}
+		else if (PawnSpeed > SpeedUpperLimit)
+		{
+			if (Quest)
+				Quest->OnFailed();
+		}
+	}
+
 	
 	
 }
@@ -33,6 +67,17 @@ void ASpeedTrap::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* O
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	Super::OnItemEndOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex);
+	if (bIsPersistence)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(PersistenceSpeedCheckTimer);	
+	}
+	
+	if (bIsPersistence&& PawnSpeed <= SpeedUpperLimit)
+	{
+		if (Quest)
+			Quest->OnSuccess();
+	}
+	
 }
 
 void ASpeedTrap::SetQuestInfo()
@@ -45,5 +90,9 @@ void ASpeedTrap::SetQuestInfo()
 
 void ASpeedTrap::PersistentSpeedCheck()
 {
-	/*if (IsSpeed)*/
+	if (PawnSpeed > SpeedUpperLimit)
+	{
+		if (Quest)
+			Quest->OnFailed();
+	}
 }
