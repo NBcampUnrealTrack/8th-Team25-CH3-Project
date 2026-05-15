@@ -16,4 +16,7 @@ class ANTARCITCKIDS_API USensorSubSystem : public UGameInstanceSubsystem
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	
 	virtual void Deinitialize() override;
+	
+public:
+	void OnRegister();
 };

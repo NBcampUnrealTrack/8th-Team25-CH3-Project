@@ -40,7 +40,7 @@ void UQuestBase::OnCompletetd()
 	
 	
 	CurrentQuestInfo.QuestState = EQuestProgressType::Completed;
-	OnQuestCompleted.Broadcast(this);
+	OnQuestCompleted.Broadcast(QuestCompletedEvent);
 }
 
 void UQuestBase::OnPaused()
@@ -81,5 +81,14 @@ void UQuestBase::PlayEffect()
 	
 	
 	
+}
+
+bool UQuestBase::IsQuestEnd()
+{
+	if (CurrentQuestInfo.QuestProgress != EQuestAchivmentType::InProgress)
+	{
+		return false;
+	}
+	return true;
 }
 

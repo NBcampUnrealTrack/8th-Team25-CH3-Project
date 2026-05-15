@@ -12,7 +12,8 @@
  */
 
 class UQuestBase;
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnQuestCompletedNotify, FQuestCompletedEvent)
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnQuestListChange, FQuestListChange)
 
 
 UCLASS()
@@ -22,11 +23,11 @@ class ANTARCITCKIDS_API UQuestSubSystem : public UGameInstanceSubsystem
 	
 public:
 	//서브 시스템의 UI 변화
-	FOnQuestCompletedNotify OnQuestCompletedNotify;
+	FOnQuestListChange OnQuestListChange;
 	
 	UQuestSubSystem();
 	void OnRegisterQuest( UQuestBase* RegisterQuest);
-	void OnQuestsCompleted( UQuestBase* RegisterQuest);
+	void OnQuestsCompleted( FQuestCompletedEvent& QuestCompletedEvent);
 	void OnQuestAborted();
 	void OnLoadQuest();
 	
@@ -36,6 +37,7 @@ public:
 private:
 	TArray<UQuestBase*> QuestsList;
 	TArray<UQuestBase*> CompletedQuestsList;
+	FQuestListChange QuestListChangeStruct;
 	UDataTable* StartMissionList;
 	//데이터 로드된 데이터만 들고 있을 수 있도록 변경
 	

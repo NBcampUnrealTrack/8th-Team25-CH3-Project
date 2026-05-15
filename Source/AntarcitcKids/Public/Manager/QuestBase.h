@@ -13,7 +13,7 @@
  */
 class UNiagaraSystem;
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnQuestCompleted,  UQuestBase*)
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnQuestCompleted,  FQuestCompletedEvent& )
 
 
 UCLASS()
@@ -32,6 +32,7 @@ public:
 	virtual void OnFailed();
 	virtual void SetEffect(UNiagaraSystem* Effect);
 	virtual void PlayEffect();
+	virtual bool IsQuestEnd();
 	
 	FQuestCompletedEvent GetQuestCompletedEvent() { return QuestCompletedEvent;}
 	

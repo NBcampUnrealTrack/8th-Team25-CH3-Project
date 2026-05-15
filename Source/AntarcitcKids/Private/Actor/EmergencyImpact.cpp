@@ -23,7 +23,6 @@ void AEmergencyImpact::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor
 {
 	Super::OnItemOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 	
-	if (!IsValid(OtherActor)) return;
 	
 	
 }
@@ -38,12 +37,12 @@ void AEmergencyImpact::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AAc
 	
 	if (bIsImpact)
 	{
-		if (IsValid(Quest))
+		if (IsValid(Quest) &&Quest->IsQuestEnd())
 			Quest->OnFailed();
 	}
 	else
 	{
-		if (IsValid(Quest))
+		if (IsValid(Quest) && Quest->IsQuestEnd())
 			Quest->OnSuccess();
 	}
 	bIsImpact = false;

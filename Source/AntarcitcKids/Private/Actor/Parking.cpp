@@ -68,7 +68,7 @@ void AParking::CheckParking(AActor* Player)
 	UE_LOG(LogTemp, Warning, TEXT("AngleDiff: %f"), AngleDiff);
 	if (bIsParallel)
 	{
-		if (Quest)
+		if (Quest && Quest->IsQuestEnd())
 			Quest->OnSuccess();
 	}
 
