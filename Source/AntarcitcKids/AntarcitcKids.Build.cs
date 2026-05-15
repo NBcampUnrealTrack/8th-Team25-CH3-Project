@@ -17,9 +17,8 @@ public class AntarcitcKids : ModuleRules
 			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "ChaosVehicles", "Landscape"
 
 		});
-
+		
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 		PrivateDependencyModuleNames.AddRange(new string[] { "Niagara","NiagaraCore" });
-
 	}
 }

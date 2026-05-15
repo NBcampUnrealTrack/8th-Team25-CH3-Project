@@ -34,6 +34,12 @@ void ASplineRoadActor::OnConstruction(const FTransform& Transform)
 
 		RoadPart->SetStaticMesh(RoadMesh);
 		RoadPart->SetForwardAxis(ESplineMeshAxis::X);
+		
+		//콜리전 설정
+		RoadPart->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		RoadPart->SetCollisionProfileName(UCollisionProfile::BlockAll_ProfileName);
+		//계속 변동된다는 것을 알려주는 함수
+		RoadPart->SetMobility(EComponentMobility::Movable);
 
 		// 컴포넌트 자체는 월드 원점 기준으로 둠
 		RoadPart->SetWorldLocation(FVector::ZeroVector);
