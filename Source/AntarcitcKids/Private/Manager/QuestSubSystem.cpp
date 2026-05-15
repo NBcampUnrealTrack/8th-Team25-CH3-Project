@@ -26,13 +26,18 @@ void UQuestSubSystem::OnRegisterQuest(UQuestBase* RegisterQuest)
 
 
 
-void UQuestSubSystem::OnQuestsCompleted(UQuestBase* CompletedQuest)
+void UQuestSubSystem::OnQuestsCompleted(FQuestCompletedEvent& QuestCompletedEvent)
 {
-	QuestsList.Remove(CompletedQuest);
-	CompletedQuestsList.Add(CompletedQuest);
+	QuestListChangeStruct.QuestTypeList.FindOrAdd(QuestCompletedEvent.QuestClass) += 1;
+	FQuestStats& Stats = QuestListChangeStruct.QuestTypeStats.FindOrAdd(QuestCompletedEvent.QuestClass);
+	Stats.AttemptCount += 1;
+	if (QuestCompletedEvent.QuestProgress == EQuestAchivmentType::Succeed)
+	{
+		QuestListChangeStruct.QuestTypeStats[QuestCompletedEvent.QuestClass].SuccessCount +=1;
+	}
 	
-	FQuestCompletedEvent QuestCompletedEvent = CompletedQuest->GetQuestCompletedEvent();
-	OnQuestCompletedNotify.Broadcast(QuestCompletedEvent);
+	OnQuestListChange.Broadcast(QuestListChangeStruct);
+	
 	
 }
 

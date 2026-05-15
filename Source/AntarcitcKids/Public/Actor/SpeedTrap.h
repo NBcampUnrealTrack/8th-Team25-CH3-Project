@@ -7,6 +7,8 @@
 #include "Manager/QuestBase.h"
 #include "SpeedTrap.generated.h"
 
+class UBoxComponent;
+
 UCLASS()
 class ANTARCITCKIDS_API ASpeedTrap : public ATriggerMissionBase
 {
@@ -20,6 +22,9 @@ public:
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	bool bIsPersistence; //구간단속 여부 확인
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Collision")
+	UBoxComponent* EndGate;
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSpeedLimitEntered, float, SpeedLimit);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSpeedLimitExited);
@@ -48,15 +53,29 @@ protected:
 		const FHitResult& SweepResult) override;
 
 
-	virtual void OnItemEndOverlap(
+	/*virtual void OnItemEndOverlap(
 		UPrimitiveComponent* OverlappedComp,
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex) override;
+		int32 OtherBodyIndex) override;*/
+	
+	
+	UFUNCTION()
+	virtual void OnEndGateOverlap(
+	UPrimitiveComponent* OverlappedComp,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult);
+	
+	
 	
 	virtual void SetQuestInfo() override;
 	virtual void PersistentSpeedCheck();	
 	FTimerHandle PersistenceSpeedCheckTimer;
 private:
+	float StartSpeed;
+	float EndSpeed;
 	
 };

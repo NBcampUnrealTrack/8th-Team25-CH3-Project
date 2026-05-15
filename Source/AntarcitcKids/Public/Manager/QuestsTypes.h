@@ -33,7 +33,7 @@ enum class EQuestClass : uint8
 {
 	SpeedTrap UMETA(DisplayName = "SpeedTrap"),
 	TrafficSignal UMETA(DisplayName = "TrafficSignal"),
-	EmergencyStop UMETA(DisplayName = "EmergencyStop"),
+	EmergencyImpact UMETA(DisplayName = "EmergencyImpact"),
 	Parking UMETA(DisplayName = "Parking")
 
 };
@@ -54,6 +54,42 @@ struct FQuestCompletedEvent
 	
 	
 };
+
+USTRUCT(BlueprintType)
+struct FQuestStats
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Quest")
+	int32 AttemptCount = 0;   
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Quest")
+	int32 SuccessCount = 0;   
+
+
+	float GetSuccessRate() const
+	{
+		if (AttemptCount == 0) return 0.f;
+		return (float)SuccessCount / (float)AttemptCount;
+	}
+};
+
+
+USTRUCT(BlueprintType)
+struct FQuestListChange
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Quest")
+	TMap<EQuestClass,int32> QuestTypeList;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Quest")
+	TMap<EQuestClass,FQuestStats> QuestTypeStats;
+	
+	
+	
+};
+
 
 USTRUCT(BlueprintType)
 struct FQuestInfo : public FTableRowBase

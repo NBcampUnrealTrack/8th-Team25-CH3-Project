@@ -47,12 +47,12 @@ void ATrafficLightActor::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AAct
 		if (!IsValid(Player)) return;
 		if (CurrentState == ETrafficLightState::Red)
 		{
-			if (Quest)
+			if (Quest && Quest->IsQuestEnd())
 				Quest->OnFailed();
 		}
 		else
 		{
-			if (Quest)
+			if (Quest && Quest->IsQuestEnd())
 				Quest->OnSuccess();
 		}
 	}

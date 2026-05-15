@@ -13,3 +13,10 @@ void USensorSubSystem::Deinitialize()
 	Super::Deinitialize();
 	
 }
+
+void USensorSubSystem::OnRegister()
+{
+	
+}
+
+
