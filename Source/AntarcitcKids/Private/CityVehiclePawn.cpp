@@ -48,9 +48,6 @@ ACityVehiclePawn::ACityVehiclePawn()
 	
 	ChaosVehicleMovement = CastChecked<UChaosWheeledVehicleMovementComponent>(GetVehicleMovement());
 	
-	PreviousGear = ChaosVehicleMovement->GetCurrentGear();
-	OnHUDGearUpdated.Broadcast(FText::FromString(TEXT("N")));
-	
 	/*
 	CameraSensor = CreateDefaultSubobject<UCameraSceneComponent>(TEXT("CameraSensor"));
 	CameraSensor->SetupAttachment(GetMesh());
@@ -64,8 +61,8 @@ ACityVehiclePawn::ACityVehiclePawn()
 	
 	DataLogger = CreateDefaultSubobject<UAgentDataLogger>(TEXT("DataLogger"));
 	
-	//AIControllerClass = ACityVehicleAIController::StaticClass();
-	//AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	AIControllerClass = ACityVehicleAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	
 }
 
@@ -173,6 +170,12 @@ void ACityVehiclePawn::BeginPlay()
 	Super::BeginPlay();
 	
 	GetWorld()->GetTimerManager().SetTimer(FlipCheckTimer, this, &ACityVehiclePawn::FlippedCheck, FlipCheckTime, true);
+	
+	if (ChaosVehicleMovement)
+	{
+		PreviousGear = ChaosVehicleMovement->GetCurrentGear();
+		OnHUDGearUpdated.Broadcast(FText::FromString(TEXT("N")));
+	}
 }
 
 void ACityVehiclePawn::EndPlay(EEndPlayReason::Type EndPlayReason)
@@ -237,7 +240,7 @@ void ACityVehiclePawn::Tick(float Delta)
 
 void ACityVehiclePawn::UpdateWheelSteerAngleLog()
 {
-	UE_LOG(LogTemp, Warning, TEXT("UpdateWheelSteerAngleLog called")); //불러와지는지 체크용
+	//UE_LOG(LogTemp, Warning, TEXT("UpdateWheelSteerAngleLog called")); //불러와지는지 체크용
 	
 	if (!ChaosVehicleMovement)
 	{

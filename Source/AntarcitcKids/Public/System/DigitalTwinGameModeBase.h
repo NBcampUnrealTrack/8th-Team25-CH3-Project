@@ -6,12 +6,12 @@
 #include "GameFramework/GameModeBase.h"
 #include "DigitalTwinGameModeBase.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class ANTARCITCKIDS_API ADigitalTwinGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+public:
+	ADigitalTwinGameModeBase();
 };

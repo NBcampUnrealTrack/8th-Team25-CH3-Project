@@ -6,11 +6,19 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerStart.h"
 
+// 커스텀 로그 카테고리를 정의
+DEFINE_LOG_CATEGORY_STATIC(LogAKPlayerController, Log, All);
+
 void AAntarcitcKidsPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	
 	bAttachToPawn = true;
+	
+	// 한 프레임 대기 후 차량 찾기 (차량 스폰되는 시간 주기)
+	FTimerHandle Handle;
+	GetWorld()->GetTimerManager().SetTimer(
+		Handle, this, &AAntarcitcKidsPlayerController::FindAndBindVehicle, 0.1f, false);
 
 	/*
 	if (SensorViewWidgetClass)
@@ -43,12 +51,6 @@ void AAntarcitcKidsPlayerController::SetupInputComponent()
 void AAntarcitcKidsPlayerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-
-	VehiclePawn = CastChecked<ACityVehiclePawn>(InPawn);
-	VehiclePawn->OnDestroyed.AddDynamic(this, &AAntarcitcKidsPlayerController::OnPawnDestroyed);
-	
-	//HUD 생성
-	CreateAndBindCyberHUD();
 }
 
 void AAntarcitcKidsPlayerController::OnPawnDestroyed(AActor* DestroyedPawn)
@@ -62,7 +64,36 @@ void AAntarcitcKidsPlayerController::OnPawnDestroyed(AActor* DestroyedPawn)
 
 		if (ACityVehiclePawn* RespawnedVehicle = GetWorld()->SpawnActor<ACityVehiclePawn>(VehiclePawnClass, SpawnTransform))
 		{
-			Possess(RespawnedVehicle);
+			// Possess 안 함! AI Controller가 자동 빙의함
+			// 대신 카메라/HUD 다시 바인딩
+			VehiclePawn  = RespawnedVehicle;
+			SetViewTargetWithBlend(VehiclePawn);
+			VehiclePawn->OnDestroyed.AddDynamic(this, &AAntarcitcKidsPlayerController::OnPawnDestroyed);
+			CreateAndBindCyberHUD();
+		}
+	}
+}
+
+void AAntarcitcKidsPlayerController::FindAndBindVehicle()
+{
+	TArray<AActor*> Vehicles;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACityVehiclePawn::StaticClass(), Vehicles);
+	if (Vehicles.Num() > 0)
+	{
+		VehiclePawn = Cast<ACityVehiclePawn>(Vehicles[0]);
+		if (VehiclePawn)
+		{
+			// PlayerController의 카메라를 VehiclePawn 시점으로 부드럽게 전환
+			SetViewTargetWithBlend(VehiclePawn);
+			
+			VehiclePawn->OnDestroyed.AddDynamic(this, &AAntarcitcKidsPlayerController::OnPawnDestroyed);
+			
+			// HUD 바인딩
+			CreateAndBindCyberHUD();
+		}
+		else
+		{
+			UE_LOG(LogAKPlayerController, Warning, TEXT("PlayerController: No ACityVehiclePawn found in world."));
 		}
 	}
 }

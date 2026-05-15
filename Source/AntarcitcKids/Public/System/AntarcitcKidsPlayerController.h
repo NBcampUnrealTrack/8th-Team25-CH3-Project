@@ -21,6 +21,10 @@ protected:
 
 	UFUNCTION()
 	void OnPawnDestroyed(AActor* DestroyedPawn);
+	
+	// 신규: 월드의 차량을 찾아 참조 획득
+	UFUNCTION()
+	void FindAndBindVehicle();
 
 public:
 	void ToggleSensorView(UTextureRenderTarget2D* InCameraRT);
