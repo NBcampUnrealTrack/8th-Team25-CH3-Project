@@ -102,6 +102,9 @@ public:
 	UFUNCTION(BlueprintPure, Category="Vehicle")
 	float GetForwardSpeed() const{ return FVector::DotProduct(GetVelocity(), GetActorForwardVector()); }
 	
+	UFUNCTION(BlueprintPure, Category="Vehicle")
+	float GetCurrentSpeedKMH() const{ return FMath:: Abs(GetForwardSpeed()) * 0.036f; } // cm/s → km/h 변환
+	
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	virtual void BeginPlay() override;

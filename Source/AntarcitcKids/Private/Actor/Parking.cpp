@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Parking.cpp
 
 
 #include "Actor/Parking.h"
@@ -8,6 +8,8 @@
 
 AParking::AParking()
 {
+	// [Note] SpeedTrapQuest 추가되면 아래 주석 제거하기
+	// QuestClass = UParkingQuest::StaticClass();
 }
 
 void AParking::BeginPlay()

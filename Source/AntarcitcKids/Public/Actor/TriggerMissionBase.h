@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// TriggerMissionBase.h
 
 #pragma once
 
@@ -11,6 +11,13 @@
 class UBoxComponent;
 class UQuestBase;
 class UNiagaraSystem;
+class ACityVehiclePawn;
+
+// 공통 신호: 차량 진입/이탈
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTriggerVehicleEntered, 
+	ATriggerMissionBase*, Trigger, ACityVehiclePawn*, Vehicle);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTriggerVehicleExited, 
+	ATriggerMissionBase*, Trigger, ACityVehiclePawn*, Vehicle);
 
 UCLASS()
 class ANTARCITCKIDS_API ATriggerMissionBase : public AActor
@@ -18,17 +25,15 @@ class ANTARCITCKIDS_API ATriggerMissionBase : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ATriggerMissionBase();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traffic Light")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mission")
 	USceneComponent* SceneRoot;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traffic Light")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mission")
 	UStaticMeshComponent* TriggerBaseBody;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision")
@@ -40,7 +45,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Niagara")
 	USceneComponent* NiagaraAnchor;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Quest")
+	TSubclassOf<UQuestBase> QuestClass;
+	
+	UPROPERTY()
 	UQuestBase* Quest;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Trigger|Events")
+	FOnTriggerVehicleEntered OnVehicleEntered;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Trigger|Events")
+	FOnTriggerVehicleExited OnVehicleExited;
+	
 	
 	UFUNCTION()
 	virtual void OnItemOverlap(
