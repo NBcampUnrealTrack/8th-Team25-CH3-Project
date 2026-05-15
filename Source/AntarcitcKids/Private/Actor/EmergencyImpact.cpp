@@ -2,12 +2,20 @@
 
 
 #include "Actor/EmergencyImpact.h"
-
+#include "Components/SphereComponent.h"
 #include "Manager/QuestBase.h"
+
 
 AEmergencyImpact::AEmergencyImpact()
 {
 	bIsImpact = false;
+	
+	ImpactCollision = CreateDefaultSubobject<USphereComponent>(TEXT("ImpactCollision"));
+	ImpactCollision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+	ImpactCollision->SetupAttachment(SceneRoot);
+	ImpactCollision->SetGenerateOverlapEvents(true);
+	
+	ImpactCollision->OnComponentBeginOverlap.AddDynamic(this, &AEmergencyImpact::OnImpactOverlap);
 }
 
 void AEmergencyImpact::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -16,8 +24,6 @@ void AEmergencyImpact::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor
 	Super::OnItemOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 	
 	if (!IsValid(OtherActor)) return;
-
-	StartCheckImpact(OtherActor);
 	
 	
 }
@@ -29,7 +35,6 @@ void AEmergencyImpact::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AAc
 	Super::OnItemEndOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex);
 	
 	if (!IsValid(OtherActor)) return;
-	GetWorld()->GetTimerManager().ClearTimer(ImpactCheckTimer);
 	
 	if (bIsImpact)
 	{
@@ -41,31 +46,17 @@ void AEmergencyImpact::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AAc
 		if (IsValid(Quest))
 			Quest->OnSuccess();
 	}
-
-}
-
-void AEmergencyImpact::CheckImpact(AActor* OtherActor)
-{
-	if (!IsValid(OtherActor)) return;
-	
-	FVector CurrentLocation = GetActorLocation();
-	FVector ImpactorLocation = OtherActor->GetActorLocation();
-	
-	if (FVector::Dist(CurrentLocation,ImpactorLocation) <= ImpactDistance)
-	{
-		bIsImpact = true;
-	}
-	UE_LOG(LogTemp,Warning, TEXT("충돌 여부 : %d"),bIsImpact);
-}
-
-void AEmergencyImpact::StartCheckImpact(AActor* OtherActor)
-{
-	FTimerDelegate StartImpactCheck;
 	bIsImpact = false;
-	StartImpactCheck.BindUObject(this,&AEmergencyImpact::CheckImpact,OtherActor);
-	
-	GetWorld()->GetTimerManager().SetTimer(ImpactCheckTimer,StartImpactCheck,0.5f,true);
+
 }
+
+void AEmergencyImpact::OnImpactOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	bIsImpact = true;
+}
+
+
 
 
 

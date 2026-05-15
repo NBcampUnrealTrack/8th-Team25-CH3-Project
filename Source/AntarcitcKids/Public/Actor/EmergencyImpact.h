@@ -6,6 +6,7 @@
 #include "Actor/TriggerMissionBase.h"
 #include "EmergencyImpact.generated.h"
 
+class USphereComponent;
 /**
  * 
  */
@@ -18,6 +19,9 @@ class ANTARCITCKIDS_API AEmergencyImpact : public ATriggerMissionBase
 	
 public:
 	AEmergencyImpact();
+	
+	UPROPERTY(VisibleAnywhere,Category = "Impact")
+	USphereComponent* ImpactCollision;
 	
 	virtual void OnItemOverlap(
 	UPrimitiveComponent* OverlappedComp,
@@ -33,16 +37,21 @@ public:
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex);
 
-
+	UFUNCTION()
+	virtual void OnImpactOverlap(
+	UPrimitiveComponent* OverlappedComp,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult);
 
 	
-	void CheckImpact(AActor* OtherActor);
-	void StartCheckImpact(AActor* OtherActor);
+
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Quest")
 	float ImpactDistance;
-	
-	FTimerHandle ImpactCheckTimer;
+
 private:
 	bool bIsImpact;
 };
