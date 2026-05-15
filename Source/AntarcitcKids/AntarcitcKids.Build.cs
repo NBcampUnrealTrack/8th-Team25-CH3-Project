@@ -1,4 +1,5 @@
 // AntarcitcKids.Build.cs
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 using UnrealBuildTool;
 

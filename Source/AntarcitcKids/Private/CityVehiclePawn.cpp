@@ -1,3 +1,6 @@
+// CityVehiclePawn.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
 #include "CityVehiclePawn.h"
 #include "AntarcitcKids/AntarcitcKids.h"
 #include "System/AntarcitcKidsPlayerController.h"

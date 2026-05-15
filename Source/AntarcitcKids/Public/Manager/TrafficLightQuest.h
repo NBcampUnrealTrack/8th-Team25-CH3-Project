@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// TrafficLightQuest.h
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #pragma once
 
@@ -6,9 +7,6 @@
 #include "Manager/QuestBase.h"
 #include "TrafficLightQuest.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class ANTARCITCKIDS_API UTrafficLightQuest : public UQuestBase
 {

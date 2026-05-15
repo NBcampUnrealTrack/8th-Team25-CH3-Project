@@ -1,14 +1,13 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// QuestsTypes.h
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #pragma once
-
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
 #include "QuestsTypes.generated.h" 
 
 class UQuestBase;
-
 
 UENUM(BlueprintType)
 enum class EQuestProgressType : uint8

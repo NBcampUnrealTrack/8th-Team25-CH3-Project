@@ -1,4 +1,5 @@
 // SplineFollowerComponent.h
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #pragma once
 

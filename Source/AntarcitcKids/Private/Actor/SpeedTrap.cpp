@@ -1,4 +1,5 @@
 // SpeedTrap.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #include "Actor/SpeedTrap.h"
 #include "CityVehiclePawn.h"

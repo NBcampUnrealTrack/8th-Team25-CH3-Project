@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// DigitalTwinConfiguration.h
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #pragma once
 
@@ -6,9 +7,6 @@
 #include "Engine/GameInstance.h"
 #include "DigitalTwinConfiguration.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class ANTARCITCKIDS_API UDigitalTwinConfiguration : public UGameInstance
 {

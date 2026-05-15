@@ -1,5 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// LidarNiagaraComponent.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #include "Sensor/LidarNiagaraComponent.h"
 #include "NiagaraDataInterfaceArrayFunctionLibrary.h"

@@ -1,3 +1,6 @@
+// Sedan.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
 #include "Vehicle/Sedan.h"
 #include "Vehicle/SedanWheelFront.h"
 #include "Vehicle/SedanWheelRear.h"

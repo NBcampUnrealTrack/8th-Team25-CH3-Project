@@ -1,5 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// QuestBase.cp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #include "Manager/QuestBase.h"
 #include "NiagaraSystem.h"

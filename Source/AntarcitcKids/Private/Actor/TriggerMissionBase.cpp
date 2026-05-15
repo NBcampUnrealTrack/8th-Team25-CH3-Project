@@ -1,4 +1,5 @@
 // TriggerMissionBase.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #include "Actor/TriggerMissionBase.h"
 #include "Components/BoxComponent.h"

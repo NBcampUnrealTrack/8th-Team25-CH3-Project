@@ -1,3 +1,6 @@
+// VehicleWheelRear.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
 #include "Vehicle/VehicleWheelRear.h"
 #include "UObject/ConstructorHelpers.h"
 

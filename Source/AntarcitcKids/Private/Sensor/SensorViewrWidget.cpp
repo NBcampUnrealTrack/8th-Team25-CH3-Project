@@ -1,4 +1,5 @@
-// Copyright NBC, Inc. All Rights Reserved.
+// SensorViewrWidget.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #include "Sensor/SensorViewrWidget.h"
 #include "Components/Image.h"

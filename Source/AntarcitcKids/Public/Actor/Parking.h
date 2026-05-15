@@ -1,14 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// Parking.h
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Actor/TriggerMissionBase.h"
 #include "Parking.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class ANTARCITCKIDS_API AParking : public ATriggerMissionBase
 {

@@ -1,7 +1,8 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// AntarcitcKids.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(LogAntarcitcKids, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogCategoryName, Log, All);

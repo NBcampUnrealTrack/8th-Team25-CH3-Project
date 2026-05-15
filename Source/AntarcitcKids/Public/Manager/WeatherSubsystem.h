@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// WeatherSubsystem.h
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #pragma once
 
@@ -6,9 +7,6 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "WeatherSubsystem.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class ANTARCITCKIDS_API UWeatherSubsystem : public UWorldSubsystem
 {

@@ -1,3 +1,6 @@
+// TrafficLightActor.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
 #include "Actor/TrafficLightActor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneComponent.h"

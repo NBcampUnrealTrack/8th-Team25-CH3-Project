@@ -1,3 +1,6 @@
+// SedanWheelRear.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
 #include "Vehicle/SedanWheelRear.h"
 
 USedanWheelRear::USedanWheelRear()

@@ -1,3 +1,6 @@
+// AntarcitcKidsPlayerController.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
 #include "System/AntarcitcKidsPlayerController.h"
 #include "CityVehiclePawn.h"
 #include "Sensor/SensorViewrWidget.h"

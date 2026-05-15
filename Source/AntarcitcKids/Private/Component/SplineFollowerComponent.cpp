@@ -1,4 +1,5 @@
 // SplineFollowerComponent.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #include "Component/SplineFollowerComponent.h"
 #include "CityVehiclePawn.h"

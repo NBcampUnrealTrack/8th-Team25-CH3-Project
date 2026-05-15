@@ -1,5 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// QuestSubSystem.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #include "Manager/QuestSubSystem.h"
 #include "Manager/QuestSubSystem.h"

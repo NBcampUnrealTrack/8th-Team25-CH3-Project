@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// QuestSubSystem.h
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #pragma once
 
@@ -7,9 +8,6 @@
 #include "Manager/QuestsTypes.h"
 #include "QuestSubSystem.generated.h"
 
-/**
- * 
- */
 
 class UQuestBase;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnQuestCompletedNotify, FQuestCompletedEvent)

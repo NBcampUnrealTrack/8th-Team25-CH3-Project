@@ -1,3 +1,6 @@
+// CameraSceneComponent.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
 #include "Sensor/CameraSceneComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "Engine/TextureRenderTarget2D.h"

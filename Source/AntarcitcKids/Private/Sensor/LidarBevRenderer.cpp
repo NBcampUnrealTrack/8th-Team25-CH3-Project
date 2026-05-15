@@ -1,3 +1,6 @@
+// LidarBevRenderer.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
 #include "Sensor/LidarBevRenderer.h"
 #include "Engine/Texture2D.h"
 

@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// LidarBevRenderer.h
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #pragma once
 
@@ -7,9 +8,6 @@
 #include "CameraSensorTypes.h"
 #include "LidarBevRenderer.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class ANTARCITCKIDS_API ULidarBevRenderer : public UObject
 {

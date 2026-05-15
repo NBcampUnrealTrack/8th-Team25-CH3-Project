@@ -1,3 +1,6 @@
+// CyberTruckVehiclePawn.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
 #include "Vehicle/CyberTruckVehiclePawn.h"
 #include "Vehicle/CyberTruckWheelFront.h"
 #include "Vehicle/CyberTruckWheelRear.h"

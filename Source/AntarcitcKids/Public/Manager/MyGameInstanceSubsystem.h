@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// MyGameInstanceSubsystem.h
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #pragma once
 
@@ -6,9 +7,6 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "MyGameInstanceSubsystem.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class ANTARCITCKIDS_API UMyGameInstanceSubsystem : public UGameInstanceSubsystem
 {

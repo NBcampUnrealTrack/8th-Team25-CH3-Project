@@ -1,3 +1,6 @@
+// SplineRoadActor.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
 #include "Road/SplineRoadActor.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"

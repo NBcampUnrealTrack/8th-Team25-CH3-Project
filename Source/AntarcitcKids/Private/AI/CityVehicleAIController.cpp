@@ -1,4 +1,5 @@
 // CityVehicleAIController.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #include "AI/CityVehicleAIController.h"
 #include "CityVehiclePawn.h"

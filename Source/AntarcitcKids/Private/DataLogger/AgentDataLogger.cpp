@@ -1,4 +1,5 @@
 ﻿//AgentDataLogger.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #include "DataLogger/AgentDataLogger.h"
 #include "HAL/PlatformFileManager.h" //파일을 다루는 헤더

@@ -1,3 +1,6 @@
+// CyberTruckWheelRear.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
 #include "Vehicle/CyberTruckWheelRear.h"
 
 UCyberTruckWheelRear::UCyberTruckWheelRear()

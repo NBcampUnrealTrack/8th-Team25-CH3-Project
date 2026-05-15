@@ -1,4 +1,5 @@
-// Copyright NBC, Inc. All Rights Reserved.
+// LidarSceneComponent.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #include "Sensor/LidarSceneComponent.h"
 #include "Sensor/LidarBevRenderer.h"
@@ -9,8 +10,6 @@
 #include "Sensor/LidarNiagaraComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogLidarSensor, Log, All);
-
-
 
 ULidarSceneComponent::ULidarSceneComponent()
 {
