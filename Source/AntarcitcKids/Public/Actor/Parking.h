@@ -17,8 +17,8 @@ class ANTARCITCKIDS_API AParking : public ATriggerMissionBase
 public:
 	AParking();
 	
-
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Quest")
+	float LimitAngle;
 	
 protected:
 	
@@ -47,5 +47,5 @@ protected:
 	
 protected:
 	FTimerHandle IsCorrectParking;
-	float LimitAngle;
+	
 };

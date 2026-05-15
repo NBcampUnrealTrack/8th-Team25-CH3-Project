@@ -5,6 +5,7 @@
 #include "TimerManager.h"
 #include "Manager/TrafficLightQuest.h"
 #include "CityVehiclePawn.h"
+#include "NiagaraDataInterfaceEmitterBinding.h"
 #include "NiagaraSystem.h"
 #include "Manager/QuestsTypes.h"
 #include "WorldPartition/ContentBundle/ContentBundleLog.h"
@@ -37,8 +38,10 @@ void ATrafficLightActor::BeginPlay()
 void ATrafficLightActor::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (!IsValid(OtherActor)) return;
 	if (ACityVehiclePawn* Player = Cast<ACityVehiclePawn>(OtherActor))
 	{
+		if (!IsValid(Player)) return;
 		if (CurrentState == ETrafficLightState::Red)
 		{
 			if (Quest)

@@ -27,6 +27,7 @@ void AParking::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 	int32 OtherBodyIndex)
 {
 	Super::OnItemEndOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex);
+	GetWorld()->GetTimerManager().ClearTimer(IsCorrectParking);
 	
 }
 
@@ -39,7 +40,20 @@ void AParking::SetQuestInfo()
 
 void AParking::CheckParking(AActor* Player)
 {
-	if (!Player) return;
+	if (!IsValid(Player)) return;
+	FBox ParkingBox = GetComponentsBoundingBox();
+	FBox PlayerBox = Player->GetComponentsBoundingBox();
+	
+	PlayerBox.Min.Z = ParkingBox.Min.Z;
+	PlayerBox.Max.Z = ParkingBox.Min.Z;
+	
+	if (!ParkingBox.IsInsideOrOn(PlayerBox.Min) || !ParkingBox.IsInsideOrOn(PlayerBox.Max))
+	{
+		UE_LOG(LogTemp, Log, TEXT("완전히 주차영역에 들어오지 않음"));
+		return;
+	}
+	
+	
 	
 	float AngleDiff = FMath::RadiansToDegrees(
 		FMath::Acos(FMath::Clamp(
@@ -49,7 +63,7 @@ void AParking::CheckParking(AActor* Player)
 	
 	
 	bool bIsParallel = AngleDiff < LimitAngle || FMath::Abs(AngleDiff - 180.f) < LimitAngle;
-	
+	UE_LOG(LogTemp, Warning, TEXT("AngleDiff: %f"), AngleDiff);
 	if (bIsParallel)
 	{
 		if (Quest)
