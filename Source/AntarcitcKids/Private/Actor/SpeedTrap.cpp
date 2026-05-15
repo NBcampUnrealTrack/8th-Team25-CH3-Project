@@ -1,5 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// SpeedTrap.cpp
 
 #include "Actor/SpeedTrap.h"
 #include "CityVehiclePawn.h"
@@ -12,10 +11,9 @@ ASpeedTrap::ASpeedTrap()
 	bIsPersistence = false;
 	PawnSpeed = 0;
 	
+	// [Note] SpeedTrapQuest 추가되면 아래 주석 제거하기
+	//QuestClass = USpeedTrapQuest::StaticClass();
 }
-
-
-
 
 void ASpeedTrap::SetPawnSpeed(float SpeedKMH)
 {
@@ -28,19 +26,17 @@ void ASpeedTrap::BeginPlay()
 
 }
 
-
-
-
-
 void ASpeedTrap::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	Super::OnItemOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-	if (ACityVehiclePawn* Player = Cast<ACityVehiclePawn>(OtherActor))
+	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
 	{
-		Player->OnHUDSpeedUpdated.AddDynamic(this,&ASpeedTrap::SetPawnSpeed);
+		Vehicle->OnHUDSpeedUpdated.AddDynamic(this,&ASpeedTrap::SetPawnSpeed); 
+		// [Note] SetPawnSpeed 등록만 하고, 아직 호출 안 됨
 		
-	
+		PawnSpeed = Vehicle->GetCurrentSpeedKMH(); 
+		// [Note] 현재 차량 속도를 즉시 직접 조회하여 PawnSpeed를 갱신, 현재 프레임에서 바로 판정 가능
 		
 		if (bIsPersistence)
 		{
@@ -57,27 +53,33 @@ void ASpeedTrap::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 			if (Quest)
 				Quest->OnFailed();
 		}
+		
+		OnSpeedLimitEntered.Broadcast(SpeedUpperLimit);
 	}
-
-	
-	
 }
 
 void ASpeedTrap::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	Super::OnItemEndOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex);
-	if (bIsPersistence)
-	{
-		GetWorld()->GetTimerManager().ClearTimer(PersistenceSpeedCheckTimer);	
-	}
 	
-	if (bIsPersistence&& PawnSpeed <= SpeedUpperLimit)
+	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
 	{
-		if (Quest)
-			Quest->OnSuccess();
-	}
+		Vehicle->OnHUDSpeedUpdated.RemoveDynamic(this, &ASpeedTrap::SetPawnSpeed);
+		
+		if (bIsPersistence)
+		{
+			GetWorld()->GetTimerManager().ClearTimer(PersistenceSpeedCheckTimer);	
+		}
 	
+		if (bIsPersistence && PawnSpeed <= SpeedUpperLimit)
+		{
+			if (Quest)
+				Quest->OnSuccess();
+		}
+	
+		OnSpeedLimitExited.Broadcast();
+	}
 }
 
 void ASpeedTrap::SetQuestInfo()

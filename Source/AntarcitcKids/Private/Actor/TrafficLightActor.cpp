@@ -1,13 +1,10 @@
 #include "Actor/TrafficLightActor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneComponent.h"
-#include "Components/BoxComponent.h"
 #include "TimerManager.h"
 #include "Manager/TrafficLightQuest.h"
 #include "CityVehiclePawn.h"
-#include "NiagaraSystem.h"
 #include "Manager/QuestsTypes.h"
-#include "WorldPartition/ContentBundle/ContentBundleLog.h"
 
 ATrafficLightActor::ATrafficLightActor()
 {
@@ -23,6 +20,8 @@ ATrafficLightActor::ATrafficLightActor()
 	GreenLight->SetupAttachment(SceneRoot);
 	
 	CurrentState = ETrafficLightState::Red;
+	
+	QuestClass = UTrafficLightQuest::StaticClass();
 }
 
 void ATrafficLightActor::BeginPlay()
@@ -30,13 +29,13 @@ void ATrafficLightActor::BeginPlay()
 	Super::BeginPlay();
 	
 	SwitchToRed();
-	SetQuestInfo();
-
 }
 
 void ATrafficLightActor::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	Super::OnItemOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+	
 	if (ACityVehiclePawn* Player = Cast<ACityVehiclePawn>(OtherActor))
 	{
 		if (CurrentState == ETrafficLightState::Red)
@@ -56,7 +55,7 @@ void ATrafficLightActor::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AAct
 void ATrafficLightActor::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	
+	Super::OnItemEndOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex);
 }
 
 void ATrafficLightActor::SetTrafficLightState(ETrafficLightState NewState)
@@ -70,12 +69,8 @@ void ATrafficLightActor::SetTrafficLightState(ETrafficLightState NewState)
 
 void ATrafficLightActor::SetQuestInfo()
 {
-	if (NiagaraAnchor)
-	{
-		QuestInfo.QuestLocation = NiagaraAnchor->GetComponentLocation();	
-	}
+	Super::SetQuestInfo();
 	
-
 	QuestInfo.QuestName = TEXT("신호등 준수 퀘스트");
 	QuestInfo.Description = TEXT("신호등 알맞게 진행");
 }

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// SpeedTrap.h
 
 #pragma once
 
@@ -7,9 +7,6 @@
 #include "Manager/QuestBase.h"
 #include "SpeedTrap.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class ANTARCITCKIDS_API ASpeedTrap : public ATriggerMissionBase
 {
@@ -18,13 +15,20 @@ class ANTARCITCKIDS_API ASpeedTrap : public ATriggerMissionBase
 public:
 	ASpeedTrap();
 	
-	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Speed")
 	float SpeedUpperLimit;
 	
-	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	bool bIsPersistence; //구간단속 여부 확인
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSpeedLimitEntered, float, SpeedLimit);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSpeedLimitExited);
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnSpeedLimitEntered OnSpeedLimitEntered;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnSpeedLimitExited OnSpeedLimitExited;
 	
 	UFUNCTION()
 	void SetPawnSpeed(float SpeedKMH);

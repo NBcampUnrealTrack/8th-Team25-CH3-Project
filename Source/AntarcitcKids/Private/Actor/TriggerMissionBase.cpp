@@ -1,15 +1,13 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// TriggerMissionBase.cpp
 
 #include "Actor/TriggerMissionBase.h"
 #include "Components/BoxComponent.h"
 #include "Manager/QuestBase.h"
+#include "CityVehiclePawn.h"
 
-// Sets default values
 ATriggerMissionBase::ATriggerMissionBase()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+ 	PrimaryActorTick.bCanEverTick = false;
 
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
 	SetRootComponent(SceneRoot);
@@ -29,13 +27,14 @@ ATriggerMissionBase::ATriggerMissionBase()
 	Collision->OnComponentEndOverlap.AddDynamic(this, &ATriggerMissionBase::OnItemEndOverlap);
 }
 
-// Called when the game starts or when spawned
 void ATriggerMissionBase::BeginPlay()
 {
 	Super::BeginPlay();
 	SetQuestInfo();
 	
-	Quest = NewObject<UQuestBase>(this);
+	UClass* ClassToUse = QuestClass ? QuestClass.Get() : UQuestBase::StaticClass();
+	Quest = NewObject<UQuestBase>(this, ClassToUse);
+	
 	Quest->OnInitialized(QuestInfo);
 	Quest->SetEffect(SuccessEffect);
 	
@@ -44,18 +43,24 @@ void ATriggerMissionBase::BeginPlay()
 void ATriggerMissionBase::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
+	{
+		OnVehicleEntered.Broadcast(this, Vehicle);
+	}
 }
 
 void ATriggerMissionBase::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
                                            UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
+	{
+		OnVehicleExited.Broadcast(this, Vehicle);
+	}
 }
 
-// Called every frame
 void ATriggerMissionBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ATriggerMissionBase::SetQuestInfo()
