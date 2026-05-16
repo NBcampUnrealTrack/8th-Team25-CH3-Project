@@ -8,6 +8,7 @@
 #include "Misc/Paths.h"
 #include "TimerManager.h"
 #include "Sensor/LidarNiagaraComponent.h"
+#include "Manager/SensorSubSystem.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogLidarSensor, Log, All);
 
@@ -23,6 +24,7 @@ void ULidarSceneComponent::BeginPlay()
 	Super::BeginPlay();
 	UE_LOG(LogTemp,Warning,TEXT("ULidarSceneComponent Activate"));
 	ApplyPreset(Preset);
+	
 	InitializeSensor();
 	StartScan();
 	
@@ -69,11 +71,19 @@ void ULidarSceneComponent::InitializeSensor()
 	BevRenderer = NewObject<ULidarBevRenderer>(this, TEXT("BevRenderer"));
 	BevRenderer->Initialize(BevConfig);
 	
+	
 	/*LidarSensorRenderer = NewObject<ULidarNiagaraComponent>(this, TEXT("LidarRenderer"));
 	LidarSensorRenderer->SetupAttachment(this);
 	LidarSensorRenderer->RegisterComponent();*/
 	
+	//센서 서브시스템 제어 추가
+	USensorSubSystem* SensorSubSystem =  GetWorld()->GetSubsystem<USensorSubSystem>();
 	
+	if (SensorSubSystem)
+	{
+		SensorSubSystem->OnSensorPresetChanged.AddUObject(this, &ULidarSceneComponent::ApplyPreset);
+		SensorSubSystem->OnSetSensorHz.AddUObject(this,&ULidarSceneComponent::SetScanRate);
+	}
 	
 
 	//매 틱마다 메모리에 동적 할당 되지 않도록 최적화
