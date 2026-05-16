@@ -20,6 +20,7 @@ AStreetLightSource::AStreetLightSource()
 	
 	//빛이 아래를 비추도록 설정
 	SpotLight->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
+	PointLight->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
 }
 
 //에디터에서 수정 시 바로 반영되도록 OnConstruction()함수에서 작성
