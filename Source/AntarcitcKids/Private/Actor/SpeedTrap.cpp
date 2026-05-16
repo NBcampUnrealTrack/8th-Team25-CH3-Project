@@ -55,13 +55,13 @@ void ASpeedTrap::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 		
 		if (bIsPersistence)
 		{
-			GetWorld()->GetTimerManager().SetTimer(
+			/*GetWorld()->GetTimerManager().SetTimer(
 				PersistenceSpeedCheckTimer,
 				this,
 				&ASpeedTrap::PersistentSpeedCheck,
 				0.5f,
 				true
-				);
+				);*/
 		}
 		else if (PawnSpeed > SpeedUpperLimit)
 		{

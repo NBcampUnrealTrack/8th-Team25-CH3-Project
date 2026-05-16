@@ -8,6 +8,7 @@
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "TimerManager.h"
+#include "Manager/SensorSubSystem.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogCameraSensor, Log, All);
 
@@ -84,6 +85,12 @@ void UCameraSceneComponent::InitializeCapture()
 		StartCaptureTimer();
 	}
 
+	USensorSubSystem* SensorSubSystem = GetWorld()->GetSubsystem<USensorSubSystem>();
+	if (SensorSubSystem)
+	{
+		SensorSubSystem->OnCameraPresetChanged.AddUObject(this,&UCameraSceneComponent::ApplyPreset);
+		SensorSubSystem->OnSetCameraHz.AddUObject(this,&UCameraSceneComponent::SetCaptureRate);
+	}
 	//카메라 내부 광학 설정 값
 	UE_LOG(LogCameraSensor, Log, TEXT("CameraSensor initialized: %dx%d @ %.0f Hz, FOV %.0f°"),
 		Intrinsics.ImageWidth, Intrinsics.ImageHeight, Intrinsics.FrameRate, Intrinsics.FOVDegrees);
@@ -387,6 +394,8 @@ void UCameraSceneComponent::ApplyPreset(ECameraSensorPreset NewPreset)
 	default:
 		break;
 	}
+	
+	RefreshSettings();
 }
 
 //카메라 프레임 저장 파이프라인

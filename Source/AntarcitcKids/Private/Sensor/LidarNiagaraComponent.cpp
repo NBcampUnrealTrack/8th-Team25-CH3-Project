@@ -15,7 +15,8 @@ ULidarNiagaraComponent::ULidarNiagaraComponent()
 
 void ULidarNiagaraComponent::RenderPointCloudNiagara(const FLidarPointCloudData& PointCloud)
 {
-	if (!GetSystemInstance()) return;
+	
+	
 	DeactivateImmediate(); 
 	const int32 IntensityCount = PointCloud.Intensities.Num();
 	const int32 PointCount = PointCloud.PointCount;
