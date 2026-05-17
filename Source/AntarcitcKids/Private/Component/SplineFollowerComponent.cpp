@@ -84,8 +84,10 @@ void USplineFollowerComponent::SetSpeedLimit(float SpeedLimitKMH)
 
 void USplineFollowerComponent::ClearSpeedLimit()
 {
+	if (!bHasActiveSpeedLimit) return;
+	
 	bHasActiveSpeedLimit = false;
-	UE_LOG(LogSplineFollower, Log, TEXT("Speed limit removed."));
+	UE_LOG(LogSplineFollower, Log, TEXT(">> ClearSpeedLimit CALLED"));
 }
 
 
