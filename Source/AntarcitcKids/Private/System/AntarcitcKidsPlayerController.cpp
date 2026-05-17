@@ -4,6 +4,7 @@
 #include "System/AntarcitcKidsPlayerController.h"
 #include "CityVehiclePawn.h"
 #include "Sensor/SensorViewrWidget.h"
+#include "Manager/QuestSubSystem.h"
 #include "EnhancedInputSubsystems.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
@@ -93,12 +94,19 @@ void AAntarcitcKidsPlayerController::FindAndBindVehicle()
 			
 			// HUD 바인딩
 			CreateAndBindCyberHUD();
+			
+			if (UQuestSubSystem* QuestSub = GetGameInstance()->GetSubsystem<UQuestSubSystem>())
+			{
+				QuestSub->SetVehiclePawn(VehiclePawn);
+			}
 		}
 		else
 		{
 			UE_LOG(LogAKPlayerController, Warning, TEXT("PlayerController: No ACityVehiclePawn found in world."));
 		}
 	}
+	
+	
 }
 
 void AAntarcitcKidsPlayerController::ToggleSensorView(UTextureRenderTarget2D* InCameraRT)
@@ -154,6 +162,7 @@ void AAntarcitcKidsPlayerController::CreateAndBindCyberHUD()
 	VehiclePawn->OnHUDSpeedUpdated.AddDynamic(this,    &AAntarcitcKidsPlayerController::OnHUDSpeedUpdated);
 	VehiclePawn->OnHUDSteeringUpdated.AddDynamic(this, &AAntarcitcKidsPlayerController::OnHUDSteeringUpdated);
 	VehiclePawn->OnHUDMissionUpdated.AddDynamic(this,  &AAntarcitcKidsPlayerController::OnHUDMissionUpdated);
+	VehiclePawn->OnHUDMissionRegistered.AddDynamic(this, &AAntarcitcKidsPlayerController::OnHUDMissionRegistered);
 	VehiclePawn->OnHUDTimerUpdated.AddDynamic(this,    &AAntarcitcKidsPlayerController::OnHUDTimerUpdated);
 	VehiclePawn->OnHUDGearUpdated.AddDynamic(this, &AAntarcitcKidsPlayerController::OnHUDGearUpdated);
 	VehiclePawn->OnHUDRPMUpdated.AddDynamic(this,  &AAntarcitcKidsPlayerController::OnHUDRPMUpdated);
@@ -167,9 +176,27 @@ void AAntarcitcKidsPlayerController::OnHUDSteeringUpdated(float LeftAngle, float
 {
 	
 }
-void AAntarcitcKidsPlayerController::OnHUDMissionUpdated(int32 MissionIndex, bool bCompleted)
+void AAntarcitcKidsPlayerController::OnHUDMissionUpdated(int32 MissionIndex, bool bCompleted, FName QuestName)
 {
-	
+	if (!CyberHUDWidget) return;
+
+	UFunction* Func = CyberHUDWidget->FindFunction(FName("OnMissionCompleted"));
+	if (Func)
+	{
+		struct { int32 MissionIndex; bool bCompleted; FName QuestName; } Params = { MissionIndex, bCompleted, QuestName };
+		CyberHUDWidget->ProcessEvent(Func, &Params);
+	}
+}
+void AAntarcitcKidsPlayerController::OnHUDMissionRegistered(int32 MissionIndex, FName QuestName)
+{
+	if (!CyberHUDWidget) return;
+
+	UFunction* Func = CyberHUDWidget->FindFunction(FName("OnMissionRegistered"));
+	if (Func)
+	{
+		struct { int32 MissionIndex; FName QuestName; } Params = { MissionIndex, QuestName };
+		CyberHUDWidget->ProcessEvent(Func, &Params);
+	}
 }
 void AAntarcitcKidsPlayerController::OnHUDTimerUpdated(float RemainingSeconds)
 {

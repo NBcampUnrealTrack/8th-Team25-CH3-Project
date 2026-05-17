@@ -34,6 +34,8 @@ public:
 	
 	FQuestCompletedEvent GetQuestCompletedEvent() { return QuestCompletedEvent;}
 	
+	FQuestInfo GetCurrentQuestInfo() { return CurrentQuestInfo; }
+	
 protected:
 	EQuestClass QuestClass;
 	FQuestInfo CurrentQuestInfo;

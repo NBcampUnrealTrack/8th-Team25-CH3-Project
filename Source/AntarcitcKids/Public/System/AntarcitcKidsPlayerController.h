@@ -82,7 +82,9 @@ private:
 	UFUNCTION() 
 	void OnHUDSteeringUpdated(float LeftAngle, float RightAngle);
 	UFUNCTION() 
-	void OnHUDMissionUpdated(int32 MissionIndex, bool bCompleted);
+	void OnHUDMissionUpdated(int32 MissionIndex, bool bCompleted, FName QuestName);
+	UFUNCTION()
+	void OnHUDMissionRegistered(int32 MissionIndex, FName QuestName);
 	UFUNCTION() 
 	void OnHUDTimerUpdated(float RemainingSeconds);
 	UFUNCTION() 

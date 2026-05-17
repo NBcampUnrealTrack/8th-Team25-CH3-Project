@@ -8,7 +8,7 @@
 #include "Manager/QuestsTypes.h"
 #include "QuestSubSystem.generated.h"
 
-
+class ACityVehiclePawn; //HUD연결용
 class UQuestBase;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnQuestListChange, FQuestListChange)
@@ -20,6 +20,10 @@ class ANTARCITCKIDS_API UQuestSubSystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 	
 public:
+	// HUD 연결용
+	UFUNCTION(BlueprintCallable)
+	void SetVehiclePawn(ACityVehiclePawn* InPawn);
+	
 	//서브 시스템의 UI 변화
 	FOnQuestListChange OnQuestListChange;
 	
@@ -33,6 +37,10 @@ public:
 	TArray<UQuestBase*> GetCompletedQuestList() { return CompletedQuestsList;}
 	
 private:
+	// HUD 연결용
+	UPROPERTY()
+	TWeakObjectPtr<ACityVehiclePawn> CachedVehiclePawn;
+	
 	TArray<UQuestBase*> QuestsList;
 	TArray<UQuestBase*> CompletedQuestsList;
 	FQuestListChange QuestListChangeStruct;

@@ -78,6 +78,9 @@ void ACityVehiclePawn::DoThrottle(float ThrottleValue)
 {
 	ChaosVehicleMovement->SetThrottleInput(ThrottleValue);
 	ChaosVehicleMovement->SetBrakeInput(0.0f);
+	BrakeLights(false);
+	
+	UE_LOG(LogTemp, Warning, TEXT("Throttle=%.3f"), ThrottleValue);
 }
 
 void ACityVehiclePawn::DoFullStop()
@@ -122,6 +125,9 @@ void ACityVehiclePawn::DoBrake(float BrakeValue)
 {
 	ChaosVehicleMovement->SetBrakeInput(BrakeValue);
 	ChaosVehicleMovement->SetThrottleInput(0.0f);
+	BrakeLights(BrakeValue > 0.f);
+	
+	UE_LOG(LogTemp, Warning, TEXT("Brake=%.3f"), BrakeValue);
 }
 
 void ACityVehiclePawn::DoBrakeStart()
@@ -376,9 +382,14 @@ void ACityVehiclePawn::FlippedCheck()
 	*/
 }
 
-void ACityVehiclePawn::CompleteMission(int32 MissionIndex)
+void ACityVehiclePawn::CompleteMission(int32 MissionIndex, FName QuestName)
 {
-	OnHUDMissionUpdated.Broadcast(MissionIndex, true);
+	OnHUDMissionUpdated.Broadcast(MissionIndex, true, QuestName);
+}
+
+void ACityVehiclePawn::RegisterMission(int32 MissionIndex, FName QuestName)
+{
+	OnHUDMissionRegistered.Broadcast(MissionIndex, QuestName);
 }
 
 void ACityVehiclePawn::StartMissionTimer(float TotalSeconds)

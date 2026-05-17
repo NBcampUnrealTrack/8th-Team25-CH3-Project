@@ -3,7 +3,7 @@
 
 #include "Manager/QuestSubSystem.h"
 #include "Manager/QuestSubSystem.h"
-
+#include "CityVehiclePawn.h"
 #include "AnimNodes/AnimNode_RandomPlayer.h"
 #include "EntitySystem/MovieSceneEntitySystemRunner.h"
 #include "Manager/QuestBase.h"
@@ -12,6 +12,17 @@
 UQuestSubSystem::UQuestSubSystem()
 {
 	OnLoadQuest();
+}
+
+void UQuestSubSystem::SetVehiclePawn(ACityVehiclePawn* InPawn)
+{
+	CachedVehiclePawn = InPawn;
+	
+	for (int32 i = 0; i < QuestsList.Num(); i++)
+	{
+		FName QuestName = QuestsList[i]->GetCurrentQuestInfo().QuestName;
+		CachedVehiclePawn->RegisterMission(i, QuestName);
+	}
 }
 
 void UQuestSubSystem::OnRegisterQuest(UQuestBase* RegisterQuest)
@@ -38,6 +49,19 @@ void UQuestSubSystem::OnQuestsCompleted(FQuestCompletedEvent& QuestCompletedEven
 	
 	OnQuestListChange.Broadcast(QuestListChangeStruct);
 	
+	if (CachedVehiclePawn.IsValid())
+	{
+		// QuestID(FName)를 미션 인덱스로 쓰기 위해 변환
+		// DataTable의 RowName이 곧 QuestID이므로 인덱스 기반으로 매핑 필요
+		int32 MissionIndex = QuestsList.IndexOfByPredicate([&](UQuestBase* Q){
+			return Q->GetQuestCompletedEvent().QuestID == QuestCompletedEvent.QuestID;
+		});
+        
+		if (MissionIndex != INDEX_NONE)
+		{
+			CachedVehiclePawn->CompleteMission(MissionIndex, QuestCompletedEvent.QuestID);
+		}
+	}
 	
 }
 
@@ -61,3 +85,5 @@ void UQuestSubSystem::OnLoadQuest()
 		}
 	}
 }
+
+

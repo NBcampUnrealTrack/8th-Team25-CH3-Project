@@ -40,8 +40,8 @@ ACyberTruckVehiclePawn::ACyberTruckVehiclePawn()
 	GetChaosVehicleMovement()->TransmissionSetup.bUseAutomaticGears = true;
 	GetChaosVehicleMovement()->TransmissionSetup.bUseAutoReverse = true;
 	GetChaosVehicleMovement()->TransmissionSetup.FinalRatio = 2.81f;
-	GetChaosVehicleMovement()->TransmissionSetup.ChangeUpRPM = 4500.0f;
-	GetChaosVehicleMovement()->TransmissionSetup.ChangeDownRPM = 1500.0f;
+	GetChaosVehicleMovement()->TransmissionSetup.ChangeUpRPM = 3000.0f;
+	GetChaosVehicleMovement()->TransmissionSetup.ChangeDownRPM = 1200.0f;
 	GetChaosVehicleMovement()->TransmissionSetup.GearChangeTime = 0.2f;
 	GetChaosVehicleMovement()->TransmissionSetup.TransmissionEfficiency = 0.9f;
 	

@@ -9,7 +9,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDSpeedUpdated, float, SpeedKMH);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHUDSteeringUpdated, float, LeftAngle, float, RightAngle);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHUDMissionUpdated, int32, MissionIndex, bool, bCompleted);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnHUDMissionUpdated, int32, MissionIndex, bool, bCompleted, FName, QuestName);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHUDMissionRegistered, int32, MissionIndex, FName, QuestName);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDTimerUpdated, float, RemainingSeconds);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDGearUpdated, FText, GearText);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDRPMUpdated, float, CurrentRPM);
@@ -43,6 +44,9 @@ public:
 	FOnHUDMissionUpdated OnHUDMissionUpdated;
 
 	UPROPERTY(BlueprintAssignable, Category="HUD")
+	FOnHUDMissionRegistered OnHUDMissionRegistered;
+	
+	UPROPERTY(BlueprintAssignable, Category="HUD")
 	FOnHUDTimerUpdated OnHUDTimerUpdated;
 
 	UPROPERTY(BlueprintAssignable, Category="HUD")
@@ -53,7 +57,10 @@ public:
 	
 	// HUD API
 	UFUNCTION(BlueprintCallable, Category="HUD|Mission")
-	void CompleteMission(int32 MissionIndex);
+	void CompleteMission(int32 MissionIndex, FName QuestName);
+	
+	UFUNCTION(BlueprintCallable, Category="HUD|Mission")
+	void RegisterMission(int32 MissionIndex, FName QuestName);
 
 	UFUNCTION(BlueprintCallable, Category="HUD|Timer")
 	void StartMissionTimer(float TotalSeconds);
