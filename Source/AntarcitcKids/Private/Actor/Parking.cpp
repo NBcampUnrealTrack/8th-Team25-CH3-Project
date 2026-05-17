@@ -3,7 +3,7 @@
 
 
 #include "Actor/Parking.h"
-
+#include "CityVehiclePawn.h"
 #include "Manager/QuestBase.h"
 #include "Math/UnitConversion.h"
 
@@ -22,7 +22,11 @@ void AParking::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherA
                              int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	Super::OnItemOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-	StartParkingCheck(OtherActor);
+	
+	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
+	{
+		StartParkingCheck(OtherActor);
+	}
 	
 }
 
@@ -30,8 +34,11 @@ void AParking::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 	int32 OtherBodyIndex)
 {
 	Super::OnItemEndOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex);
-	GetWorld()->GetTimerManager().ClearTimer(IsCorrectParking);
 	
+	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(IsCorrectParking);	
+	}
 }
 
 void AParking::SetQuestInfo()
@@ -56,8 +63,6 @@ void AParking::CheckParking(AActor* Player)
 		return;
 	}
 	
-	
-	
 	float AngleDiff = FMath::RadiansToDegrees(
 		FMath::Acos(FMath::Clamp(
 			FVector::DotProduct(
@@ -71,11 +76,9 @@ void AParking::CheckParking(AActor* Player)
 	{
 		if (Quest && Quest->IsQuestEnd())
 			Quest->OnSuccess();
+		
+		GetWorld()->GetTimerManager().ClearTimer(IsCorrectParking);
 	}
-
-	
-	
-	
 }
 
 void AParking::StartParkingCheck(AActor* Player)
