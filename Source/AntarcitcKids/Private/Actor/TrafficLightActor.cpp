@@ -64,6 +64,12 @@ void ATrafficLightActor::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, A
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	Super::OnItemEndOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex);
+	
+	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
+	{
+		OnTrafficLightCleared.Broadcast();
+		//UE_LOG(LogTemp, Warning, TEXT(">>> Vehicle EXITED traffic light"));
+	}
 }
 
 void ATrafficLightActor::SetTrafficLightState(ETrafficLightState NewState)
@@ -75,6 +81,7 @@ void ATrafficLightActor::SetTrafficLightState(ETrafficLightState NewState)
 	GreenLight->SetVisibility(NewState == ETrafficLightState::Green);
 	
 	OnStateChanged.Broadcast(NewState);
+	//UE_LOG(LogTemp, Warning, TEXT(">>> TrafficLight state -> %d"), (int32)NewState);
 }
 
 void ATrafficLightActor::SetQuestInfo()

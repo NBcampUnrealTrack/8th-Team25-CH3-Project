@@ -30,8 +30,13 @@ public:
 	ATrafficLightActor();
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTrafficLightStateChanged, ETrafficLightState, NewState);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTrafficLightCleared);
 	
+	UPROPERTY(BlueprintAssignable)
 	FOnTrafficLightStateChanged OnStateChanged;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnTrafficLightCleared OnTrafficLightCleared;
 
 protected:
 	virtual void BeginPlay() override;
