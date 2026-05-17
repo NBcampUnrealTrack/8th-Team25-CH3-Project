@@ -17,6 +17,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Quest")
 	float LimitAngle;
 	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnParkingZoneEntered, AParking*, Zone);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnParkingZoneEntered OnParkingZoneEntered;
+	
 protected:
 	
 	virtual void BeginPlay() override;

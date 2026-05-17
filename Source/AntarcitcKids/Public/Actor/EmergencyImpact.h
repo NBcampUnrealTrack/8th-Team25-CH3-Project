@@ -14,10 +14,17 @@ class ANTARCITCKIDS_API AEmergencyImpact : public ATriggerMissionBase
 {
 	GENERATED_BODY()
 	
-	
-	
 public:
 	AEmergencyImpact();
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEmergencyDetected);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEmergencyCleared);
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnEmergencyDetected OnEmergencyDetected;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnEmergencyCleared OnEmergencyCleared;
 	
 	UPROPERTY(VisibleAnywhere,Category = "Impact")
 	USphereComponent* ImpactCollision;

@@ -28,6 +28,10 @@ class ANTARCITCKIDS_API ATrafficLightActor : public ATriggerMissionBase
 
 public:
 	ATrafficLightActor();
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTrafficLightStateChanged, ETrafficLightState, NewState);
+	
+	FOnTrafficLightStateChanged OnStateChanged;
 
 protected:
 	virtual void BeginPlay() override;
