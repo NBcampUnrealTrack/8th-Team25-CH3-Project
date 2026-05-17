@@ -32,20 +32,49 @@ class ANTARCITCKIDS_API USplineFollowerComponent : public UActorComponent
 public:
 	USplineFollowerComponent();
 	
+	// ────────────────────────────────────────────────────────
+	// 외부(AI Controller) 명령 인터페이스
+	// ────────────────────────────────────────────────────────
 	
-	// 언리얼 컨벤션: Request~는 "외부에서 요청"을 의미
-	// 즉시 정차
+	// 즉시 정지
 	UFUNCTION(BlueprintCallable, Category = "SplineFollower|Commands")
-	void HaltDriving();
+	void EmergencyStop();
 
+	// 부드럽게 감속 후 정지
+	UFUNCTION(BlueprintCallable, Category = "SplineFollower|Commands")
+	void SmoothStop();
+	
 	// 주행 재개
 	UFUNCTION(BlueprintCallable, Category = "SplineFollower|Commands")
 	void ResumeDriving();
 
+	// 일시적 속도 제한 (km/h -> cm/s로 변환)
+	UFUNCTION(BlueprintCallable, Category = "SplineFollower|Commands")
+	void SetSpeedLimit(float SpeedLimitKMH);
+	
+	UFUNCTION(BlueprintCallable, Category = "SplineFollower|Commands")
+	void ClearSpeedLimit();
+
+	// ────────────────────────────────────────────────────────
+	// Getter
+	// ────────────────────────────────────────────────────────
+	
 	// 현재 추종 상태 조회
 	UFUNCTION(BlueprintPure, Category = "SplineFollower|State")
-	bool IsDrivingHalted() const { return FollowState == ESplineFollowState::Stopped; }
-
+	bool IsEmergencyStopping() const { return FollowState == ESplineFollowState::EmergencyStopping; }
+	
+	UFUNCTION(BlueprintPure, Category = "SplineFollower|State")
+	bool IsSmoothlyStopping() const { return FollowState == ESplineFollowState::SmoothStopping; }
+	
+	UFUNCTION(BlueprintPure, Category = "SplineFollower|State")
+	bool IsAnyStopActive() const 
+	{ 
+		return (FollowState == ESplineFollowState::EmergencyStopping) || (FollowState == ESplineFollowState::SmoothStopping); 
+	}
+	
+	UFUNCTION(BlueprintPure, Category = "SplineFollower|State")
+	float GetActiveSpeedLimit() const { return ActiveSpeedLimit; }
+	
 protected:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -165,14 +194,11 @@ private:
 	
 	enum class ESplineFollowState : uint8
 	{
-		Driving,    // 정상 주행
-		Stopped,    // 외부 요청 또는 도로 끝 도달로 정차
-		
-		//SlowingDown,        // 감속 중 (스쿨존 진입, 신호등 노란불)
-		//Paused,             // 일시 정지 후 재개 대기 (긴급 장애물 사라짐 기다리기)
-		//Yielding,           // 양보 (교차로 다른 차량 통과 대기)
-		//Reversing,          // 후진 (주차 시나리오)
-		//Parking,            // 주차 동작 중
+		Driving,			// 정상 주행
+		EmergencyStopping,	// 즉시 정차
+		SmoothStopping,		// 감속 후 정차
+		//Reversing,        // 후진 (주차 시나리오)
+		//Parking,          // 주차 동작 중
 	};
 	
 	ESplineFollowState FollowState;
@@ -196,4 +222,10 @@ private:
 	
 	// 보간된 목표 속도 (감속/가속 보간용)
 	float SmoothedTargetSpeed;
+	
+	// 외부에서 설정한 활성 속도 제한 활성 여부
+	bool bHasActiveSpeedLimit;
+	
+	// 외부에서 설정한 활성 속도 제한 (cm/s)
+	float ActiveSpeedLimit;
 };

@@ -31,6 +31,8 @@ USplineFollowerComponent::USplineFollowerComponent()
 	, SplineTotalLength(0.f)
 	, bSplineIsClosedLoop(false)
 	, SmoothedTargetSpeed(0.f)
+	, bHasActiveSpeedLimit(false)
+	, ActiveSpeedLimit(0.f)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	
@@ -38,33 +40,53 @@ USplineFollowerComponent::USplineFollowerComponent()
 	PrimaryComponentTick.bStartWithTickEnabled = false;
 }
 
-void USplineFollowerComponent::HaltDriving()
+void USplineFollowerComponent::EmergencyStop()
 {
-	if (FollowState != ESplineFollowState::Stopped)
+	if (FollowState != ESplineFollowState::EmergencyStopping)
 	{
-		FollowState = ESplineFollowState::Stopped;
-		UE_LOG(LogSplineFollower, Log, TEXT("HaltDriving: Transition to Stopped state."));
+		FollowState = ESplineFollowState::EmergencyStopping;
+		UE_LOG(LogSplineFollower, Log, TEXT("EmergencyStop: Transition to EmergencyStopping state."));
+	}
+}
+
+void USplineFollowerComponent::SmoothStop()
+{
+	if (!IsAnyStopActive())
+	{
+		FollowState = ESplineFollowState::SmoothStopping;
+		UE_LOG(LogSplineFollower, Log, TEXT("SmoothStop: Transition to SmoothStopping state."));
 	}
 }
 
 void USplineFollowerComponent::ResumeDriving()
 {
 	// 루프가 아닌데, 경로 끝에 다다른 경우, 무시
-	if (FollowState == ESplineFollowState::Stopped)
+	if (IsAnyStopActive())
 	{
-		if (bSplineIsClosedLoop  || ProgressDistance < SplineTotalLength - KINDA_SMALL_NUMBER)
+		if (bSplineIsClosedLoop || ProgressDistance < SplineTotalLength - KINDA_SMALL_NUMBER)
 		{
 			FollowState = ESplineFollowState::Driving;
 			UE_LOG(LogSplineFollower, Log, TEXT("ResumeDriving: Transition to Driving state."));
 		}
-		else
-		{
-			UE_LOG(LogSplineFollower, Log, TEXT("ResumeDriving: Ignored."));
-		}
 	}
 }
 
+void USplineFollowerComponent::SetSpeedLimit(float SpeedLimitKMH)
+{
+	// km/h → cm/s 변환 (1 km/h ≈ 27.78 cm/s)
+	ActiveSpeedLimit = SpeedLimitKMH / 0.036f;
+	bHasActiveSpeedLimit = true;
+	
+	UE_LOG(LogSplineFollower, Log,
+		TEXT("SetSpeedLimit: %.0f km/h (%.0f cm/s)"),
+		SpeedLimitKMH, ActiveSpeedLimit);
+}
 
+void USplineFollowerComponent::ClearSpeedLimit()
+{
+	bHasActiveSpeedLimit = false;
+	UE_LOG(LogSplineFollower, Log, TEXT("Speed limit removed."));
+}
 
 
 void USplineFollowerComponent::BeginPlay()
@@ -218,9 +240,7 @@ void USplineFollowerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	if (! OwnerPawn.IsValid() || !CurrentSpline.IsValid()) return;
 	
 	// ── 외부 명령 상태 처리 ──────────────────────────────────────
-	// HaltDriving()으로 정지 상태가 된 경우 — 차량을 정차시키고 조기 종료
-	// 신호등/장애물 시나리오 (예정)
-	if (FollowState == ESplineFollowState::Stopped)
+	if (FollowState == ESplineFollowState::EmergencyStopping)
 	{
 		OwnerPawn->DoFullStop();
 		return;
@@ -234,7 +254,7 @@ void USplineFollowerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 		OwnerPawn->DoFullStop();
 		
 		// NextRoads가 있으면 여기서 다음 도로로 전환 (현재는 정차)
-		FollowState = ESplineFollowState::Stopped;
+		FollowState = ESplineFollowState::EmergencyStopping;
 		UE_LOG(LogSplineFollower, Log, TEXT("Tick: Reached end of road. Stopping."));
 		return;
 	}
@@ -383,13 +403,26 @@ float USplineFollowerComponent::ComputeThrottleBrakeCommand(float DeltaTime, flo
 	
 	const float Velocity = OwnerPawn->GetForwardSpeed();
 	
-	// ── 속도 계산 ───────────────────────────────────────────────
+	// ── 곡률 기반 속도 계산 ──────────────────────────────────────
 	// 현재와 전방 곡률 중 더 엄격한 제한 적용 → 커브 진입 전 미리 감속
 	
-	const float SpeedLimit = FMath::Min(
+	const float CurveSpeedLimit = FMath::Min(
 		ComputeCurveSpeedLimit(CurvHere),
 		ComputeCurveSpeedLimit(CurvAhead)
 	);
+	
+	// ── 외부(AI) 속도 제한과 합성 ────────────────────────────────
+	float SpeedLimit = CurveSpeedLimit;
+	
+	if (bHasActiveSpeedLimit)
+	{
+		SpeedLimit = FMath::Min(SpeedLimit, ActiveSpeedLimit);
+	}
+	
+	if (FollowState == ESplineFollowState::SmoothStopping)
+	{
+		SpeedLimit = 0.f;
+	}
 
 	// ── 목표 속도 보간 ──────────────────────────────────────────
 	// 감속은 빠르게(DecelRate), 가속은 천천히(AccelRate) 보간

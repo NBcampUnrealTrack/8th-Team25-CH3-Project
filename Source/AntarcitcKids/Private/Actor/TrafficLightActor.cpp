@@ -72,6 +72,8 @@ void ATrafficLightActor::SetTrafficLightState(ETrafficLightState NewState)
 	RedLight->SetVisibility(NewState == ETrafficLightState::Red);
 	YellowLight->SetVisibility(NewState == ETrafficLightState::Yellow);
 	GreenLight->SetVisibility(NewState == ETrafficLightState::Green);
+	
+	OnStateChanged.Broadcast(NewState);
 }
 
 void ATrafficLightActor::SetQuestInfo()
