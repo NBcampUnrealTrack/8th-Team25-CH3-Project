@@ -42,9 +42,9 @@ void ATrafficLightActor::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AAct
 
 	if (!IsValid(OtherActor)) return;
 	
-	if (ACityVehiclePawn* Player = Cast<ACityVehiclePawn>(OtherActor))
+	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
 	{
-		if (!IsValid(Player)) return;
+		if (!IsValid(Vehicle)) return;
 		if (CurrentState == ETrafficLightState::Red)
 		{
 			if (Quest && Quest->IsQuestEnd())
@@ -55,8 +55,9 @@ void ATrafficLightActor::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AAct
 			if (Quest && Quest->IsQuestEnd())
 				Quest->OnSuccess();
 		}
+		
+		OnStateChanged.Broadcast(CurrentState);
 	}
-	
 }
 
 void ATrafficLightActor::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
