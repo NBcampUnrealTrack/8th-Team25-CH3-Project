@@ -6,7 +6,6 @@
 #include "StreetLightSource.generated.h"
 
 class USpotLightComponent;
-class UPointLightComponent;
 
 UCLASS()
 class ANTARCITCKIDS_API AStreetLightSource : public AActor
@@ -26,21 +25,12 @@ protected:
 	TObjectPtr<USceneComponent> Root;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Street Light")
-	TObjectPtr<UPointLightComponent> PointLight;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Street Light")
 	TObjectPtr<USpotLightComponent>	SpotLight;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Street Light|Settings")
-	bool bUsePointLight = true;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Street Light|Settings")
 	bool bUseSpotLight = true;
 	
 	// 빛의 강도
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Street Light|Settings")
-	float PointLightIntensity = 3000.f;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Street Light|Settings")
 	float SpotLightIntensity = 8000.f;
 	
