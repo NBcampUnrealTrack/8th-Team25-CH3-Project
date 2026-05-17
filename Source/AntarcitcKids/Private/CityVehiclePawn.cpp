@@ -80,7 +80,7 @@ void ACityVehiclePawn::DoThrottle(float ThrottleValue)
 	ChaosVehicleMovement->SetBrakeInput(0.0f);
 	BrakeLights(false);
 	
-	UE_LOG(LogTemp, Warning, TEXT("Throttle=%.3f"), ThrottleValue);
+	//UE_LOG(LogTemp, Warning, TEXT("Throttle=%.3f"), ThrottleValue);
 }
 
 void ACityVehiclePawn::DoFullStop()
@@ -127,7 +127,7 @@ void ACityVehiclePawn::DoBrake(float BrakeValue)
 	ChaosVehicleMovement->SetThrottleInput(0.0f);
 	BrakeLights(BrakeValue > 0.f);
 	
-	UE_LOG(LogTemp, Warning, TEXT("Brake=%.3f"), BrakeValue);
+	//UE_LOG(LogTemp, Warning, TEXT("Brake=%.3f"), BrakeValue);
 }
 
 void ACityVehiclePawn::DoBrakeStart()
