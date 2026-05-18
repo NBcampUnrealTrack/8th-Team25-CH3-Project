@@ -11,6 +11,8 @@ AParking::AParking()
 {
 	// [Note] SpeedTrapQuest 추가되면 아래 주석 제거하기
 	// QuestClass = UParkingQuest::StaticClass();
+	TimeOverLimit = 90.0f;
+	
 }
 
 void AParking::BeginPlay()
@@ -39,6 +41,14 @@ void AParking::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 	{
 		GetWorld()->GetTimerManager().ClearTimer(IsCorrectParking);	
 	}
+}
+
+void AParking::OnAreaOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	Super::OnAreaOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+	CheckTimeOver();
+
 }
 
 void AParking::SetQuestInfo()
@@ -79,6 +89,23 @@ void AParking::CheckParking(AActor* Player)
 		
 		GetWorld()->GetTimerManager().ClearTimer(IsCorrectParking);
 	}
+}
+
+void AParking::CheckTimeOver()
+{
+	GetWorld()->GetTimerManager().SetTimer(
+	IsTimeOver,
+	this,
+	&AParking::TimeOver,
+	TimeOverLimit,
+	false
+	);
+}
+
+void AParking::TimeOver()
+{
+	if (Quest && Quest->IsQuestEnd())
+		Quest->OnFailed();
 }
 
 void AParking::StartParkingCheck(AActor* Player)
