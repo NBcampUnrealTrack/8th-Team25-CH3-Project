@@ -40,6 +40,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision")
 	UBoxComponent* Collision;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision")
+	UBoxComponent* AreaCollision;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Niagara")
 	UNiagaraSystem* SuccessEffect;
 	
@@ -70,6 +73,22 @@ protected:
 
 	UFUNCTION()
 	virtual void OnItemEndOverlap(
+		UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex);
+	
+	UFUNCTION()
+	virtual void OnAreaOverlap(
+		UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult);
+
+	UFUNCTION()
+	virtual void OnAreaEndOverlap(
 		UPrimitiveComponent* OverlappedComp,
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComp,

@@ -37,12 +37,29 @@ protected:
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex) override;
 	
+	virtual void OnAreaOverlap(
+		UPrimitiveComponent* OverlappedComp, 
+		AActor* OtherActor, 
+		UPrimitiveComponent* OtherComp, 
+		int32 OtherBodyIndex, 
+		bool bFromSweep, 
+		const FHitResult& SweepResult) override;
+	
 	virtual void SetQuestInfo() override;
 	
 	void CheckParking(AActor* Actor);
+	void CheckTimeOver();
+	void TimeOver();
 	void StartParkingCheck(AActor* Actor);
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Quest")
+	float TimeOverLimit;
 	
 protected:
 	FTimerHandle IsCorrectParking;
+	FTimerHandle IsTimeOver;
+	
+private:
+	
 	
 };

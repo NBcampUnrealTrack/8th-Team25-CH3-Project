@@ -21,6 +21,11 @@ ATriggerMissionBase::ATriggerMissionBase()
 	Collision->SetupAttachment(SceneRoot);
 	Collision->SetGenerateOverlapEvents(true);
 	
+	AreaCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("AreaCollision"));
+	AreaCollision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+	AreaCollision->SetupAttachment(SceneRoot);
+	AreaCollision->SetGenerateOverlapEvents(true);
+	
 	NiagaraAnchor = CreateDefaultSubobject<USceneComponent>(TEXT("Anchor"));
 	NiagaraAnchor->SetupAttachment(SceneRoot);
 	
@@ -57,6 +62,16 @@ void ATriggerMissionBase::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, 
 	{
 		OnVehicleExited.Broadcast(this, Vehicle);
 	}
+}
+
+void ATriggerMissionBase::OnAreaOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+}
+
+void ATriggerMissionBase::OnAreaEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
 }
 
 void ATriggerMissionBase::Tick(float DeltaTime)

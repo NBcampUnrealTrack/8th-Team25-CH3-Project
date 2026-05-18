@@ -33,9 +33,10 @@ public:
 	TArray<UQuestBase*> GetCompletedQuestList() { return CompletedQuestsList;}
 	
 private:
+	FQuestListChange QuestListChangeStruct;
+	
 	TArray<UQuestBase*> QuestsList;
 	TArray<UQuestBase*> CompletedQuestsList;
-	FQuestListChange QuestListChangeStruct;
 	UDataTable* StartMissionList;
 	//데이터 로드된 데이터만 들고 있을 수 있도록 변경
 	
