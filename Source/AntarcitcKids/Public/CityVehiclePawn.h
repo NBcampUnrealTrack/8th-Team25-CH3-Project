@@ -5,6 +5,7 @@
 
 #include "CoreMinimal.h"
 #include "WheeledVehiclePawn.h"
+#include "Components/SceneCaptureComponent2D.h"
 #include "CityVehiclePawn.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDSpeedUpdated, float, SpeedKMH);
@@ -161,6 +162,18 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> BackCamera;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
+	TObjectPtr<USceneCaptureComponent2D> LeftMirrorCapture;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
+	TObjectPtr<USceneCaptureComponent2D> RightMirrorCapture;
+
+	UPROPERTY(EditAnywhere, Category="Mirror")
+	TObjectPtr<UTextureRenderTarget2D> LeftMirrorRenderTarget;
+
+	UPROPERTY(EditAnywhere, Category="Mirror")
+	TObjectPtr<UTextureRenderTarget2D> RightMirrorRenderTarget;
+	
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
 	//TObjectPtr<UCameraSceneComponent> CameraSensor;
 
@@ -191,8 +204,6 @@ private:
 	UPROPERTY(EditAnywhere, Category="Flip Check")
 	float FlipCheckMinDot = -0.2f;
 	
-	
-private:
 	bool bFrontCameraActive = false;
 	bool bPreviousFlipCheck = false;
 	bool bIsManuallyStopped = false;

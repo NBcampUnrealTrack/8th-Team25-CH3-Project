@@ -13,6 +13,8 @@
 #include "ChaosWheeledVehicleMovementComponent.h"
 #include "TimerManager.h"
 #include "Component/SplineFollowerComponent.h"
+#include "Components/SceneCaptureComponent2D.h"
+#include "Engine/TextureRenderTarget2D.h"
 #include "Sensor/CameraSceneComponent.h"
 #include "Sensor/LidarSceneComponent.h"
 #include "DataLogger/AgentDataLogger.h"
@@ -31,6 +33,12 @@ ACityVehiclePawn::ACityVehiclePawn()
 	FrontCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Front Camera"));
 	FrontCamera->SetupAttachment(FrontSpringArm);
 	FrontCamera->bAutoActivate = false;
+	
+	LeftMirrorCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("LeftMirrorCapture"));
+	LeftMirrorCapture->SetupAttachment(GetMesh());
+
+	RightMirrorCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("RightMirrorCapture"));
+	RightMirrorCapture->SetupAttachment(GetMesh());
 	
 	BackSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Back Spring Arm"));
 	BackSpringArm->SetupAttachment(GetMesh());
