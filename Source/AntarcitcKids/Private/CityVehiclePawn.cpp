@@ -136,6 +136,11 @@ void ACityVehiclePawn::DoBrake(float BrakeValue)
 	BrakeLights(BrakeValue > 0.f);
 	
 	//UE_LOG(LogTemp, Warning, TEXT("Brake=%.3f"), BrakeValue);
+	
+	if (BrakeValue > 0.5f) // 급정거 카메라 무빙 브로드캐스트
+	{
+		OnEmergencyBrake.Broadcast(BrakeValue);
+	}
 }
 
 void ACityVehiclePawn::DoBrakeStart()

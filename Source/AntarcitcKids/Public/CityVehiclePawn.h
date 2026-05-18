@@ -15,6 +15,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHUDMissionRegistered, int32, Mis
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDTimerUpdated, float, RemainingSeconds);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDGearUpdated, FText, GearText);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDRPMUpdated, float, CurrentRPM);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEmergencyBrake, float, BrakeValue);// 급정거 카메라 무빙
 
 class UCameraComponent;
 class USpringArmComponent;
@@ -33,6 +34,10 @@ class ANTARCITCKIDS_API ACityVehiclePawn : public AWheeledVehiclePawn
 	
 public:
 	ACityVehiclePawn();
+	
+	// 급정거 카메라 무빙
+	UPROPERTY(BlueprintAssignable, Category="Camera")
+	FOnEmergencyBrake OnEmergencyBrake;
 	
 	// HUD 델리게이트
 	UPROPERTY(BlueprintAssignable, Category="HUD")
