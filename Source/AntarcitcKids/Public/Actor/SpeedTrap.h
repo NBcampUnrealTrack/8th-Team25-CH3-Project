@@ -53,11 +53,11 @@ protected:
 		const FHitResult& SweepResult) override;
 
 
-	/*virtual void OnItemEndOverlap(
+	virtual void OnItemEndOverlap(
 		UPrimitiveComponent* OverlappedComp,
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex) override;*/
+		int32 OtherBodyIndex) override;
 	
 	
 	UFUNCTION()

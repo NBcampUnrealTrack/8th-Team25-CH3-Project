@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "Manager/QuestBase.h"
 #include "CityVehiclePawn.h"
+#include "Camera/CameraComponent.h"
 
 ATriggerMissionBase::ATriggerMissionBase()
 {
@@ -25,6 +26,10 @@ ATriggerMissionBase::ATriggerMissionBase()
 	AreaCollision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
 	AreaCollision->SetupAttachment(SceneRoot);
 	AreaCollision->SetGenerateOverlapEvents(true);
+	
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	CameraComponent->SetupAttachment(SceneRoot);
+	
 	
 	NiagaraAnchor = CreateDefaultSubobject<USceneComponent>(TEXT("Anchor"));
 	NiagaraAnchor->SetupAttachment(SceneRoot);
@@ -52,6 +57,7 @@ void ATriggerMissionBase::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AAc
 	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
 	{
 		OnVehicleEntered.Broadcast(this, Vehicle);
+		
 	}
 }
 
