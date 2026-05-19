@@ -6,6 +6,7 @@
 #include "CoreMinimal.h"
 #include "WheeledVehiclePawn.h"
 #include "Components/SceneCaptureComponent2D.h"
+#include "Components/AudioComponent.h"
 #include "CityVehiclePawn.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDSpeedUpdated, float, SpeedKMH);
@@ -38,6 +39,20 @@ public:
 	// 급정거 카메라 무빙
 	UPROPERTY(BlueprintAssignable, Category="Camera")
 	FOnEmergencyBrake OnEmergencyBrake;
+	
+	UFUNCTION(BlueprintCallable, Category="Camera")
+	void TriggerEmergencyBrakeCamera(float BrakeValue);
+	
+	// 급정거 사운드
+	UPROPERTY(EditAnywhere, Category="Sound")
+	TArray<TObjectPtr<USoundBase>> BrakeSounds;
+	
+	// 사운드
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Sound", meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UAudioComponent> EngineAudioComponent;
+
+	UPROPERTY(EditAnywhere, Category="Sound")
+	TObjectPtr<USoundBase> EngineSound;
 	
 	// HUD 델리게이트
 	UPROPERTY(BlueprintAssignable, Category="HUD")
@@ -212,6 +227,7 @@ private:
 	bool bFrontCameraActive = false;
 	bool bPreviousFlipCheck = false;
 	bool bIsManuallyStopped = false;
+	bool bCameraTriggered = false;
 	
 	UFUNCTION()
 	void TickMissionTimer();
