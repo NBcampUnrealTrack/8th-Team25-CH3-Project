@@ -17,6 +17,8 @@ AEmergencyImpact::AEmergencyImpact()
 	ImpactCollision->SetGenerateOverlapEvents(true);
 	
 	ImpactCollision->OnComponentBeginOverlap.AddDynamic(this, &AEmergencyImpact::OnImpactOverlap);
+	
+	
 }
 
 void AEmergencyImpact::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -62,6 +64,28 @@ void AEmergencyImpact::OnImpactOverlap(UPrimitiveComponent* OverlappedComp, AAct
 		bIsImpact = true;
 	}
 }
+
+
+
+void AEmergencyImpact::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	StartLocation = GetActorLocation();
+	DestLocation = GetActorLocation() + GetActorForwardVector()* MoveDistance;
+}
+
+void AEmergencyImpact::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+}
+
+void AEmergencyImpact::MoveTo()
+{
+	/*SetActorLocation(FMath::Lerp(StartLocation,DestLocation))*/
+}
+
+
 
 
 

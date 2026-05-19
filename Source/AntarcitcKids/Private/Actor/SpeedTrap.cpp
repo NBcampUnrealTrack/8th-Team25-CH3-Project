@@ -47,7 +47,8 @@ void ASpeedTrap::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 	
 	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
 	{
-		Vehicle->OnHUDSpeedUpdated.AddDynamic(this,&ASpeedTrap::SetPawnSpeed); 
+		
+		Vehicle->OnHUDSpeedUpdated.AddUniqueDynamic(this,&ASpeedTrap::SetPawnSpeed); 
 		// [Note] SetPawnSpeed 등록만 하고, 아직 호출 안 됨
 		
 		PawnSpeed = Vehicle->GetCurrentSpeedKMH(); 
@@ -74,7 +75,7 @@ void ASpeedTrap::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 	}
 }
 
-/*void ASpeedTrap::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+void ASpeedTrap::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	Super::OnItemEndOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex);
@@ -84,7 +85,7 @@ void ASpeedTrap::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 	{
 		Vehicle->OnHUDSpeedUpdated.RemoveDynamic(this, &ASpeedTrap::SetPawnSpeed);
 		
-		if (bIsPersistence)
+		/*if (bIsPersistence)
 		{
 			GetWorld()->GetTimerManager().ClearTimer(PersistenceSpeedCheckTimer);	
 		}
@@ -95,9 +96,9 @@ void ASpeedTrap::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 				Quest->OnSuccess();
 		}
 	
-		OnSpeedLimitExited.Broadcast();
+		OnSpeedLimitExited.Broadcast();*/
 	}
-}*/
+}
 
 void ASpeedTrap::OnEndGateOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

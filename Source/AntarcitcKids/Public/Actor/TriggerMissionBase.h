@@ -13,6 +13,7 @@ class UBoxComponent;
 class UQuestBase;
 class UNiagaraSystem;
 class ACityVehiclePawn;
+class UCameraComponent;
 
 // 공통 신호: 차량 진입/이탈
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTriggerVehicleEntered, 
@@ -51,6 +52,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Quest")
 	TSubclassOf<UQuestBase> QuestClass;
+	
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Camera")
+	UCameraComponent* CameraComponent;
 	
 	UPROPERTY()
 	UQuestBase* Quest;
@@ -98,6 +102,7 @@ protected:
 	FQuestInfo QuestInfo;
 	
 	virtual void SetQuestInfo();
+	void OnFocusCamera();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

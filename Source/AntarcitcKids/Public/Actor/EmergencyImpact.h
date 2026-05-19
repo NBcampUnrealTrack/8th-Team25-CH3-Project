@@ -53,11 +53,28 @@ public:
 	const FHitResult& SweepResult);
 
 	
-
+	
+	virtual void BeginPlay() override; 
+	virtual void Tick(float DeltaSeconds) override;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Quest")
 	float ImpactDistance;
 
+	void MoveTo();
+
 private:
+	FTimerHandle MoveTimerHandle;
+	
 	bool bIsImpact;
+	
+	
+	FVector StartLocation;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Quest", meta=(AllowPrivateAccess = true))
+	FVector DestLocation;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Quest", meta=(AllowPrivateAccess = true))
+	float MoveDistance;
+	
+
 };
