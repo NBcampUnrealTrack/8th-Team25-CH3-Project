@@ -5,6 +5,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "EntitySystem/MovieSceneEntityLedger.h"
 #include "SplineFollowerComponent.generated.h"
 
 class ACityVehiclePawn;
@@ -48,13 +49,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SplineFollower|Commands")
 	void ResumeDriving();
 
-	// 일시적 속도 제한 (km/h -> cm/s로 변환)
+	// 도로의 기본 속도 설정 (도로 경계 진입 시 호출) - 일반도로 50, 고속도로 110, 주차장 10
+	UFUNCTION(BlueprintCallable, Category = "SplineFollower|Commands")
+	void SetNormalSpeed(float SpeedKMH);
+	
+	// 시나리오별 추가 속도 제한 (km/h -> cm/s로 내부 변환)
 	UFUNCTION(BlueprintCallable, Category = "SplineFollower|Commands")
 	void SetSpeedLimit(float SpeedLimitKMH);
 	
 	UFUNCTION(BlueprintCallable, Category = "SplineFollower|Commands")
 	void ClearSpeedLimit();
 
+	
 	// ────────────────────────────────────────────────────────
 	// Getter
 	// ────────────────────────────────────────────────────────
@@ -71,6 +77,9 @@ public:
 	{ 
 		return (FollowState == ESplineFollowState::EmergencyStopping) || (FollowState == ESplineFollowState::SmoothStopping); 
 	}
+	
+	UFUNCTION(BlueprintPure, Category = "SplineFollower|State")
+	float GetNormalSpeedKHM() const {return NormalSpeed * 0.036f; }
 	
 	UFUNCTION(BlueprintPure, Category = "SplineFollower|State")
 	float GetActiveSpeedLimit() const { return ActiveSpeedLimit; }
@@ -136,12 +145,18 @@ private:
 	
 	//────── Speed ─────────────────────────────────────────────────
 	
+	// 포인트 : 환경에서 만날 수 있는 모든 속도제한 요소보다 클 것. (변경 지양)
+	// 차량의 기계적 최대속도(cm/s) → 고속도로보다 충분히 크게 설정
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Speed", meta=(AllowPrivateAccess="true"))
-	float MaxSpeed;
-
+	float VehicleMaxSpeed;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Speed", meta=(AllowPrivateAccess="true"))
-	float MinSpeed;
-
+	float NormalSpeed;
+	
+	// 곡률 보정용 최저 속도 (급커브에서도 너무 느려지지 않게)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Speed", meta=(AllowPrivateAccess="true"))
+	float MinCurveSpeed;
+	
 	// (목표속도 - 현재속도) × ThrottleGain → 명령값
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Speed", meta=(AllowPrivateAccess="true"))
 	float ThrottleGain;
@@ -153,7 +168,18 @@ private:
 	// 가속 시 목표 속도 보간 속도 (천천히)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Speed", meta=(AllowPrivateAccess="true"))
 	float AccelRate;
+	
+	// 도로 속성 (cm/s)
+	// 고속도로, 자동차전용도로, 일반 도시 도로 등
+	float RoadNormalSpeed;
+	
+	// 외부에서 설정한 활성 속도 제한 (스쿨존, 공사존 등)
+	bool bHasActiveSpeedLimit;
+	float ActiveSpeedLimit;
 
+	// 보간된 목표 속도 (감속/가속 보간용)
+	float SmoothedTargetSpeed;
+	
 	//────── Steering ──────────────────────────────────────────────
     
 	// 기본 전방 주시 거리 (cm)
@@ -219,13 +245,4 @@ private:
 	
 	// 닫힌 루프 여부 캐시
 	bool bSplineIsClosedLoop;
-	
-	// 보간된 목표 속도 (감속/가속 보간용)
-	float SmoothedTargetSpeed;
-	
-	// 외부에서 설정한 활성 속도 제한 활성 여부
-	bool bHasActiveSpeedLimit;
-	
-	// 외부에서 설정한 활성 속도 제한 (cm/s)
-	float ActiveSpeedLimit;
 };

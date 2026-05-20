@@ -5,7 +5,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Road/RoadTypes.h"
 #include "SplineRoadActor.generated.h"
 
 class USplineComponent;
@@ -52,15 +51,7 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Road|Routing")
 	TArray<TObjectPtr<ASplineRoadActor>> NextRoads;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Road|Properties")
-	ERoadCategory Category = ERoadCategory::Unspecified;
 
-	// 카테고리 기본 속도 무시하고 특정 값(cm/s) 강제 적용이 필요한 경우 
-	// -1 디폴트 값 의미: 카테고리 기본값 사용
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Road|Properties", meta=(ClampMin="-1", UIMin="-1"))
-	float SpeedLimitOverride = -1.f;
-	
 	// 주차장 진입로 끝 지점 (주차 시나리오용)
 	// nullptr이면 일반 도로로 간주
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Road|Properties")
