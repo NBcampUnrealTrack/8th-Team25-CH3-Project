@@ -14,8 +14,6 @@ class ANTARCITCKIDS_API AStreetLightSource : public AActor
 	
 public:	
 	AStreetLightSource();
-
-	virtual void OnConstruction(const FTransform& Transform) override;
 	
 	UFUNCTION(category="Street Light")
 	void SetLightEnabled(bool bEnabled) const;
