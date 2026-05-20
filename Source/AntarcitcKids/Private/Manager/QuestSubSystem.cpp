@@ -31,6 +31,7 @@ void UQuestSubSystem::OnRegisterQuest(UQuestBase* RegisterQuest)
 	UE_LOG(LogTemp, Warning, TEXT("퀘스트 만들어짐."));
 	
 	QuestsList.Add(RegisterQuest);
+	
 }
 
 
@@ -59,7 +60,7 @@ void UQuestSubSystem::OnQuestsCompleted(FQuestCompletedEvent& QuestCompletedEven
         
 		if (MissionIndex != INDEX_NONE)
 		{
-			CachedVehiclePawn->CompleteMission(MissionIndex, QuestCompletedEvent.QuestID);
+			CachedVehiclePawn->CompleteMission(MissionIndex, QuestCompletedEvent.QuestName);
 		}
 	}
 	

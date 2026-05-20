@@ -8,7 +8,14 @@
 #include "EnhancedInputSubsystems.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/PlayerStart.h"
+#include "QuestCameraWidget.h"
+#include "Camera/CameraComponent.h"
+#include "Chaos/SoftsSpring.h"
+#include "GameFramework/SpringArmComponent.h"
+
+
 
 // 커스텀 로그 카테고리를 정의
 DEFINE_LOG_CATEGORY_STATIC(LogAKPlayerController, Log, All);
@@ -34,6 +41,11 @@ void AAntarcitcKidsPlayerController::BeginPlay()
 			SensorViewWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		}
 	}*/
+	
+
+	
+
+
 }
 
 void AAntarcitcKidsPlayerController::SetupInputComponent()
@@ -90,6 +102,17 @@ void AAntarcitcKidsPlayerController::FindAndBindVehicle()
 			// PlayerController의 카메라를 VehiclePawn 시점으로 부드럽게 전환
 			SetViewTargetWithBlend(VehiclePawn);
 			
+			UCameraComponent* CameraComponent = VehiclePawn->GetBackCamera();
+			USpringArmComponent* SpringArmComponent = VehiclePawn->GetBackSpringArm();
+	
+			if (IsValid(CameraComponent) && IsValid(SpringArmComponent))
+			{
+				DefaultRotator = SpringArmComponent->GetComponentRotation();
+				DefaultDepthOfFieldFocalDistance = CameraComponent->PostProcessSettings.DepthOfFieldFocalDistance;
+		
+			}
+			
+			
 			VehiclePawn->OnDestroyed.AddDynamic(this, &AAntarcitcKidsPlayerController::OnPawnDestroyed);
 			
 			// HUD 바인딩
@@ -109,17 +132,89 @@ void AAntarcitcKidsPlayerController::FindAndBindVehicle()
 	
 }
 
+void AAntarcitcKidsPlayerController::HighLightActor(USceneCaptureComponent2D* TargetActor)
+{
+	UCameraComponent* CameraComponent = VehiclePawn->GetBackCamera();
+	USpringArmComponent* SpringArmComponent = VehiclePawn->GetBackSpringArm();
+	
+	FRotator LookAt = UKismetMathLibrary::FindLookAtRotation(
+	VehiclePawn->GetActorLocation(),
+	TargetActor->GetComponentLocation());
+	/*UE_LOG(LogTemp,Warning, TEXT("LookAt 활성화"));*/
+	
+	
+		
+	float Distance = FVector::Dist(
+		TargetActor->GetComponentLocation(), 
+		VehiclePawn->GetActorLocation());
+	
+	UE_LOG(LogTemp, Warning, TEXT("HightLightActor 발동"));
+	SpringArmComponent->SetWorldRotation(LookAt);
+	CameraComponent->PostProcessSettings.bOverride_DepthOfFieldFocalDistance = true;
+	CameraComponent->PostProcessSettings.DepthOfFieldFocalDistance = Distance;
+	
+}
+
+void AAntarcitcKidsPlayerController::ResetHightlight()
+{
+	UCameraComponent* CameraComponent = VehiclePawn->GetBackCamera();
+	USpringArmComponent* SpringArmComponent = VehiclePawn->GetBackSpringArm();
+	
+	if (!CameraComponent || !SpringArmComponent) return;
+	
+	SpringArmComponent->SetWorldRotation(DefaultRotator);
+	CameraComponent->PostProcessSettings.bOverride_DepthOfFieldFocalDistance = false;
+	CameraComponent->PostProcessSettings.DepthOfFieldFocalDistance = DefaultDepthOfFieldFocalDistance;
+}
+
+
 void AAntarcitcKidsPlayerController::ToggleSensorView(UTextureRenderTarget2D* InCameraRT)
 {
-	/*
-	if (!SensorViewWidget) return;
+	
+	/*if (!SensorViewWidget) return;
 
 	if (InCameraRT)
 	{
 		SensorViewWidget->SetRenderTarget(InCameraRT);
 	}
-	SensorViewWidget->ToggleCameraView();
-	*/
+	SensorViewWidget->ToggleCameraView();*/
+	
+}
+
+
+
+void AAntarcitcKidsPlayerController::TurnOnQuestCameraView(UTextureRenderTarget2D* InCameraRT)
+{
+	if (!QuestCameraWidget) return;
+	UE_LOG(LogTemp,Warning, TEXT("ToogleQuestCameraView 작동됨"));
+	if (InCameraRT)
+	{
+		UE_LOG(LogTemp,Warning, TEXT("InCameraRT 있음"));
+		QuestCameraWidget->SetRenderTarget(InCameraRT);
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning, TEXT("InCameraRT 없음"));
+	}
+	
+	QuestCameraWidget->TurnOnCameraView();
+}
+
+void AAntarcitcKidsPlayerController::TurnOffQuestCameraView(UTextureRenderTarget2D* InCameraRT)
+{
+	if (!QuestCameraWidget) return;
+	UE_LOG(LogTemp,Warning, TEXT("ToogleQuestCameraView 작동됨"));
+	if (InCameraRT)
+	{
+		UE_LOG(LogTemp,Warning, TEXT("InCameraRT 있음"));
+		QuestCameraWidget->SetRenderTarget(InCameraRT);
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning, TEXT("InCameraRT 없음"));
+	}
+	
+	QuestCameraWidget->TurnOffCameraView();
 }
 
 void AAntarcitcKidsPlayerController::ToggleLidarView(UTexture2D* InLidarRT)
@@ -157,6 +252,17 @@ void AAntarcitcKidsPlayerController::CreateAndBindCyberHUD()
 	if (CyberHUDWidget)
 	{
 		CyberHUDWidget->AddToViewport();
+	}
+	
+	if (QuestCameraWidgetClass)
+	{
+		QuestCameraWidget = CreateWidget<UQuestCameraWidget>(this, QuestCameraWidgetClass);
+		if (QuestCameraWidget)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Viewport 추가됨"));
+			QuestCameraWidget->AddToViewport(10);
+			
+		}
 	}
 
 	VehiclePawn->OnHUDSpeedUpdated.AddDynamic(this,    &AAntarcitcKidsPlayerController::OnHUDSpeedUpdated);

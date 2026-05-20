@@ -57,6 +57,7 @@ public:
 	virtual void BeginPlay() override; 
 	virtual void Tick(float DeltaSeconds) override;
 	
+	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Quest")
 	float ImpactDistance;
 

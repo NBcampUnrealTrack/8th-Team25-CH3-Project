@@ -36,6 +36,8 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "CameraSensor")
 	bool IsLidarViewVisible() const;
+	
+
 
 protected:
 	virtual void NativeConstruct() override;
