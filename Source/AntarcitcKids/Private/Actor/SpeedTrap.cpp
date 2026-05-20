@@ -25,6 +25,8 @@ ASpeedTrap::ASpeedTrap()
 	
 	EndGate->OnComponentBeginOverlap.AddDynamic(this,&ASpeedTrap::OnEndGateOverlap);
 	
+	AreaCollision->OnComponentBeginOverlap.AddDynamic(this, &ATriggerMissionBase::OnAreaOverlap);
+	AreaCollision->OnComponentEndOverlap.AddDynamic(this, &ATriggerMissionBase::OnAreaEndOverlap);
 	
 }
 

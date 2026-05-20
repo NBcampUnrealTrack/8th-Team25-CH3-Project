@@ -11,11 +11,17 @@ class UInputMappingContext;
 class ACityVehiclePawn;
 class USensorViewrWidget;
 class UTextureRenderTarget2D;
+class USpringArmComponent;
+class UQuestCameraWidget;
+
+
 
 UCLASS()
 class ANTARCITCKIDS_API AAntarcitcKidsPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+	
+	
 	
 protected:
 	virtual void BeginPlay() override;
@@ -30,7 +36,14 @@ protected:
 	void FindAndBindVehicle();
 
 public:
+	
+	void HighLightActor(USceneCaptureComponent2D* TargetActor);
+	void ResetHightlight();
+	
 	void ToggleSensorView(UTextureRenderTarget2D* InCameraRT);
+	void TurnOnQuestCameraView(UTextureRenderTarget2D* InCameraRT);
+	void TurnOffQuestCameraView(UTextureRenderTarget2D* InCameraRT);
+	
 	void ToggleLidarView(UTexture2D* InLidarRT);
 	bool IsLidarViewVisible() const;
 
@@ -64,9 +77,19 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UUserWidget> MobileControlsWidget;
+	
+	//QuestCamera 관련
 
-	UPROPERTY()
-	TObjectPtr<USensorViewrWidget> SensorViewWidget;
+	UPROPERTY(EditAnywhere ,Category = "Vehicle|UI")
+	TSubclassOf<UQuestCameraWidget> QuestCameraWidgetClass;
+	
+	UPROPERTY(EditAnywhere ,Category = "Vehicle|UI")
+	TObjectPtr<UQuestCameraWidget> QuestCameraWidget;
+	
+	bool IsPlayerOrTriggerActor;
+	
+	float DefaultDepthOfFieldFocalDistance;
+	FRotator DefaultRotator;
 	
 	// CyberHUD담당
 	UPROPERTY(EditAnywhere, Category="Vehicle|UI")

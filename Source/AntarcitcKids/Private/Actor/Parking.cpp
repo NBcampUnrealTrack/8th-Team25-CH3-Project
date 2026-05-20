@@ -6,12 +6,16 @@
 #include "CityVehiclePawn.h"
 #include "Manager/QuestBase.h"
 #include "Math/UnitConversion.h"
+#include "Components/BoxComponent.h"
 
 AParking::AParking()
 {
 	// [Note] SpeedTrapQuest 추가되면 아래 주석 제거하기
 	// QuestClass = UParkingQuest::StaticClass();
 	TimeOverLimit = 90.0f;
+	
+	AreaCollision->OnComponentBeginOverlap.AddDynamic(this, &ATriggerMissionBase::OnAreaOverlap);
+	AreaCollision->OnComponentEndOverlap.AddDynamic(this, &ATriggerMissionBase::OnAreaEndOverlap);
 	
 }
 

@@ -6,7 +6,9 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Manager/QuestsTypes.h"
+#include "Actor/TriggerMissionBase.h"
 #include "QuestSubSystem.generated.h"
+
 
 class ACityVehiclePawn; //HUD연결용
 class UQuestBase;
@@ -23,6 +25,7 @@ public:
 	// HUD 연결용
 	UFUNCTION(BlueprintCallable)
 	void SetVehiclePawn(ACityVehiclePawn* InPawn);
+	int32 SetQuestID() {return QuestID++;}
 	
 	//서브 시스템의 UI 변화
 	FOnQuestListChange OnQuestListChange;
@@ -50,6 +53,6 @@ private:
 	UDataTable* StartMissionList;
 	//데이터 로드된 데이터만 들고 있을 수 있도록 변경
 	
-	
+	int QuestID = 1;
 	
 };
