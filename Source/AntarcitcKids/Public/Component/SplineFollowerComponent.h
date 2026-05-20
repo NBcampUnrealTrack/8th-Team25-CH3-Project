@@ -79,10 +79,10 @@ public:
 	}
 	
 	UFUNCTION(BlueprintPure, Category = "SplineFollower|State")
-	float GetNormalSpeedKHM() const {return NormalSpeed * 0.036f; }
+	float GetNormalSpeedKHM() const {return RoadNormalSpeedKMH * 0.036f; }
 	
 	UFUNCTION(BlueprintPure, Category = "SplineFollower|State")
-	float GetActiveSpeedLimit() const { return ActiveSpeedLimit; }
+	float GetActiveSpeedLimit() const { return ActiveSpeedLimitKMH; }
 	
 protected:
 	virtual void BeginPlay() override;
@@ -130,7 +130,11 @@ private:
 	float EstimateCurvatureAt(float OffsetAhead) const;
 	
 	// 곡률을 기반으로 물리적으로 안전한 최대 속도를 계산 (원심력 = 횡 마찰력 공식)
-	float ComputeCurveSpeedLimit(float Curvature) const;
+	float ComputeCurveSpeedLimitKMH(float Curvature) const;
+	
+	// 단위 변환 헬퍼함수
+	static float KMHToCMS(float SpeedKMH) { return SpeedKMH / 0.036f; }
+	static float CMSToKMH(float SpeedCMS) { return SpeedCMS * 0.036f; }
 
 private:
 
@@ -146,17 +150,18 @@ private:
 	//────── Speed ─────────────────────────────────────────────────
 	
 	// 포인트 : 환경에서 만날 수 있는 모든 속도제한 요소보다 클 것. (변경 지양)
-	// 차량의 기계적 최대속도(cm/s) → 고속도로보다 충분히 크게 설정
+	// 차량의 기계적 최대속도 → 고속도로보다 충분히 크게 설정
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Speed", meta=(AllowPrivateAccess="true"))
-	float VehicleMaxSpeed;
+	float VehicleMaxSpeedKMH;
 	
+	// 도로 속성에 따른 속도 - 고속도로, 자동차전용도로, 일반 도시 도로 등
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Speed", meta=(AllowPrivateAccess="true"))
-	float NormalSpeed;
+	float RoadNormalSpeedKMH;
 	
 	// 현재는 맑은 날씨 일반 도시 도로 기준의 절대 최소 속도이기 때문에, 추후 소프트하한으로 변경의 여지 있음
 	// 곡률 보정용 최저 속도 (급커브에서도 너무 느려지지 않게)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Speed", meta=(AllowPrivateAccess="true"))
-	float MinCurveSpeed;
+	float MinCurveSpeedKMH;
 	
 	// (목표속도 - 현재속도) × ThrottleGain → 명령값
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Speed", meta=(AllowPrivateAccess="true"))
@@ -170,15 +175,11 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Speed", meta=(AllowPrivateAccess="true"))
 	float AccelRate;
 	
-	// 도로 속성 (cm/s)
-	// 고속도로, 자동차전용도로, 일반 도시 도로 등
-	float RoadNormalSpeed;
-	
 	// 외부에서 설정한 활성 속도 제한 (스쿨존, 공사존 등)
 	bool bHasActiveSpeedLimit;
-	float ActiveSpeedLimit;
+	float ActiveSpeedLimitKMH;
 
-	// 보간된 목표 속도 (감속/가속 보간용)
+	// 보간된 목표 속도(cm/s) - 감속/가속 보간용
 	float SmoothedTargetSpeed;
 	
 	//────── Steering ──────────────────────────────────────────────
