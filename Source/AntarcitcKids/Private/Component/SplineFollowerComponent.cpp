@@ -13,11 +13,16 @@ DEFINE_LOG_CATEGORY_STATIC(LogSplineFollower, Log, All);
 
 USplineFollowerComponent::USplineFollowerComponent()
 	: EndDetectionThreshold(200.f)
-	, MaxSpeed(3000.f)
-	, MinSpeed(400.f)
+	, VehicleMaxSpeed(4000.f)
+	, NormalSpeed(50.f / 0.036f)
+	, MinCurveSpeed(400.f)
 	, ThrottleGain(0.002f)
 	, DecelRate(0.5f)
 	, AccelRate(1.f)
+	, RoadNormalSpeed(1390.f)
+	, bHasActiveSpeedLimit(false)
+	, ActiveSpeedLimit(0.f)
+	, SmoothedTargetSpeed(0.f)
 	, LookAheadBase(1500.f)
 	, LookAheadSpeedFactor(0.3f)
 	, MaxYawDelta(40.f)
@@ -30,9 +35,7 @@ USplineFollowerComponent::USplineFollowerComponent()
 	, ProgressDistance(0.f)
 	, SplineTotalLength(0.f)
 	, bSplineIsClosedLoop(false)
-	, SmoothedTargetSpeed(0.f)
-	, bHasActiveSpeedLimit(false)
-	, ActiveSpeedLimit(0.f)
+	
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	
@@ -71,6 +74,13 @@ void USplineFollowerComponent::ResumeDriving()
 	}
 }
 
+void USplineFollowerComponent::SetNormalSpeed(float SpeedKMH)
+{
+	NormalSpeed = SpeedKMH / 0.036f;
+	UE_LOG(LogSplineFollower, Log, TEXT("SetNormalSpeed: %.0f km/h (%.0f cm/s)", SpeedKMH, NormalSpeed));
+}
+
+
 void USplineFollowerComponent::SetSpeedLimit(float SpeedLimitKMH)
 {
 	// km/h → cm/s 변환 (1 km/h ≈ 27.78 cm/s)
@@ -87,9 +97,8 @@ void USplineFollowerComponent::ClearSpeedLimit()
 	if (!bHasActiveSpeedLimit) return;
 	
 	bHasActiveSpeedLimit = false;
-	UE_LOG(LogSplineFollower, Log, TEXT(">> ClearSpeedLimit CALLED"));
+	UE_LOG(LogSplineFollower, Log, TEXT("ClearSpeedLimit: Speed limit removed."));
 }
-
 
 void USplineFollowerComponent::BeginPlay()
 {
@@ -161,14 +170,15 @@ void USplineFollowerComponent::BuildPath()
     
 	InitializeProgress();
 	
-	SmoothedTargetSpeed = MaxSpeed;
+	SmoothedTargetSpeed = NormalSpeed;
 	FollowState = ESplineFollowState::Driving;
 	SetComponentTickEnabled(true);
 	
 	UE_LOG(LogSplineFollower, Log,
-		TEXT("BuildPath: Road='%s', Length=%.0fcm, Loop=%s, StartDist=%.0fcm"),
+		TEXT("BuildPath: Road='%s', Length=%.0fcm, Loop=%s, StartDist=%.0fcm, NormalSpeed=%.0fkm/h"),
 		*TargetRoad->GetName(), SplineTotalLength,
-		bSplineIsClosedLoop ? TEXT("Y") : TEXT("N"), ProgressDistance);
+		bSplineIsClosedLoop ? TEXT("Y") : TEXT("N"), 
+		ProgressDistance, NormalSpeed * 0.036f);
 }
 
 ASplineRoadActor* USplineFollowerComponent::FindNearestRoad() const
@@ -413,9 +423,12 @@ float USplineFollowerComponent::ComputeThrottleBrakeCommand(float DeltaTime, flo
 		ComputeCurveSpeedLimit(CurvAhead)
 	);
 	
-	// ── 외부(AI) 속도 제한과 합성 ────────────────────────────────
-	float SpeedLimit = CurveSpeedLimit;
+	// ── 기본 목표 속도 ──────────────────────────────────────────
+	// 도로 기본 속도 vs 곡률 안전 속도 중 작은 값
+	float SpeedLimit = FMath::Min(NormalSpeed, CurveSpeedLimit);
 	
+	// ── 외부(AI) 시나리오 제한 ──────────────────────────────────
+    // 스쿨존, 공사구간 등 추가 제한 적용
 	if (bHasActiveSpeedLimit)
 	{
 		SpeedLimit = FMath::Min(SpeedLimit, ActiveSpeedLimit);
@@ -508,12 +521,12 @@ float USplineFollowerComponent::ComputeCurveSpeedLimit(float Curvature) const
 		// 미끄러지지 않으려면 F_c <= F_f
 		// 즉, V_max = sqrt(μ * g * R)
 	
-	// 곡률이 0에 가까우면 직선 → 최대 속도 허용
-	if (Curvature <= KINDA_SMALL_NUMBER) return MaxSpeed;
+	// 곡률이 0에 가까우면 직선 → 차량 최대 속도까지 허용
+	if (Curvature <= KINDA_SMALL_NUMBER) return VehicleMaxSpeed;
 	
 	// 두 샘플 포인트 사이 거리(호의 길이) = R × θ
 	const float Radius = CurvatureSampleSpan / Curvature;
 	const float MaxSafeSpeed = FMath::Sqrt(LateralFriction * 980.f * Radius);
 	
-	return FMath::Clamp(MaxSafeSpeed, MinSpeed, MaxSpeed);
+	return FMath::Clamp(MaxSafeSpeed, MinCurveSpeed, VehicleMaxSpeed);
 }
