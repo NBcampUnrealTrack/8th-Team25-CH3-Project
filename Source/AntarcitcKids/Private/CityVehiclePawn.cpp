@@ -19,6 +19,7 @@
 #include "Sensor/LidarSceneComponent.h"
 #include "DataLogger/AgentDataLogger.h"
 #include "AI/CityVehicleAIController.h"
+#include "Kismet/GameplayStatics.h"
 
 ACityVehiclePawn::ACityVehiclePawn()
 {
@@ -53,6 +54,10 @@ ACityVehiclePawn::ACityVehiclePawn()
 	
 	BackCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Back Camera"));
 	BackCamera->SetupAttachment(BackSpringArm);
+	
+	EngineAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("EngineAudio"));
+	EngineAudioComponent->SetupAttachment(GetRootComponent());
+	EngineAudioComponent->bAutoActivate = false;
 	
 	GetMesh()->SetSimulatePhysics(true);
 	GetMesh()->SetCollisionProfileName(FName("Vehicle"));
@@ -104,16 +109,16 @@ void ACityVehiclePawn::DoFullStop()
 	ChaosVehicleMovement->SetUseAutomaticGears(false);
 	ChaosVehicleMovement->SetTargetGear(0, true); // 기어 중립
 	
-	// 강제로 속도를 0으로 만듬
-	if (UPrimitiveComponent* VehicleMesh = Cast<UPrimitiveComponent>(GetRootComponent()))
+	if (EngineAudioComponent && EngineAudioComponent->IsPlaying())
 	{
-		VehicleMesh->SetPhysicsLinearVelocity(FVector::ZeroVector);
-		VehicleMesh->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector);
+		EngineAudioComponent->Stop();
 	}
 }
 
 void ACityVehiclePawn::ResumeMovement()
 {
+	// 급제동 카메라 용
+	bCameraTriggered = false;
 	// 강제 정지 상태 해제
 	bIsManuallyStopped = false;
 
@@ -127,6 +132,7 @@ void ACityVehiclePawn::ResumeMovement()
     
 	// 즉시 출발을 돕기 위해 스로틀 살짝 건듬
 	ChaosVehicleMovement->SetThrottleInput(0.1f);
+	
 }
 
 void ACityVehiclePawn::DoBrake(float BrakeValue)
@@ -136,11 +142,6 @@ void ACityVehiclePawn::DoBrake(float BrakeValue)
 	BrakeLights(BrakeValue > 0.f);
 	
 	//UE_LOG(LogTemp, Warning, TEXT("Brake=%.3f"), BrakeValue);
-	
-	if (BrakeValue > 0.5f) // 급정거 카메라 무빙 브로드캐스트
-	{
-		OnEmergencyBrake.Broadcast(BrakeValue);
-	}
 }
 
 void ACityVehiclePawn::DoBrakeStart()
@@ -197,6 +198,12 @@ void ACityVehiclePawn::BeginPlay()
 	{
 		PreviousGear = ChaosVehicleMovement->GetCurrentGear();
 		OnHUDGearUpdated.Broadcast(FText::FromString(TEXT("N")));
+	}
+	
+	if (EngineSound) // 사운드
+	{
+		EngineAudioComponent->SetSound(EngineSound);
+		EngineAudioComponent->Play();
 	}
 }
 
@@ -257,6 +264,22 @@ void ACityVehiclePawn::Tick(float Delta)
 	
 	UpdateWheelSteerAngleLog(); //실시간으로 바뀌는 바퀴 계산 
 	
+	if (EngineAudioComponent && EngineAudioComponent->IsPlaying())// 사운드
+	{
+		//RPM에 따라 소리 조절
+		const float RPM = ChaosVehicleMovement->GetEngineRotationSpeed();
+		const float MaxRPM = 5500.0f;
+		const float PitchMin = 0.5f;
+		const float PitchMax = 2.0f;
+		const float Pitch = FMath::Lerp(PitchMin, PitchMax, RPM / MaxRPM);
+		EngineAudioComponent->SetPitchMultiplier(Pitch);
+	}
+	
+	/* 사운드 체크용
+	UE_LOG(LogTemp, Warning, TEXT("RPM=%.0f | IsPlaying=%d"), 
+	ChaosVehicleMovement->GetEngineRotationSpeed(),
+	EngineAudioComponent->IsPlaying() ? 1 : 0);
+	*/
 }
 
 
@@ -427,5 +450,21 @@ void ACityVehiclePawn::TickMissionTimer()
 	{
 		GetWorld()->GetTimerManager().ClearTimer(MissionTimerHandle);
 		UE_LOG(LogTemp, Warning, TEXT("[CyberHUD] Mission timer expired!"));
+	}
+}
+
+void ACityVehiclePawn::TriggerEmergencyBrakeCamera(float BrakeValue)
+{
+	if (bCameraTriggered) return;
+	
+	bCameraTriggered = true;
+	
+	OnEmergencyBrake.Broadcast(BrakeValue);
+	
+	// 브레이크 사운드
+	if (BrakeSounds.Num() > 0)
+	{
+		int32 Index = FMath::RandRange(0, BrakeSounds.Num() -1);
+		UGameplayStatics::PlaySoundAtLocation(this, BrakeSounds[Index], GetActorLocation());
 	}
 }

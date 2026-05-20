@@ -14,12 +14,18 @@ class UQuestBase;
 class UNiagaraSystem;
 class ACityVehiclePawn;
 class UCameraComponent;
+class USceneCaptureComponent2D;
+class UTextureRenderTarget2D;
+class AAntarcitcKidsPlayerController;
 
 // 공통 신호: 차량 진입/이탈
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTriggerVehicleEntered, 
 	ATriggerMissionBase*, Trigger, ACityVehiclePawn*, Vehicle);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTriggerVehicleExited, 
 	ATriggerMissionBase*, Trigger, ACityVehiclePawn*, Vehicle);
+
+
+
 
 UCLASS()
 class ANTARCITCKIDS_API ATriggerMissionBase : public AActor
@@ -28,6 +34,25 @@ class ANTARCITCKIDS_API ATriggerMissionBase : public AActor
 	
 public:	
 	ATriggerMissionBase();
+	
+
+	
+	
+	UFUNCTION()
+	virtual void OnAreaOverlap(
+		UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult);
+
+	UFUNCTION()
+	virtual void OnAreaEndOverlap(
+		UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex);
 
 protected:
 	virtual void BeginPlay() override;
@@ -44,6 +69,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision")
 	UBoxComponent* AreaCollision;
 	
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "CCTV")
+	USceneCaptureComponent2D* SceneTarget;
+	
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "CCTV")
+	UTextureRenderTarget2D* RenderTarget2D;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Niagara")
 	UNiagaraSystem* SuccessEffect;
 	
@@ -53,8 +84,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Quest")
 	TSubclassOf<UQuestBase> QuestClass;
 	
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Camera")
-	UCameraComponent* CameraComponent;
+
 	
 	UPROPERTY()
 	UQuestBase* Quest;
@@ -82,32 +112,25 @@ protected:
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex);
 	
-	UFUNCTION()
-	virtual void OnAreaOverlap(
-		UPrimitiveComponent* OverlappedComp,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult& SweepResult);
 
-	UFUNCTION()
-	virtual void OnAreaEndOverlap(
-		UPrimitiveComponent* OverlappedComp,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex);
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Quest")
 	FQuestInfo QuestInfo;
 	
 	virtual void SetQuestInfo();
-	void OnFocusCamera();
+	virtual void TurnOnQuestCamera();
+	virtual void TurnOffQuestCamera();
+	
+	virtual void FocusOn();
+	virtual void ResetFocus();
+	UTextureRenderTarget2D* GetRenderTarget2D() { return RenderTarget2D;}
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
 private:
+	ACityVehiclePawn* VehiclePawn;
+	AAntarcitcKidsPlayerController* PlayerController;
 	
 
 };
