@@ -77,7 +77,7 @@ void USplineFollowerComponent::ResumeDriving()
 void USplineFollowerComponent::SetNormalSpeed(float SpeedKMH)
 {
 	NormalSpeed = SpeedKMH / 0.036f;
-	UE_LOG(LogSplineFollower, Log, TEXT("SetNormalSpeed: %.0f km/h (%.0f cm/s)", SpeedKMH, NormalSpeed));
+	UE_LOG(LogSplineFollower, Log, TEXT("SetNormalSpeed: %.0f km/h (%.0f cm/s)"), SpeedKMH, NormalSpeed);
 }
 
 
