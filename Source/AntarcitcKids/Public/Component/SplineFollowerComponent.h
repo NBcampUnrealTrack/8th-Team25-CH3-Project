@@ -153,6 +153,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Speed", meta=(AllowPrivateAccess="true"))
 	float NormalSpeed;
 	
+	// 현재는 맑은 날씨 일반 도시 도로 기준의 절대 최소 속도이기 때문에, 추후 소프트하한으로 변경의 여지 있음
 	// 곡률 보정용 최저 속도 (급커브에서도 너무 느려지지 않게)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SplineFollower|Speed", meta=(AllowPrivateAccess="true"))
 	float MinCurveSpeed;
