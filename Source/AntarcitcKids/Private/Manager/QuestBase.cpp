@@ -6,12 +6,15 @@
 #include "NiagaraFunctionLibrary.h"
 #include "AnimNodes/AnimNode_RandomPlayer.h"
 #include "Manager/QuestSubSystem.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void UQuestBase::OnInitialized(const FQuestInfo& QuestInfo)
 {
 	
+	
 	QuestClass = EQuestClass::TrafficSignal;
+	CurrentQuestInfo.QuestID = GetWorld()->GetGameInstance()->GetSubsystem<UQuestSubSystem>()->SetQuestID();
 	CurrentQuestInfo.QuestClass = QuestInfo.QuestClass;
 	CurrentQuestInfo.QuestID = QuestInfo.QuestID;
 	CurrentQuestInfo.QuestName = QuestInfo.QuestName;

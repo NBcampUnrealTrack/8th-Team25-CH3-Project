@@ -6,10 +6,14 @@
 #include "Manager/QuestBase.h"
 #include "CityVehiclePawn.h"
 #include "Camera/CameraComponent.h"
+#include "Engine/TextureRenderTarget2D.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "System/AntarcitcKidsPlayerController.h"
 
 ATriggerMissionBase::ATriggerMissionBase()
 {
- 	PrimaryActorTick.bCanEverTick = false;
+ 	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
 	SetRootComponent(SceneRoot);
@@ -27,15 +31,23 @@ ATriggerMissionBase::ATriggerMissionBase()
 	AreaCollision->SetupAttachment(SceneRoot);
 	AreaCollision->SetGenerateOverlapEvents(true);
 	
-	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	CameraComponent->SetupAttachment(SceneRoot);
+	SceneTarget = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneTarget"));
+	SceneTarget->SetupAttachment(SceneRoot);
+	SceneTarget->bCaptureEveryFrame = false;
+	SceneTarget->bCaptureOnMovement = false;
+
 	
+
 	
 	NiagaraAnchor = CreateDefaultSubobject<USceneComponent>(TEXT("Anchor"));
 	NiagaraAnchor->SetupAttachment(SceneRoot);
 	
 	Collision->OnComponentBeginOverlap.AddDynamic(this, &ATriggerMissionBase::OnItemOverlap);
 	Collision->OnComponentEndOverlap.AddDynamic(this, &ATriggerMissionBase::OnItemEndOverlap);
+	
+	
+	SceneTarget->CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
+
 }
 
 void ATriggerMissionBase::BeginPlay()
@@ -45,9 +57,17 @@ void ATriggerMissionBase::BeginPlay()
 	
 	UClass* ClassToUse = QuestClass ? QuestClass.Get() : UQuestBase::StaticClass();
 	Quest = NewObject<UQuestBase>(this, ClassToUse);
-	
 	Quest->OnInitialized(QuestInfo);
 	Quest->SetEffect(SuccessEffect);
+	
+	//렌더 타겟은 CreateSubObject를 통해서 생성하여 UpdateResource를 할 경우, GPU 리소스가 할당되기 전이라서 검은 화면만이 나오게 된다.
+	RenderTarget2D = NewObject<UTextureRenderTarget2D>(this);
+	RenderTarget2D->RenderTargetFormat = ETextureRenderTargetFormat::RTF_RGBA8;
+	RenderTarget2D->InitAutoFormat(1280,720);
+	RenderTarget2D->UpdateResourceImmediate(true);
+	
+	SceneTarget->TextureTarget = RenderTarget2D;
+	
 	
 }
 
@@ -73,16 +93,39 @@ void ATriggerMissionBase::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, 
 void ATriggerMissionBase::OnAreaOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	
+	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
+	{
+		VehiclePawn = Vehicle;
+		PlayerController = Cast<AAntarcitcKidsPlayerController>(GetWorld()->GetFirstPlayerController());
+		TurnOnQuestCamera();
+	}
 }
 
 void ATriggerMissionBase::OnAreaEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	if (!IsValid(OtherActor)) return;
+	
+	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
+	{
+		VehiclePawn = nullptr;
+		PlayerController = nullptr;
+		TurnOffQuestCamera();
+		
+	}
 }
 
 void ATriggerMissionBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	/*UE_LOG(LogTemp,Warning, TEXT("Tick 활성화"));*/
+	if (IsValid(VehiclePawn))
+	{
+		
+		FocusOn();
+		
+	}
 }
 
 void ATriggerMissionBase::SetQuestInfo()
@@ -92,4 +135,72 @@ void ATriggerMissionBase::SetQuestInfo()
 		QuestInfo.QuestLocation = NiagaraAnchor->GetComponentLocation();	
 	}
 }
+
+void ATriggerMissionBase::TurnOnQuestCamera()
+{
+	SetActorTickEnabled(true);
+	
+	UE_LOG(LogTemp, Warning, TEXT("bCanEverTick: %s"), 
+	PrimaryActorTick.bCanEverTick ? TEXT("true") : TEXT("false"));
+	UE_LOG(LogTemp, Warning, TEXT("IsActorTickEnabled: %s"), 
+		IsActorTickEnabled() ? TEXT("true") : TEXT("false"));
+	
+		SceneTarget->bCaptureEveryFrame = true;
+		SceneTarget->CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
+		UE_LOG(LogTemp,Warning, TEXT("영역 오버랩 1발동함"));
+		if (AAntarcitcKidsPlayerController* PC = 
+		Cast<AAntarcitcKidsPlayerController>(GetWorld()->GetFirstPlayerController()))
+		{
+			UE_LOG(LogTemp,Warning, TEXT("영역 오버랩 2발동함"));
+			PC->TurnOnQuestCameraView(RenderTarget2D);
+		}
+		
+		UE_LOG(LogTemp, Warning, TEXT("Passed RT: %s"),
+			*GetNameSafe(RenderTarget2D));
+
+		UE_LOG(LogTemp, Warning, TEXT("SceneCapture RT: %s"),
+			*GetNameSafe(SceneTarget->TextureTarget));
+		
+}
+
+void ATriggerMissionBase::TurnOffQuestCamera()
+{
+	SetActorTickEnabled(false);
+	SceneTarget->bCaptureEveryFrame = false;
+		
+	if (AAntarcitcKidsPlayerController* PC = 
+	Cast<AAntarcitcKidsPlayerController>(GetWorld()->GetFirstPlayerController()))
+	{
+		PC->TurnOffQuestCameraView(RenderTarget2D);
+		PC->ResetHightlight();
+	}
+}
+
+void ATriggerMissionBase::FocusOn()
+{
+	FRotator LookAt = UKismetMathLibrary::FindLookAtRotation(
+	SceneTarget->GetComponentLocation(), 
+	VehiclePawn->GetActorLocation());
+	/*UE_LOG(LogTemp,Warning, TEXT("LookAt 활성화"));*/
+	SceneTarget->SetWorldRotation(LookAt);
+		
+	float Distance = FVector::Dist(
+		SceneTarget->GetComponentLocation(), 
+		VehiclePawn->GetActorLocation());
+		
+
+		
+	SceneTarget->PostProcessSettings.bOverride_DepthOfFieldFocalDistance = true;
+	SceneTarget->PostProcessSettings.DepthOfFieldFocalDistance = Distance;
+	
+	
+	PlayerController->HighLightActor(SceneTarget);
+}
+
+void ATriggerMissionBase::ResetFocus()
+{
+	
+}
+
+
 

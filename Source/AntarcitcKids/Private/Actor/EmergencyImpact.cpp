@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "Manager/QuestBase.h"
 #include "CityVehiclePawn.h"
+#include "Components/BoxComponent.h"
 
 
 AEmergencyImpact::AEmergencyImpact()
@@ -18,7 +19,8 @@ AEmergencyImpact::AEmergencyImpact()
 	
 	ImpactCollision->OnComponentBeginOverlap.AddDynamic(this, &AEmergencyImpact::OnImpactOverlap);
 	
-	
+	AreaCollision->OnComponentBeginOverlap.AddDynamic(this, &ATriggerMissionBase::OnAreaOverlap);
+	AreaCollision->OnComponentEndOverlap.AddDynamic(this, &ATriggerMissionBase::OnAreaEndOverlap);
 }
 
 void AEmergencyImpact::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,

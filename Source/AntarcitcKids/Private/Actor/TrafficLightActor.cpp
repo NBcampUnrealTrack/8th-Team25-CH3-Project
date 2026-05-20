@@ -8,11 +8,12 @@
 #include "Manager/TrafficLightQuest.h"
 #include "CityVehiclePawn.h"
 #include "NiagaraDataInterfaceEmitterBinding.h"
+#include "Components/BoxComponent.h"
 #include "Manager/QuestsTypes.h"
 
 ATrafficLightActor::ATrafficLightActor()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	
 	RedLight = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RedLight"));
 	RedLight->SetupAttachment(SceneRoot);
@@ -26,6 +27,11 @@ ATrafficLightActor::ATrafficLightActor()
 	CurrentState = ETrafficLightState::Red;
 	
 	QuestClass = UTrafficLightQuest::StaticClass();
+	
+	AreaCollision->OnComponentBeginOverlap.AddDynamic(this, &ATriggerMissionBase::OnAreaOverlap);
+	AreaCollision->OnComponentEndOverlap.AddDynamic(this, &ATriggerMissionBase::OnAreaEndOverlap);
+	
+	
 }
 
 void ATrafficLightActor::BeginPlay()
