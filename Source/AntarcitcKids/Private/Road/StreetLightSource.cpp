@@ -1,7 +1,5 @@
 
 #include "Road/StreetLightSource.h"
-
-#include "Components/PointLightComponent.h"
 #include "Components/SpotLightComponent.h"
 
 
@@ -17,17 +15,14 @@ AStreetLightSource::AStreetLightSource()
 	
 	//빛이 아래를 비추도록 설정
 	SpotLight->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
-}
-
-//에디터에서 수정 시 바로 반영되도록 OnConstruction()함수에서 작성
-void AStreetLightSource::OnConstruction(const FTransform& Transform)
-{
-	Super::OnConstruction(Transform);
 	
-	SpotLight->SetIntensity(SpotLightIntensity);
-	SpotLight->SetAttenuationRadius(AttenuationRadius);
-	SpotLight->SetLightColor(LightColor);
-	SpotLight->SetVisibility(bUseSpotLight);
+	//런타임중 바뀔 수 있음
+	SpotLight->SetMobility(EComponentMobility::Stationary);
+	
+	//성능 보호 차원에서 넣음. 생각보다 괜찮으면 다시 킬 예정
+	SpotLight->CastShadows = false;
+	
+	SpotLight->SetVisibility(false);
 }
 
 void AStreetLightSource::SetLightEnabled(bool bEnabled) const
