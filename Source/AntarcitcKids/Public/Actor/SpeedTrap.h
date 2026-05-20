@@ -18,7 +18,7 @@ public:
 	ASpeedTrap();
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Speed")
-	float SpeedUpperLimit;
+	float SpeedUpperLimitKHM;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	bool bIsPersistence; //구간단속 여부 확인
@@ -42,7 +42,7 @@ protected:
 	
 	virtual void BeginPlay() override;
 	
-	float PawnSpeed;
+	float PawnSpeedKMH;
 
 	virtual void OnItemOverlap(
 		UPrimitiveComponent* OverlappedComp,
@@ -75,7 +75,7 @@ protected:
 	virtual void PersistentSpeedCheck();	
 	FTimerHandle PersistenceSpeedCheckTimer;
 private:
-	float StartSpeed;
-	float EndSpeed;
+	float StartSpeedKMH;
+	float EndSpeedKMH;
 	
 };

@@ -11,9 +11,9 @@
 ASpeedTrap::ASpeedTrap()
 {
 	bIsPersistence = false;
-	PawnSpeed = 0;
-	StartSpeed = 0.f;
-	EndSpeed = 0.f;
+	PawnSpeedKMH = 0;
+	StartSpeedKMH = 0.f;
+	EndSpeedKMH = 0.f;
 	
 	// [Note] SpeedTrapQuest 추가되면 아래 주석 제거하기
 	//QuestClass = USpeedTrapQuest::StaticClass();
@@ -30,7 +30,7 @@ ASpeedTrap::ASpeedTrap()
 
 void ASpeedTrap::SetPawnSpeed(float SpeedKMH)
 {
-	PawnSpeed = SpeedKMH;
+	PawnSpeedKMH = SpeedKMH;
 }
 
 void ASpeedTrap::BeginPlay()
@@ -48,11 +48,11 @@ void ASpeedTrap::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
 	{
 		
-		Vehicle->OnHUDSpeedUpdated.AddUniqueDynamic(this,&ASpeedTrap::SetPawnSpeed); 
+		Vehicle->OnHUDSpeedUpdated.AddUniqueDynamic(this,&ASpeedTrap::SetPawnSpeed);
 		// [Note] SetPawnSpeed 등록만 하고, 아직 호출 안 됨
 		
-		PawnSpeed = Vehicle->GetCurrentSpeedKMH(); 
-		StartSpeed = PawnSpeed;
+		PawnSpeedKMH = Vehicle->GetCurrentSpeedKMH(); 
+		StartSpeedKMH = PawnSpeedKMH;
 		// [Note] 현재 차량 속도를 즉시 직접 조회하여 PawnSpeed를 갱신, 현재 프레임에서 바로 판정 가능
 		
 		if (bIsPersistence)
@@ -65,13 +65,13 @@ void ASpeedTrap::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 				true
 				);*/
 		}
-		else if (PawnSpeed > SpeedUpperLimit)
+		else if (PawnSpeedKMH > SpeedUpperLimitKHM)
 		{
 			if (Quest)
 				Quest->OnFailed();
 		}
 		
-		OnSpeedLimitEntered.Broadcast(SpeedUpperLimit);
+		OnSpeedLimitEntered.Broadcast(SpeedUpperLimitKHM);
 	}
 }
 
@@ -90,7 +90,7 @@ void ASpeedTrap::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* O
 			GetWorld()->GetTimerManager().ClearTimer(PersistenceSpeedCheckTimer);	
 		}
 	
-		if (bIsPersistence && PawnSpeed <= SpeedUpperLimit)
+		if (bIsPersistence && PawnSpeedKMH <= SpeedUpperLimitKHM)
 		{
 			if (Quest)
 				Quest->OnSuccess();
@@ -107,15 +107,15 @@ void ASpeedTrap::OnEndGateOverlap(UPrimitiveComponent* OverlappedComp, AActor* O
 	
 	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
 	{
-		PawnSpeed = Vehicle->GetCurrentSpeedKMH(); 
-		EndSpeed = PawnSpeed;
+		PawnSpeedKMH = Vehicle->GetCurrentSpeedKMH(); 
+		EndSpeedKMH = PawnSpeedKMH;
 		
 		Vehicle->OnHUDSpeedUpdated.RemoveDynamic(this, &ASpeedTrap::SetPawnSpeed);
 		
 
-		float FinalSpeed = (StartSpeed + EndSpeed)/2;
+		float FinalSpeed = (StartSpeedKMH + EndSpeedKMH)/2;
 		
-		if (FinalSpeed <= SpeedUpperLimit)
+		if (FinalSpeed <= SpeedUpperLimitKHM)
 		{
 			if (Quest && Quest->IsQuestEnd())
 				Quest->OnSuccess();
@@ -137,7 +137,7 @@ void ASpeedTrap::SetQuestInfo()
 void ASpeedTrap::PersistentSpeedCheck()
 {
 	
-	if (PawnSpeed > SpeedUpperLimit)
+	if (PawnSpeedKMH > SpeedUpperLimitKHM)
 	{
 		if (Quest && Quest->IsQuestEnd())
 			Quest->OnFailed();
