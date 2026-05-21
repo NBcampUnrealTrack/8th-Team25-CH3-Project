@@ -1,14 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "SimControlSubsystem.generated.h"
 
-/**
- * 
- */
+UENUM(BlueprintType)
 enum class ESimulationState : uint8
 {
 	Pause UMETA(DisplayName = "Pause"),
@@ -22,14 +18,19 @@ class ANTARCITCKIDS_API USimControlSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 	
+public:
+	UFUNCTION(BlueprintCallable)
 	void Pause();
+	UFUNCTION(BlueprintCallable)
 	void Play();
+	UFUNCTION(BlueprintCallable)
 	void SetAccelation(float TimeDliation);
+	UFUNCTION(BlueprintCallable)
 	void TogglePlayPause();
 	
 private:
-	ESimulationState CurrentState;
-	float CurrentTimeDliation;
+	ESimulationState CurrentState = ESimulationState::Play;
+	float CurrentTimeDliation = 1.f;
 	
 	
 };
