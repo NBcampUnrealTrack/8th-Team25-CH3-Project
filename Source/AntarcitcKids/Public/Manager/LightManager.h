@@ -18,10 +18,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Light")
-	TObjectPtr<ADirectionalLight> DirectionalLight;
-	
-	UFUNCTION(CallInEditor, Category = "Light")
-	void UpdateLights();
+	UFUNCTION(Category = "Light")
+	void UpdateLights(double Pitch);
 	
 };
