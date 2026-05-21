@@ -1,11 +1,8 @@
-
 #include "Manager/LightManager.h"
-
 #include "Engine/DirectionalLight.h"
 #include "Kismet/GameplayStatics.h"
 #include "Manager/TimeSubsystem.h"
 #include "Road/StreetLightSource.h"
-
 
 ALightManager::ALightManager()
 {
@@ -15,32 +12,22 @@ ALightManager::ALightManager()
 void ALightManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	GetWorld()->GetSubsystem<UTimeSubsystem>()->TimeChanged.AddUObject(this, &ALightManager::UpdateLights);
+	GetWorld()->GetSubsystem<UTimeSubsystem>()->TimeChanged.AddDynamic(
+		this, &ALightManager::UpdateLights);
 }
 
-void ALightManager::UpdateLights(double Pitch)
+void ALightManager::UpdateLights(double Pitch, FTimeOfDay TimeData)
 {
-	const bool bIsNight = Pitch >= 0.f && Pitch <= 180.f;
-	
+	const bool bIsNight = (TimeData.Period == ETimeOfDay::Night ||
+						   TimeData.Period == ETimeOfDay::Dawn);
+
 	TArray<AActor*> FoundLights;
-	
-	UGameplayStatics::GetAllActorsOfClass(
-		GetWorld(),
-		AStreetLightSource::StaticClass(),
-		FoundLights);
-	
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AStreetLightSource::StaticClass(), FoundLights);
+
 	for (AActor* Actor : FoundLights)
 	{
-		AStreetLightSource* Light = Cast<AStreetLightSource>(Actor);
-		
-		if (Light)
-		{
+		if (AStreetLightSource* Light = Cast<AStreetLightSource>(Actor))
 			Light->SetLightEnabled(bIsNight);
-		}
 	}
-	
-	
 }
-
 
