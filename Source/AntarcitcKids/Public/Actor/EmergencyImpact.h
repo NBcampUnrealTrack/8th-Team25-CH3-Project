@@ -5,6 +5,7 @@
 
 #include "CoreMinimal.h"
 #include "Actor/TriggerMissionBase.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "EmergencyImpact.generated.h"
 
 class USphereComponent;
@@ -20,6 +21,10 @@ public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEmergencyDetected);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEmergencyCleared);
 	
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Move")
+	UCharacterMovementComponent* MovementComponent;
+	
 	UPROPERTY(BlueprintAssignable)
 	FOnEmergencyDetected OnEmergencyDetected;
 	
@@ -28,6 +33,23 @@ public:
 	
 	UPROPERTY(VisibleAnywhere,Category = "Impact")
 	USphereComponent* ImpactCollision;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character")
+	USkeletalMeshComponent* CharacterMesh;
+	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
+	UAnimMontage* ImpactMontage;
+	
+	
+	UFUNCTION(BlueprintCallable)
+	bool IsImpact() { return bIsImpact;}
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Animation")
+	float MoveSpeed = 300.f;
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	float MoveDistance = 500.f;
 	
 	virtual void OnItemOverlap(
 	UPrimitiveComponent* OverlappedComp,
@@ -57,11 +79,7 @@ public:
 	virtual void BeginPlay() override; 
 	virtual void Tick(float DeltaSeconds) override;
 	
-	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Quest")
-	float ImpactDistance;
-
-	void MoveTo();
+	void PlayImpactMontage();
 
 private:
 	FTimerHandle MoveTimerHandle;
@@ -74,8 +92,6 @@ private:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Quest", meta=(AllowPrivateAccess = true))
 	FVector DestLocation;
 	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Quest", meta=(AllowPrivateAccess = true))
-	float MoveDistance;
 	
 
 };

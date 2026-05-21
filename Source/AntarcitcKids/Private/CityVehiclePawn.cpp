@@ -229,6 +229,8 @@ void ACityVehiclePawn::Tick(float Delta)
 	
 	// 속도 브로드캐스트 (cm/s → km/h)
 	const float SpeedKMH = FMath::Abs(ChaosVehicleMovement->GetForwardSpeed()) * 0.036f;
+	const float RoundedSpeed = FMath::IsNearlyZero(SpeedKMH, 0.9f) ? 0.f : 
+	FMath::RoundToFloat(SpeedKMH * 10.f) / 10.f;
 	OnHUDSpeedUpdated.Broadcast(SpeedKMH);
 	
 	// RPM 브로드캐스트 (매 프레임)
