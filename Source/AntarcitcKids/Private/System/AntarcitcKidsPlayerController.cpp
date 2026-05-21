@@ -137,9 +137,12 @@ void AAntarcitcKidsPlayerController::HighLightActor(USceneCaptureComponent2D* Ta
 	UCameraComponent* CameraComponent = VehiclePawn->GetBackCamera();
 	USpringArmComponent* SpringArmComponent = VehiclePawn->GetBackSpringArm();
 	
+	
+	
+	
 	FRotator LookAt = UKismetMathLibrary::FindLookAtRotation(
-	VehiclePawn->GetActorLocation(),
-	TargetActor->GetComponentLocation());
+	CameraComponent->GetComponentLocation(),
+	TargetActor->GetComponentLocation()+FVector(0.f, 0.f, 0.f));
 	/*UE_LOG(LogTemp,Warning, TEXT("LookAt 활성화"));*/
 	
 	
@@ -149,7 +152,16 @@ void AAntarcitcKidsPlayerController::HighLightActor(USceneCaptureComponent2D* Ta
 		VehiclePawn->GetActorLocation());
 	
 	UE_LOG(LogTemp, Warning, TEXT("HightLightActor 발동"));
-	SpringArmComponent->SetWorldRotation(LookAt);
+
+	
+	FRotator Smoothed = FMath::RInterpTo(
+		 CameraComponent->GetComponentRotation(),
+		 LookAt,
+		 GetWorld()->GetDeltaSeconds(),
+		 1.f);
+	CameraComponent->SetWorldRotation(Smoothed);
+	
+	
 	CameraComponent->PostProcessSettings.bOverride_DepthOfFieldFocalDistance = true;
 	CameraComponent->PostProcessSettings.DepthOfFieldFocalDistance = Distance;
 	
@@ -162,7 +174,11 @@ void AAntarcitcKidsPlayerController::ResetHightlight()
 	
 	if (!CameraComponent || !SpringArmComponent) return;
 	
-	SpringArmComponent->SetWorldRotation(DefaultRotator);
+	FRotator Smoothed = FMath::RInterpTo(
+	 CameraComponent->GetComponentRotation(),
+	 DefaultRotator,
+	 GetWorld()->GetDeltaSeconds(),
+	 1.f);
 	CameraComponent->PostProcessSettings.bOverride_DepthOfFieldFocalDistance = false;
 	CameraComponent->PostProcessSettings.DepthOfFieldFocalDistance = DefaultDepthOfFieldFocalDistance;
 }
