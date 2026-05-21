@@ -84,7 +84,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Quest")
 	TSubclassOf<UQuestBase> QuestClass;
 	
-
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Quest")
+	bool bIsPawnOrActor;
 	
 	UPROPERTY()
 	UQuestBase* Quest;

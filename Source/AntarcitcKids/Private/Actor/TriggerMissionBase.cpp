@@ -139,27 +139,16 @@ void ATriggerMissionBase::SetQuestInfo()
 void ATriggerMissionBase::TurnOnQuestCamera()
 {
 	SetActorTickEnabled(true);
-	
-	UE_LOG(LogTemp, Warning, TEXT("bCanEverTick: %s"), 
-	PrimaryActorTick.bCanEverTick ? TEXT("true") : TEXT("false"));
-	UE_LOG(LogTemp, Warning, TEXT("IsActorTickEnabled: %s"), 
-		IsActorTickEnabled() ? TEXT("true") : TEXT("false"));
-	
 		SceneTarget->bCaptureEveryFrame = true;
 		SceneTarget->CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
-		UE_LOG(LogTemp,Warning, TEXT("영역 오버랩 1발동함"));
 		if (AAntarcitcKidsPlayerController* PC = 
 		Cast<AAntarcitcKidsPlayerController>(GetWorld()->GetFirstPlayerController()))
 		{
-			UE_LOG(LogTemp,Warning, TEXT("영역 오버랩 2발동함"));
-			PC->TurnOnQuestCameraView(RenderTarget2D);
+			if (bIsPawnOrActor)
+				PC->TurnOnQuestCameraView(RenderTarget2D);
 		}
 		
-		UE_LOG(LogTemp, Warning, TEXT("Passed RT: %s"),
-			*GetNameSafe(RenderTarget2D));
 
-		UE_LOG(LogTemp, Warning, TEXT("SceneCapture RT: %s"),
-			*GetNameSafe(SceneTarget->TextureTarget));
 		
 }
 
@@ -171,8 +160,16 @@ void ATriggerMissionBase::TurnOffQuestCamera()
 	if (AAntarcitcKidsPlayerController* PC = 
 	Cast<AAntarcitcKidsPlayerController>(GetWorld()->GetFirstPlayerController()))
 	{
-		PC->TurnOffQuestCameraView(RenderTarget2D);
-		PC->ResetHightlight();
+		if (bIsPawnOrActor)
+		{
+			PC->TurnOffQuestCameraView(RenderTarget2D);	
+		}
+		else
+		{
+			PC->ResetHightlight();
+		}
+		
+		
 	}
 }
 
@@ -193,8 +190,8 @@ void ATriggerMissionBase::FocusOn()
 	SceneTarget->PostProcessSettings.bOverride_DepthOfFieldFocalDistance = true;
 	SceneTarget->PostProcessSettings.DepthOfFieldFocalDistance = Distance;
 	
-	
-	PlayerController->HighLightActor(SceneTarget);
+	if (!bIsPawnOrActor)
+		PlayerController->HighLightActor(SceneTarget);
 }
 
 void ATriggerMissionBase::ResetFocus()
