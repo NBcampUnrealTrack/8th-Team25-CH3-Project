@@ -13,7 +13,7 @@ void USimControlSubsystem::Pause()
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 	if (IsValid(PlayerController))
 	{
-		PlayerController->SetPause(false);
+		PlayerController->SetPause(true); // true 여야 정지
 	}
 }
 
@@ -29,7 +29,7 @@ void USimControlSubsystem::Play()
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 	if (IsValid(PlayerController))
 	{
-		PlayerController->SetPause(true);
+		PlayerController->SetPause(false); // false 여야 재생
 	}
 }
 
