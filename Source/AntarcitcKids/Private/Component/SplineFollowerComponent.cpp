@@ -68,6 +68,7 @@ void USplineFollowerComponent::ResumeDriving()
 		if (bSplineIsClosedLoop || ProgressDistance < SplineTotalLength - KINDA_SMALL_NUMBER)
 		{
 			FollowState = ESplineFollowState::Driving;
+			OwnerPawn->ResumeMovement();
 			UE_LOG(LogSplineFollower, Log, TEXT("ResumeDriving: Transition to Driving state."));
 		}
 	}
