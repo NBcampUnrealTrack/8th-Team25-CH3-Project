@@ -13,6 +13,9 @@
 #include "QuestCameraWidget.h"
 #include "Camera/CameraComponent.h"
 #include "Chaos/SoftsSpring.h"
+#include "SimPauseWidget.h"
+#include "Manager/SimControlSubsystem.h"
+#include "EnhancedInputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 
@@ -41,11 +44,6 @@ void AAntarcitcKidsPlayerController::BeginPlay()
 			SensorViewWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		}
 	}*/
-	
-
-	
-
-
 }
 
 void AAntarcitcKidsPlayerController::SetupInputComponent()
@@ -61,6 +59,13 @@ void AAntarcitcKidsPlayerController::SetupInputComponent()
 				Subsystem->AddMappingContext(CurrentContext, 0);
 			}
 		}
+	}
+	
+	// Pause
+	if (UEnhancedInputComponent* EIC = Cast<UEnhancedInputComponent>(InputComponent))
+	{
+		if (PauseAction)
+			EIC->BindAction(PauseAction, ETriggerEvent::Started, this, &AAntarcitcKidsPlayerController::OnPauseTriggered);
 	}
 }
 
@@ -315,4 +320,26 @@ void AAntarcitcKidsPlayerController::OnHUDGearUpdated(FText GearText)
 void AAntarcitcKidsPlayerController::OnHUDRPMUpdated(float CurrentRPM)
 {
 	
+}
+
+void AAntarcitcKidsPlayerController::OnPauseTriggered()
+{
+	if (PauseWidget && PauseWidget->IsInViewport())
+	{
+		PauseWidget->CloseWidget();
+		return;
+	}
+
+	if (USimControlSubsystem* Ctrl = GetGameInstance()->GetSubsystem<USimControlSubsystem>())
+		Ctrl->Pause();
+
+	if (!PauseWidget && PauseWidgetClass)
+		PauseWidget = CreateWidget<USimPauseWidget>(this, PauseWidgetClass);
+
+	if (PauseWidget)
+	{
+		PauseWidget->AddToViewport(10);
+		SetShowMouseCursor(true);
+		SetInputMode(FInputModeUIOnly());
+	}
 }

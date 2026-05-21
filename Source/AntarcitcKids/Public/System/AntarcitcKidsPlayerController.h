@@ -5,6 +5,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "InputAction.h"
 #include "AntarcitcKidsPlayerController.generated.h"
 
 class UInputMappingContext;
@@ -13,7 +14,7 @@ class USensorViewrWidget;
 class UTextureRenderTarget2D;
 class USpringArmComponent;
 class UQuestCameraWidget;
-
+class USimPauseWidget;
 
 
 UCLASS()
@@ -97,6 +98,19 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UUserWidget> CyberHUDWidget;
+	
+	// Pause 담당
+	UPROPERTY(EditAnywhere, Category = "UI|Pause")
+	TObjectPtr<UInputAction> PauseAction;
+
+	UPROPERTY(EditAnywhere, Category = "UI|Pause")
+	TSubclassOf<USimPauseWidget> PauseWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<USimPauseWidget> PauseWidget;
+
+	UFUNCTION()
+	void OnPauseTriggered();
 
 	void CreateAndBindCyberHUD();
 
