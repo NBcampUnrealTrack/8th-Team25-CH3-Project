@@ -4,12 +4,31 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Actor/WeatherType.h"
 #include "Subsystems/WorldSubsystem.h"
+#include "Engine/StreamableManager.h"
 #include "WeatherSubsystem.generated.h"
+
+class AWeatherBase;
 
 UCLASS()
 class ANTARCITCKIDS_API UWeatherSubsystem : public UWorldSubsystem
 {
 	GENERATED_BODY()
+public:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void OnLoadedFinished(FPrimaryAssetId LoadedId);
+	
+	void SetWeather(EWeatherType WeatherType);
+	void GetCurrentWeather();
+	
+	
+	class UWeatherDataAsset* WeatherDataAsset;
+	
+protected:
+	TSharedPtr<FStreamableHandle> LoadingHandle;
+	TMap<EWeatherType, TSubclassOf<AWeatherBase>> LoadedWeatherMap;
+	TPair<EWeatherType, AWeatherBase*> CurrentWeather;
+
 	
 };

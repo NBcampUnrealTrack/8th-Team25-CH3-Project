@@ -30,6 +30,8 @@ public:
 	
 private:
 	
+	float CurrentTime;
+	
 	UPROPERTY()
 	TWeakObjectPtr<ADirectionalLight> CachedDirectionalLight;
 };

@@ -96,6 +96,14 @@ void AEmergencyImpact::BeginPlay()
 
 }
 
+void AEmergencyImpact::SetQuestInfo()
+{
+	Super::SetQuestInfo();
+	QuestInfo.QuestName = TEXT("긴급 정지");
+	QuestInfo.Description = TEXT("즉시 정지하십시오!");
+	
+}
+
 void AEmergencyImpact::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
