@@ -77,10 +77,12 @@ public:
 	
 	
 	virtual void BeginPlay() override; 
+	
 	virtual void Tick(float DeltaSeconds) override;
 	
 	void PlayImpactMontage();
-
+protected:
+	virtual void SetQuestInfo() override;
 private:
 	FTimerHandle MoveTimerHandle;
 	
