@@ -3,6 +3,7 @@
 
 #include "Engine/DirectionalLight.h"
 #include "Kismet/GameplayStatics.h"
+#include "Manager/TimeSubsystem.h"
 #include "Road/StreetLightSource.h"
 
 
@@ -15,28 +16,11 @@ void ALightManager::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	UpdateLights();
+	GetWorld()->GetSubsystem<UTimeSubsystem>()->TimeChanged.AddUObject(this, &ALightManager::UpdateLights);
 }
 
-void ALightManager::UpdateLights()
+void ALightManager::UpdateLights(double Pitch)
 {
-	UE_LOG(LogTemp, Warning, TEXT("UpdateLights Called"));
-	
-	if (!DirectionalLight)
-	{
-		UE_LOG(LogTemp, Error, TEXT("DirectionalLight is NULL"));
-		return;
-	}
-	
-	const FRotator SunRotation = DirectionalLight->GetActorRotation();
-	
-	UE_LOG(LogTemp, Warning, TEXT("Pitch=%f, Yaw=%f, Roll=%f"),
-	SunRotation.Pitch,
-	SunRotation.Yaw,
-	SunRotation.Roll);
-
-	const float Pitch = SunRotation.Pitch;
-
 	const bool bIsNight = Pitch >= 0.f && Pitch <= 180.f;
 	
 	TArray<AActor*> FoundLights;
