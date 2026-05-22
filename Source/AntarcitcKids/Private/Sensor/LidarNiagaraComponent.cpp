@@ -30,7 +30,7 @@ void ULidarNiagaraComponent::RenderPointCloudNiagara(const FLidarPointCloudData&
 	}
 	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector(
 		this,
-		FName("PointCloudPoints"),
+		FName("PointCloudPositions"),
 		PointCloud.Points
 		);
 	
@@ -64,7 +64,7 @@ void ULidarNiagaraComponent::RenderPointCloudNiagara(const FLidarPointCloudData&
 	
 	if (this->IsActive())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Niagara 멈춤 "));
+		UE_LOG(LogTemp, Warning, TEXT("CloudPointCount : %d "), PointCount);
 	}
 }
 

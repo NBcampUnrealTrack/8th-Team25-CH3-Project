@@ -37,7 +37,8 @@ public:
 	UFUNCTION(BlueprintPure, Category = "LidarSensor")
 	UTexture2D* GetBevRenderTarget() const;
 	
-
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="LidarSensor")
+	TArray<FName> Keys;
 
 protected:
 	virtual void BeginPlay() override;
