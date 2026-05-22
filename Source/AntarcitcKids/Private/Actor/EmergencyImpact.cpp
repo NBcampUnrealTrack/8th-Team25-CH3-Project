@@ -99,6 +99,7 @@ void AEmergencyImpact::BeginPlay()
 void AEmergencyImpact::SetQuestInfo()
 {
 	Super::SetQuestInfo();
+	QuestInfo.QuestType = EQuestClass::EmergencyImpact;
 	QuestInfo.QuestName = TEXT("긴급 정지");
 	QuestInfo.Description = TEXT("즉시 정지하십시오!");
 	

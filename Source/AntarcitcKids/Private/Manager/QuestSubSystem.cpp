@@ -31,6 +31,9 @@ void UQuestSubSystem::OnRegisterQuest(UQuestBase* RegisterQuest)
 	UE_LOG(LogTemp, Warning, TEXT("퀘스트 만들어짐."));
 	
 	QuestsList.Add(RegisterQuest);
+	EQuestClass RQuestClass = RegisterQuest->GetCurrentQuestInfo().QuestType;
+	QuestStatus.FindOrAdd(RQuestClass).AttemptCount +=1;
+	
 	
 }
 
@@ -38,31 +41,14 @@ void UQuestSubSystem::OnRegisterQuest(UQuestBase* RegisterQuest)
 
 
 
-void UQuestSubSystem::OnQuestsCompleted(FQuestCompletedEvent& QuestCompletedEvent)
+void UQuestSubSystem::OnQuestsCompleted(UQuestBase* CompleteQuest)
 {
-	QuestListChangeStruct.QuestTypeList.FindOrAdd(QuestCompletedEvent.QuestClass) += 1;
-	FQuestStats& Stats = QuestListChangeStruct.QuestTypeStats.FindOrAdd(QuestCompletedEvent.QuestClass);
-	Stats.AttemptCount += 1;
-	if (QuestCompletedEvent.QuestProgress == EQuestAchivmentType::Succeed)
-	{
-		QuestListChangeStruct.QuestTypeStats[QuestCompletedEvent.QuestClass].SuccessCount +=1;
-	}
+	EQuestClass CQuestClass = CompleteQuest->GetCurrentQuestInfo().QuestType;
+	QuestsList.Remove(CompleteQuest);
+	CompletedQuestsList.Add(CompleteQuest);
+	if (CompleteQuest->GetCurrentQuestInfo().QuestProgress == EQuestAchivmentType::Succeed)
+		QuestStatus.Find(CQuestClass)->SuccessCount;
 	
-	OnQuestListChange.Broadcast(QuestListChangeStruct);
-	
-	if (CachedVehiclePawn.IsValid())
-	{
-		// QuestID(FName)를 미션 인덱스로 쓰기 위해 변환
-		// DataTable의 RowName이 곧 QuestID이므로 인덱스 기반으로 매핑 필요
-		int32 MissionIndex = QuestsList.IndexOfByPredicate([&](UQuestBase* Q){
-			return Q->GetQuestCompletedEvent().QuestID == QuestCompletedEvent.QuestID;
-		});
-        
-		if (MissionIndex != INDEX_NONE)
-		{
-			CachedVehiclePawn->CompleteMission(MissionIndex, QuestCompletedEvent.QuestName);
-		}
-	}
 	
 }
 
