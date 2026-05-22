@@ -17,11 +17,13 @@ class ANTARCITCKIDS_API UWeatherSubsystem : public UWorldSubsystem
 	GENERATED_BODY()
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-	virtual void OnLoadedFinished(FPrimaryAssetId LoadedId);
-	
+	/*virtual void OnLoadedFinished(FPrimaryAssetId LoadedId);*/
+	UFUNCTION(BlueprintCallable)
 	void SetWeather(EWeatherType WeatherType);
+	
 	void GetCurrentWeather();
 	
+	void OnWorldBeginPlay(UWorld& InWorld) override;
 	
 	class UWeatherDataAsset* WeatherDataAsset;
 	
