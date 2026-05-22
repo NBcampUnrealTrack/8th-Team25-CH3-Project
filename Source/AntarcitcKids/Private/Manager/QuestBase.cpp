@@ -63,7 +63,7 @@ void UQuestBase::OnSuccess()
 void UQuestBase::OnFailed()
 {
 	CurrentQuestInfo.QuestProgress = EQuestAchivmentType::Failed;
-	QuestCompletedEvent.QuestProgress = EQuestAchivmentType::Succeed;
+	QuestCompletedEvent.QuestProgress = EQuestAchivmentType::Failed;
 	OnCompletetd();
 }
 
