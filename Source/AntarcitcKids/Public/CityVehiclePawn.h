@@ -22,11 +22,16 @@ class UCameraComponent;
 class USpringArmComponent;
 class UInputAction;
 class UChaosWheeledVehicleMovementComponent;
+class UCameraSceneComponent;  
+class ULidarSceneComponent;
 class UCameraSensorComponent;
 class ULidarSensorComponent;
+class ULidarNiagaraComponent;
+class UBoxBoundComponent;
 class USplineFollowerComponent;
 class UAgentDataLogger;
 struct FInputActionValue;
+
 
 UCLASS()
 class ANTARCITCKIDS_API ACityVehiclePawn : public AWheeledVehiclePawn
@@ -124,8 +129,8 @@ public:
 	FORCEINLINE USpringArmComponent* GetBackSpringArm() const { return BackSpringArm; }
 	FORCEINLINE UCameraComponent* GetBackCamera() const { return BackCamera; }
 	FORCEINLINE UChaosWheeledVehicleMovementComponent* GetChaosVehicleMovement() const { return ChaosVehicleMovement; }
-	//FORCEINLINE UCameraSensorComponent* GetCameraSensor() const { return CameraSensor; }
-	//FORCEINLINE ULidarSensorComponent* GetLidarSensor() const { return LidarSensor; }
+	/*//FORCEINLINE UCameraSensorComponent* GetCameraSensor() const { return CameraSensor; }
+	//FORCEINLINE ULidarSensorComponent* GetLidarSensor() const { return LidarSensor; }*/
 	FORCEINLINE UAgentDataLogger* GetDataLogger() const { return DataLogger; }
 	
 	UFUNCTION(BlueprintPure, Category="Vehicle")
@@ -194,11 +199,17 @@ private:
 	UPROPERTY(EditAnywhere, Category="Mirror")
 	TObjectPtr<UTextureRenderTarget2D> RightMirrorRenderTarget;
 	
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
-	//TObjectPtr<UCameraSceneComponent> CameraSensor;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCameraSceneComponent> CameraSensor;
 
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
-	//TObjectPtr<ULidarSceneComponent> LidarSensor;  
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<ULidarSceneComponent> LidarSensor;  
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<ULidarNiagaraComponent> NiagaraComponent;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UBoxBoundComponent> BoxBoundComponent;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAgentDataLogger> DataLogger;
