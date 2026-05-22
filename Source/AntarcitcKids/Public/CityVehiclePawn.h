@@ -129,8 +129,8 @@ public:
 	FORCEINLINE USpringArmComponent* GetBackSpringArm() const { return BackSpringArm; }
 	FORCEINLINE UCameraComponent* GetBackCamera() const { return BackCamera; }
 	FORCEINLINE UChaosWheeledVehicleMovementComponent* GetChaosVehicleMovement() const { return ChaosVehicleMovement; }
-	//FORCEINLINE UCameraSensorComponent* GetCameraSensor() const { return CameraSensor; }
-	//FORCEINLINE ULidarSensorComponent* GetLidarSensor() const { return LidarSensor; }
+	/*//FORCEINLINE UCameraSensorComponent* GetCameraSensor() const { return CameraSensor; }
+	//FORCEINLINE ULidarSensorComponent* GetLidarSensor() const { return LidarSensor; }*/
 	FORCEINLINE UAgentDataLogger* GetDataLogger() const { return DataLogger; }
 	
 	UFUNCTION(BlueprintPure, Category="Vehicle")
