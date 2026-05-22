@@ -58,6 +58,7 @@ void AParking::OnAreaOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 void AParking::SetQuestInfo()
 {
 	Super::SetQuestInfo();
+	QuestInfo.QuestType = EQuestClass::Parking;
 	QuestInfo.QuestName = TEXT("주차");
 	QuestInfo.Description = TEXT("주차 선에 맞추어 주차를 진행하시오");
 }

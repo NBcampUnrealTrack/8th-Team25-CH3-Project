@@ -131,6 +131,7 @@ void ASpeedTrap::OnEndGateOverlap(UPrimitiveComponent* OverlappedComp, AActor* O
 void ASpeedTrap::SetQuestInfo()
 {
 	Super::SetQuestInfo();
+	QuestInfo.QuestType = EQuestClass::SpeedTrap;
 	QuestInfo.QuestName = TEXT("과속 금지");
 	QuestInfo.Description = TEXT("일정 속도 이상 금지");
 	
