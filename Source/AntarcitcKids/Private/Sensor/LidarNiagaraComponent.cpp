@@ -15,16 +15,19 @@ ULidarNiagaraComponent::ULidarNiagaraComponent()
 
 void ULidarNiagaraComponent::RenderPointCloudNiagara(const FLidarPointCloudData& PointCloud)
 {
-	
-	
 	DeactivateImmediate(); 
+	UE_LOG(LogTemp, Warning, TEXT("RenderPointCloudNiagara 발동"))
 	const int32 IntensityCount = PointCloud.Intensities.Num();
 	const int32 PointCount = PointCloud.PointCount;
 	
 	PendingColors.SetNum(PointCloud.PointCount);
 	//RESTRICT : 해당 함수 Scope 내에서 같은 메모리를 참조하지 않는다.
 
-	
+	if (!this)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Niagara 멈춤 "));
+		return;
+	}
 	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector(
 		this,
 		FName("PointCloudPoints"),
@@ -54,8 +57,15 @@ void ULidarNiagaraComponent::RenderPointCloudNiagara(const FLidarPointCloudData&
 	}*/
 	
 	PendingCount = PointCount;
+	
+
 	SetIntParameter(TEXT("CloudPointCount"),PointCount);
 	Activate(true);
+	
+	if (this->IsActive())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Niagara 멈춤 "));
+	}
 }
 
 void ULidarNiagaraComponent::BeginPlay()

@@ -17,6 +17,9 @@
 #include "Engine/TextureRenderTarget2D.h"
 #include "Sensor/CameraSceneComponent.h"
 #include "Sensor/LidarSceneComponent.h"
+#include "Sensor/LidarNiagaraComponent.h"
+#include "Sensor/BoxBoundComponent.h"
+
 #include "DataLogger/AgentDataLogger.h"
 #include "AI/CityVehicleAIController.h"
 #include "Kismet/GameplayStatics.h"
@@ -64,14 +67,18 @@ ACityVehiclePawn::ACityVehiclePawn()
 	
 	ChaosVehicleMovement = CastChecked<UChaosWheeledVehicleMovementComponent>(GetVehicleMovement());
 	
-	/*
 	CameraSensor = CreateDefaultSubobject<UCameraSceneComponent>(TEXT("CameraSensor"));
 	CameraSensor->SetupAttachment(GetMesh());
 	
 	LidarSensor = CreateDefaultSubobject<ULidarSceneComponent>(TEXT("LidarSensor"));
 	LidarSensor->SetupAttachment(GetMesh());
 	LidarSensor->SetRelativeLocation(FVector(0.0f, 0.0f, 180.0f));
-	*/
+	
+	NiagaraComponent = CreateDefaultSubobject<ULidarNiagaraComponent>(TEXT("LidarNiagaraComponent"));
+	NiagaraComponent->SetupAttachment(GetMesh());
+	
+	BoxBoundComponent = CreateDefaultSubobject<UBoxBoundComponent>(TEXT("BoxBoundComponent"));
+	BoxBoundComponent->SetupAttachment(GetMesh());
 	
 	SplineFollower = CreateDefaultSubobject<USplineFollowerComponent>(TEXT("SplineFollower"));
 	
@@ -193,6 +200,9 @@ void ACityVehiclePawn::BeginPlay()
 	Super::BeginPlay();
 	
 	GetWorld()->GetTimerManager().SetTimer(FlipCheckTimer, this, &ACityVehiclePawn::FlippedCheck, FlipCheckTime, true);
+	LidarSensor->OnPointCloudReady.AddUObject(NiagaraComponent,&ULidarNiagaraComponent::RenderPointCloudNiagara);
+	LidarSensor->ImpactActorReady.AddUObject(BoxBoundComponent,&UBoxBoundComponent::RenderBoundingBox);
+	
 	
 	if (ChaosVehicleMovement)
 	{

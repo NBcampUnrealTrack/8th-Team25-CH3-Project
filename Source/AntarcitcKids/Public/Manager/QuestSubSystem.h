@@ -13,7 +13,7 @@
 class ACityVehiclePawn; //HUD연결용
 class UQuestBase;
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnQuestListChange, FQuestListChange)
+/*DECLARE_MULTICAST_DELEGATE_OneParam(FOnQuestListChange, FQuestListChange)*/
 
 
 UCLASS()
@@ -28,29 +28,33 @@ public:
 	int32 SetQuestID() {return QuestID++;}
 	
 	//서브 시스템의 UI 변화
-	FOnQuestListChange OnQuestListChange;
+	/*FOnQuestListChange OnQuestListChange;*/
 	
 	UQuestSubSystem();
 	void OnRegisterQuest( UQuestBase* RegisterQuest);
-	void OnQuestsCompleted( FQuestCompletedEvent& QuestCompletedEvent);
+	void OnQuestsCompleted( UQuestBase* CompleteQuest);
 	void OnQuestAborted();
 	void OnLoadQuest();
 	
+	UFUNCTION(BlueprintCallable)
 	TArray<UQuestBase*> GetQuestList() { return QuestsList;}
+	UFUNCTION(BlueprintCallable)
 	TArray<UQuestBase*> GetCompletedQuestList() { return CompletedQuestsList;}
+	UFUNCTION(BlueprintCallable)
+	TMap<EQuestClass, FQuestStats> GetQuestStatus() { return QuestStatus;}
 	
 private:
 
 	// HUD 연결용
 	UPROPERTY()
 	TWeakObjectPtr<ACityVehiclePawn> CachedVehiclePawn;
-
-	FQuestListChange QuestListChangeStruct;
+	
 
 	
 	TArray<UQuestBase*> QuestsList;
 	TArray<UQuestBase*> CompletedQuestsList;
 	UDataTable* StartMissionList;
+	TMap<EQuestClass, FQuestStats> QuestStatus;
 	//데이터 로드된 데이터만 들고 있을 수 있도록 변경
 	
 	int QuestID = 1;
