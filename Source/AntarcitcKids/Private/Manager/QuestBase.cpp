@@ -13,7 +13,7 @@ void UQuestBase::OnInitialized(const FQuestInfo& QuestInfo)
 {
 	
 	
-	QuestClass = EQuestClass::TrafficSignal;
+	CurrentQuestInfo.QuestType = EQuestClass::TrafficSignal;
 	CurrentQuestInfo.QuestID = GetWorld()->GetGameInstance()->GetSubsystem<UQuestSubSystem>()->SetQuestID();
 	CurrentQuestInfo.QuestClass = QuestInfo.QuestClass;
 	CurrentQuestInfo.QuestID = QuestInfo.QuestID;
@@ -23,7 +23,7 @@ void UQuestBase::OnInitialized(const FQuestInfo& QuestInfo)
 	CurrentQuestInfo.FreqQuest = QuestInfo.FreqQuest;
 	CurrentQuestInfo.QuestLocation = QuestInfo.QuestLocation;
 	
-	QuestCompletedEvent.QuestClass = QuestClass;
+	QuestCompletedEvent.QuestClass = CurrentQuestInfo.QuestType;
 	QuestCompletedEvent.QuestID = QuestInfo.QuestID;
 	QuestCompletedEvent.QuestProgress = QuestInfo.QuestProgress;
 	
@@ -43,7 +43,7 @@ void UQuestBase::OnCompletetd()
 	
 	
 	CurrentQuestInfo.QuestState = EQuestProgressType::Completed;
-	OnQuestCompleted.Broadcast(QuestCompletedEvent);
+	OnQuestCompleted.Broadcast(this);
 }
 
 void UQuestBase::OnPaused()

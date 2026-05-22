@@ -11,7 +11,7 @@
 
 class UNiagaraSystem;
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnQuestCompleted,  FQuestCompletedEvent& )
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnQuestCompleted,  UQuestBase* )
 
 
 UCLASS()
@@ -37,7 +37,6 @@ public:
 	FQuestInfo GetCurrentQuestInfo() { return CurrentQuestInfo; }
 	
 protected:
-	EQuestClass QuestClass;
 	FQuestInfo CurrentQuestInfo;
 	FQuestCompletedEvent QuestCompletedEvent;
 	

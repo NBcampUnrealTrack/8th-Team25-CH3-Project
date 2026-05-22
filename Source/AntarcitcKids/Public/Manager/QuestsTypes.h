@@ -62,6 +62,7 @@ USTRUCT(BlueprintType)
 struct FQuestStats
 {
 	GENERATED_BODY()
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Quest")
 	int32 AttemptCount = 0;   
@@ -78,20 +79,7 @@ struct FQuestStats
 };
 
 
-USTRUCT(BlueprintType)
-struct FQuestListChange
-{
-	GENERATED_BODY()
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Quest")
-	TMap<EQuestClass,int32> QuestTypeList;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Quest")
-	TMap<EQuestClass,FQuestStats> QuestTypeStats;
-	
-	
-	
-};
+
 
 
 USTRUCT(BlueprintType)
@@ -101,6 +89,9 @@ struct FQuestInfo : public FTableRowBase
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Quest")
 	TSubclassOf<UQuestBase> QuestClass; 
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Quest")
+	EQuestClass QuestType;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Quest")
 	int32 QuestID;
