@@ -232,3 +232,12 @@ struct FAutoExposureParams
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Exposure", meta = (EditCondition = "bEnableAutoExposure", ClampMin = "0.1", ClampMax = "20.0"))
 	float SpeedDown = 1.0f;
 };
+
+USTRUCT(BlueprintType)
+struct FTagDetectInfo
+{
+	GENERATED_BODY()
+	
+	FName Tag;
+	FLinearColor Color;
+};
