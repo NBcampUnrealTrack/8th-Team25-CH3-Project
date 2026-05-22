@@ -13,7 +13,7 @@
 class ACityVehiclePawn; //HUD연결용
 class UQuestBase;
 
-/*DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuestListChange, int32)*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnQuestListChange, EQuestClass, CQuestClass, int32, SuccessCount);
 
 
 UCLASS()
@@ -28,7 +28,7 @@ public:
 	int32 SetQuestID() {return QuestID++;}
 	
 	//서브 시스템의 UI 변화
-	/*FOnQuestListChange OnQuestListChange;*/
+	FOnQuestListChange OnQuestListChange;
 	
 	UQuestSubSystem();
 	void OnRegisterQuest( UQuestBase* RegisterQuest);
@@ -56,6 +56,8 @@ private:
 	UDataTable* StartMissionList;
 	TMap<EQuestClass, FQuestStats> QuestStatus;
 	//데이터 로드된 데이터만 들고 있을 수 있도록 변경
+	//EQuestClass : 퀘스트 종류
+	//FQuestStats : 시도 횟수, 성공 횟수
 	
 	int QuestID = 1;
 	

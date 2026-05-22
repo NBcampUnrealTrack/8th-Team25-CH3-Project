@@ -47,9 +47,10 @@ void UQuestSubSystem::OnQuestsCompleted(UQuestBase* CompleteQuest)
 	QuestsList.Remove(CompleteQuest);
 	CompletedQuestsList.Add(CompleteQuest);
 	if (CompleteQuest->GetCurrentQuestInfo().QuestProgress == EQuestAchivmentType::Succeed)
-		QuestStatus.Find(CQuestClass)->SuccessCount +=1;
-	
-	
+	{
+		QuestStatus.Find(CQuestClass)->SuccessCount++;
+		OnQuestListChange.Broadcast(CQuestClass, QuestStatus.Find(CQuestClass)->SuccessCount);
+	}
 }
 
 void UQuestSubSystem::OnQuestAborted()
