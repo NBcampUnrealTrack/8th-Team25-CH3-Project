@@ -15,9 +15,8 @@ ULidarNiagaraComponent::ULidarNiagaraComponent()
 
 void ULidarNiagaraComponent::RenderPointCloudNiagara(const FLidarPointCloudData& PointCloud)
 {
-	
-	
 	DeactivateImmediate(); 
+	UE_LOG(LogTemp, Warning, TEXT("RenderPointCloudNiagara 발동"))
 	const int32 IntensityCount = PointCloud.Intensities.Num();
 	const int32 PointCount = PointCloud.PointCount;
 	

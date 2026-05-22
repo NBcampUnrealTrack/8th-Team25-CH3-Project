@@ -7,9 +7,11 @@
 #include "GameFramework/Actor.h"
 #include "SplineRoadActor.generated.h"
 
+
 class USplineComponent;
 class USplineMeshComponent;
 class UStaticMesh;
+class URuntimeVirtualTexture; //다이나믹 스노우를 사용하기 위한 선언
 
 UCLASS()
 class ANTARCITCKIDS_API ASplineRoadActor : public AActor
@@ -56,6 +58,15 @@ protected:
 	// nullptr이면 일반 도로로 간주
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Road|Properties")
 	TObjectPtr<AActor> ParkingTarget = nullptr;
+	
+	//===================RVT 사용을 위한 코드================================
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Road|RVT")
+	TObjectPtr<URuntimeVirtualTexture> RVT_Material;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Road|RVT")
+	TObjectPtr<URuntimeVirtualTexture> RVT_Height;
+	//====================================================================
+	
 	
 	void ClearRoad();
 };

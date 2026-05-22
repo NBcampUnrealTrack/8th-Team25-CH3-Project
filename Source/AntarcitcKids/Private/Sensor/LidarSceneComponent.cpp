@@ -141,6 +141,16 @@ void ULidarSceneComponent::RebuildDirectionCache()
 	bDirectionsDirty = false;
 }
 
+void ULidarSceneComponent::DetectActor(TMap<FName, TArray<AActor*>> DetectedTagActors)
+{
+	TArray<FName> Keys;
+	DetectedTagActors.GetKeys(Keys);
+	
+	for (FName Tag : Keys)
+		ImpactActorReady.Broadcast(*DetectedTagActors.Find(Tag),Tag);
+}
+
+
 //스캔 타이머 시작
 void ULidarSceneComponent::StartScanTimer()
 {
@@ -240,6 +250,10 @@ void ULidarSceneComponent::CollectAsyncResults()
 	const float MaxRange = Config.MaxRange;
 	const float MinRange = Config.MinRange;
 	const float NoiseStd = Config.NoiseStdDev;
+	
+	TMap<FName,TArray<AActor*>> DetectedTagActors;
+	TArray<FName> Keys;
+	DetectedTagActors.GetKeys(Keys);
 
 	for (int32 i = 0; i < PendingHandles.Num(); ++i)
 	{
@@ -251,10 +265,13 @@ void ULidarSceneComponent::CollectAsyncResults()
 		const FHitResult& Hit = Data.OutHits[0];
 		if (!Hit.bBlockingHit || Hit.Distance < MinRange) continue;
 		
-		if (Hit.GetActor()->ActorHasTag(TEXT("Detect")))
+
+		for (FName Tag: Keys)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Detect Tag Detected"));
-			DetectedActors.Add(Hit.GetActor());	
+			if (Hit.GetActor()->ActorHasTag(Tag))
+			{
+				DetectedTagActors.Find(Tag)->Add(Hit.GetActor());
+			}
 		}
 		
 		
@@ -290,7 +307,9 @@ void ULidarSceneComponent::CollectAsyncResults()
 	
 	/*UE_LOG(LogTemp, Warning, TEXT("LastPointCloudReady!"));*/
 	OnPointCloudReady.Broadcast(LastPointCloud);
-	ImpactActorReady.Broadcast(DetectedActors);
+	
+	DetectActor(DetectedTagActors);
+
 	
 
 		
