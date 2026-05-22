@@ -9,7 +9,7 @@
 #include "LidarSceneComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPointCloudReady, const FLidarPointCloudData&);
-DECLARE_MULTICAST_DELEGATE_OneParam(FImpactActorReady, const TArray<AActor*>);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FImpactActorReady, TArray<AActor*>, FName);
 
 
 class ULidarBevRenderer;
@@ -36,6 +36,8 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "LidarSensor")
 	UTexture2D* GetBevRenderTarget() const;
+	
+
 
 protected:
 	virtual void BeginPlay() override;
@@ -67,6 +69,7 @@ private:
 	void SavePointCloudData();
 
 	void RebuildDirectionCache();
+	void DetectActor(TMap<FName,TArray<AActor*>> DetectedTagActors);
 	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LidarSensor|Config",
@@ -130,5 +133,9 @@ private:
 	bool bDirectionsDirty = true;
 	TArray<FVector> ScanPoints;
 	TArray<float>   ScanIntensities;
+	
+	
+	
+	
 		
 };
