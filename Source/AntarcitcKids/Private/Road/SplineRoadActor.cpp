@@ -4,7 +4,7 @@
 #include "Road/SplineRoadActor.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
-#include "VT/RuntimeVirtualTexture.h" //다이나믹 스노우를 사용하기 위한 헤더파일 추가
+
 
 ASplineRoadActor::ASplineRoadActor()
 {
@@ -80,22 +80,6 @@ void ASplineRoadActor::OnConstruction(const FTransform& Transform)
 
 		RoadPart->SetSplineUpDir(FVector(0.f, 0.f, 1.f), true);
 		
-		//====================RVT 텍스쳐 사용을 위한 cpp==================================
-		if (RVT_Material)
-
-		{
-			RoadPart->RuntimeVirtualTextures.AddUnique(RVT_Material);
-		}
-
-
-
-		if (RVT_Height)
-
-		{
-			RoadPart->RuntimeVirtualTextures.AddUnique(RVT_Height);
-		}
-		//=============================================================================
-
 		RoadPart->RegisterComponent();
 
 		SplineMeshComps.Add(RoadPart);
