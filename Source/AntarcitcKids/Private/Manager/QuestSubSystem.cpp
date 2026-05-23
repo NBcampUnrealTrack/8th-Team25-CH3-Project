@@ -33,6 +33,7 @@ void UQuestSubSystem::OnRegisterQuest(UQuestBase* RegisterQuest)
 	QuestsList.Add(RegisterQuest);
 	EQuestClass RQuestClass = RegisterQuest->GetCurrentQuestInfo().QuestType;
 	QuestStatus.FindOrAdd(RQuestClass).AttemptCount +=1;
+	QuestStatus.Find(RQuestClass)->QuestName = RegisterQuest->GetCurrentQuestInfo().QuestName;
 	
 	
 }
@@ -49,7 +50,7 @@ void UQuestSubSystem::OnQuestsCompleted(UQuestBase* CompleteQuest)
 	if (CompleteQuest->GetCurrentQuestInfo().QuestProgress == EQuestAchivmentType::Succeed)
 	{
 		QuestStatus.Find(CQuestClass)->SuccessCount++;
-		OnQuestListChange.Broadcast(CQuestClass, QuestStatus.Find(CQuestClass)->SuccessCount);
+		OnQuestListChange.Broadcast(CQuestClass, *QuestStatus.Find(CQuestClass));
 	}
 }
 

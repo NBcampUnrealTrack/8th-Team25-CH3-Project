@@ -37,8 +37,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "LidarSensor")
 	UTexture2D* GetBevRenderTarget() const;
 	
-
-
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Quest")
+	TArray<FName> Keys;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Quest")
+	FName Tag;
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -69,7 +72,7 @@ private:
 	void SavePointCloudData();
 
 	void RebuildDirectionCache();
-	void DetectActor(TMap<FName,TArray<AActor*>> DetectedTagActors);
+	void DetectActor(TArray<AActor*>DetectedTagActors);
 	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LidarSensor|Config",
@@ -128,6 +131,8 @@ private:
 	uint64 FireFrameNumber = 0;
 
 	TArray<FVector> CachedLocalDirections;
+	
+	UPROPERTY()
 	TArray<AActor*> DetectedActors;
 	
 	bool bDirectionsDirty = true;

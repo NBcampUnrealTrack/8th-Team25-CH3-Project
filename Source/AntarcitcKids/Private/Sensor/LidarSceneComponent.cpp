@@ -17,6 +17,8 @@ ULidarSceneComponent::ULidarSceneComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 	//시작 시 즉시 tick이 발동되지 않도록 한다.
 	PrimaryComponentTick.bStartWithTickEnabled = false;
+	
+	Tag = TEXT("Mission");
 }
 
 void ULidarSceneComponent::BeginPlay()
@@ -141,13 +143,12 @@ void ULidarSceneComponent::RebuildDirectionCache()
 	bDirectionsDirty = false;
 }
 
-void ULidarSceneComponent::DetectActor(TMap<FName, TArray<AActor*>> DetectedTagActors)
+void ULidarSceneComponent::DetectActor(TArray<AActor*> DetectedTagActors)
 {
-	TArray<FName> Keys;
-	DetectedTagActors.GetKeys(Keys);
+	/*UE_LOG(LogTemp, Error, TEXT("DetectActor 작동!"));*/
+	ImpactActorReady.Broadcast(DetectedTagActors,Tag);
 	
-	for (FName Tag : Keys)
-		ImpactActorReady.Broadcast(*DetectedTagActors.Find(Tag),Tag);
+		
 }
 
 
@@ -239,7 +240,7 @@ void ULidarSceneComponent::FireAsyncTraces()
 //비동기 레이 트레이스의 결과를 모은다.
 void ULidarSceneComponent::CollectAsyncResults()
 {
-
+	/*UE_LOG(LogTemp, Warning, TEXT("CollectAsyncResults 발동"));*/
 	UWorld* World = GetWorld();
 	if (!World) return;
 
@@ -251,10 +252,8 @@ void ULidarSceneComponent::CollectAsyncResults()
 	const float MinRange = Config.MinRange;
 	const float NoiseStd = Config.NoiseStdDev;
 	
-	TMap<FName,TArray<AActor*>> DetectedTagActors;
-	TArray<FName> Keys;
-	DetectedTagActors.GetKeys(Keys);
-
+	TArray<AActor*> DetectedTagActors;
+	
 	for (int32 i = 0; i < PendingHandles.Num(); ++i)
 	{
 		FTraceDatum Data;
@@ -265,13 +264,11 @@ void ULidarSceneComponent::CollectAsyncResults()
 		const FHitResult& Hit = Data.OutHits[0];
 		if (!Hit.bBlockingHit || Hit.Distance < MinRange) continue;
 		
-
-		for (FName Tag: Keys)
+		
+		if (Hit.GetActor()->ActorHasTag(Tag))
 		{
-			if (Hit.GetActor()->ActorHasTag(Tag))
-			{
-				DetectedTagActors.Find(Tag)->Add(Hit.GetActor());
-			}
+
+			DetectedTagActors.Add(Hit.GetActor());
 		}
 		
 		
@@ -305,10 +302,23 @@ void ULidarSceneComponent::CollectAsyncResults()
 		LidarSensorRenderer->RenderPointCloudNiagara(LastPointCloud);*/
 	
 	
-	/*UE_LOG(LogTemp, Warning, TEXT("LastPointCloudReady!"));*/
-	OnPointCloudReady.Broadcast(LastPointCloud);
+
+	if (OnPointCloudReady.IsBound())
+	{
+		/*UE_LOG(LogTemp, Warning, TEXT("LastPointCloudReady!"));*/
+		OnPointCloudReady.Broadcast(LastPointCloud);
+	}
+	else
+	{
+		
+		UE_LOG(LogTemp, Error, TEXT("[Liadar] %p 번지 센서에 바인딩이 존재하지 않습니다!!"), this);
+	}
+
+
 	
-	DetectActor(DetectedTagActors);
+	
+	
+	/*DetectActor(DetectedTagActors);*/
 
 	
 

@@ -152,6 +152,7 @@ private:
 	void ToggleCamera(const FInputActionValue& Value);
 	void ResetVehicle(const FInputActionValue& Value);
 	void ToggleSensorView(const FInputActionValue& Value);
+	void ToggleVisLidar(const FInputActionValue& Value);
 	void ToggleLidarView(const FInputActionValue& Value);
 	
 	UFUNCTION(BlueprintCallable, Category="Input")
@@ -165,6 +166,9 @@ private:
 	
 	UFUNCTION(BlueprintCallable, Category="Input")
 	void DoToggleLidarView();
+	
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	void DoToggleVisLidar();
 	
 protected:
 	
@@ -228,6 +232,9 @@ private:
 	
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputAction> ToggleLidarViewAction;
+	
+	UPROPERTY(EditAnywhere,Category="Input")
+	TObjectPtr<UInputAction> ToggleVisLidarAction;
 	
 	UPROPERTY(EditAnywhere, Category="Flip Check", meta = (Units = "s"))
 	float FlipCheckTime = 3.0f;

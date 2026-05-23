@@ -63,7 +63,9 @@ struct FQuestStats
 {
 	GENERATED_BODY()
 	
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Quest")
+	FName QuestName;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Quest")
 	int32 AttemptCount = 0;   
 

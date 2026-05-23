@@ -17,9 +17,13 @@ class ANTARCITCKIDS_API ULidarNiagaraComponent : public UNiagaraComponent
 public:
 	ULidarNiagaraComponent();
 	void RenderPointCloudNiagara(const FLidarPointCloudData& PointCloud);
+	void NiagaraDeactivate();
+	void NiagaraActivate();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Niagara")
 	UNiagaraSystem* NiagaraAsset;
+	
+	void ToggleIsActive();
 	
 protected:
 	virtual void BeginPlay() override;
@@ -32,5 +36,6 @@ private:
 	TArray<FVector> PendingPositions;
 	TArray<FLinearColor> PendingColors;
 	int32 PendingCount = 0;
+	bool bIsActivate;
 	
 };
