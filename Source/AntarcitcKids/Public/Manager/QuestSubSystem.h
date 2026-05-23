@@ -13,7 +13,7 @@
 class ACityVehiclePawn; //HUD연결용
 class UQuestBase;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnQuestListChange, EQuestClass, CQuestClass, int32, SuccessCount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnQuestListChange, EQuestClass, CQuestClass, FQuestStats, QuestStats);
 
 
 UCLASS()
@@ -28,6 +28,7 @@ public:
 	int32 SetQuestID() {return QuestID++;}
 	
 	//서브 시스템의 UI 변화
+	UPROPERTY(BlueprintAssignable, Category = "Quest")
 	FOnQuestListChange OnQuestListChange;
 	
 	UQuestSubSystem();

@@ -188,6 +188,7 @@ void ACityVehiclePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(ResetVehicleAction, ETriggerEvent::Triggered, this, &ACityVehiclePawn::ResetVehicle);
 		EnhancedInputComponent->BindAction(ToggleCameraViewAction, ETriggerEvent::Started, this, &ACityVehiclePawn::ToggleSensorView);
 		EnhancedInputComponent->BindAction(ToggleLidarViewAction, ETriggerEvent::Started, this, &ACityVehiclePawn::ToggleLidarView);
+		EnhancedInputComponent->BindAction(ToggleVisLidarAction, ETriggerEvent::Started, this, &ACityVehiclePawn::ToggleLidarView);
 	}
 	else
 	{
@@ -198,10 +199,30 @@ void ACityVehiclePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void ACityVehiclePawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
 	GetWorld()->GetTimerManager().SetTimer(FlipCheckTimer, this, &ACityVehiclePawn::FlippedCheck, FlipCheckTime, true);
-	LidarSensor->OnPointCloudReady.AddUObject(NiagaraComponent,&ULidarNiagaraComponent::RenderPointCloudNiagara);
-	LidarSensor->ImpactActorReady.AddUObject(BoxBoundComponent,&UBoxBoundComponent::RenderBoundingBox);
+	
+	
+	//여기서 선언된 LidarSensorCOmponent의 장소와 LidarSensorCOmponent의 주소 위치가 달라서 임시 조치를 취함
+	/*if (LidarSensor == nullptr)
+	{
+		LidarSensor = FindComponentByClass<ULidarSceneComponent>();
+		
+	}*/
+	ULidarSceneComponent* RealLidarSensor = FindComponentByClass<ULidarSceneComponent>();
+	if (IsValid(RealLidarSensor))
+	{
+		RealLidarSensor->OnPointCloudReady.AddUObject(NiagaraComponent,&ULidarNiagaraComponent::RenderPointCloudNiagara);
+		RealLidarSensor->ImpactActorReady.AddUObject(BoxBoundComponent,&UBoxBoundComponent::RenderBoundingBox);
+		/*
+		LidarSensor->OnPointCloudReady.AddLambda([](const FLidarPointCloudData& Data) {
+		UE_LOG(LogTemp, Error, TEXT("🔥 방송국에서 신호 송신 확인! 데이터 개수: %d"), Data.PointCount);
+	});*/
+		UE_LOG(LogTemp, Error, TEXT("[Pawn] %p 번지 센서에 바인딩을 걸었습니다!"), LidarSensor.Get());
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning, TEXT("LidarSensor 무력화"));
+	}
 	
 	
 	if (ChaosVehicleMovement)
@@ -359,6 +380,11 @@ void ACityVehiclePawn::ToggleSensorView(const FInputActionValue& Value)
 	DoToggleSensorView();
 }
 
+void ACityVehiclePawn::ToggleVisLidar(const FInputActionValue& Value)
+{
+	DoToggleVisLidar();
+}
+
 void ACityVehiclePawn::ToggleLidarView(const FInputActionValue& Value)
 {
 	DoToggleLidarView();
@@ -417,6 +443,12 @@ void ACityVehiclePawn::DoToggleLidarView()
 		else
 			LidarSensor->StopScan();
 	}
+}
+
+void ACityVehiclePawn::DoToggleVisLidar()
+{
+	UE_LOG(LogTemp,Warning, TEXT("DoToggleVisLidar 발동"));
+	LidarSensor->ToggleActive();
 }
 
 void ACityVehiclePawn::FlippedCheck()

@@ -61,12 +61,24 @@ void AAntarcitcKidsPlayerController::SetupInputComponent()
 		}
 	}
 	
-	// Pause
+	// Pause, WorldMap
 	if (UEnhancedInputComponent* EIC = Cast<UEnhancedInputComponent>(InputComponent))
 	{
 		if (PauseAction)
 			EIC->BindAction(PauseAction, ETriggerEvent::Started, this, &AAntarcitcKidsPlayerController::OnPauseTriggered);
+		
+		if (WorldMapAction)
+		{
+			EIC->BindAction(
+				WorldMapAction,
+				ETriggerEvent::Started,
+				this,
+				&AAntarcitcKidsPlayerController::OnWorldMapTriggered
+			);
+		}
 	}
+	
+	
 }
 
 void AAntarcitcKidsPlayerController::OnPossess(APawn* InPawn)
@@ -288,6 +300,25 @@ void AAntarcitcKidsPlayerController::CreateAndBindCyberHUD()
 			
 		}
 	}
+	
+	//월드맵 띄우고 가림
+	if (WorldMapWidgetClass)
+	{
+		WorldMapWidget =
+			CreateWidget<UUserWidget>(
+				this,
+				WorldMapWidgetClass
+			);
+
+		if (WorldMapWidget)
+		{//ZOrder를 높게 설정하여 기존 hud위에 띄워지도록
+			WorldMapWidget->AddToViewport(10);
+
+			WorldMapWidget->SetVisibility(
+				ESlateVisibility::Collapsed
+			);
+		}
+	}
 
 	VehiclePawn->OnHUDSpeedUpdated.AddDynamic(this,    &AAntarcitcKidsPlayerController::OnHUDSpeedUpdated);
 	VehiclePawn->OnHUDSteeringUpdated.AddDynamic(this, &AAntarcitcKidsPlayerController::OnHUDSteeringUpdated);
@@ -339,6 +370,33 @@ void AAntarcitcKidsPlayerController::OnHUDGearUpdated(FText GearText)
 void AAntarcitcKidsPlayerController::OnHUDRPMUpdated(float CurrentRPM)
 {
 	
+}
+
+void AAntarcitcKidsPlayerController::OnWorldMapTriggered()
+{
+	if (!WorldMapWidget)
+		return;
+
+	const bool bOpen =
+		WorldMapWidget->GetVisibility()
+		== ESlateVisibility::Visible;
+
+	if (bOpen)
+	{
+		WorldMapWidget->SetVisibility(
+			ESlateVisibility::Collapsed
+		);
+
+		SetShowMouseCursor(false);
+	}
+	else
+	{
+		WorldMapWidget->SetVisibility(
+			ESlateVisibility::Visible
+		);
+
+		SetShowMouseCursor(true);
+	}
 }
 
 void AAntarcitcKidsPlayerController::OnPauseTriggered()

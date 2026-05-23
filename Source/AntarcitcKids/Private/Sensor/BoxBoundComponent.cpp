@@ -8,9 +8,10 @@
 void UBoxBoundComponent::RenderBoundingBox(TArray<AActor*> DetectedActors, FName Tag)
 {
 	
+	/*UE_LOG(LogTemp, Warning, TEXT("DetectedActor Activate"));*/
 	if (DetectedActors.IsEmpty())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("DetectedActor Empty()"));
+		/*UE_LOG(LogTemp, Warning, TEXT("DetectedActor Empty()"));*/
 		return;
 	}
 	else
@@ -66,10 +67,7 @@ void UBoxBoundComponent::RenderBoundingBox(TArray<AActor*> DetectedActors, FName
 	}
 }
 
-void UBoxBoundComponent::Hide()
-{
-	Flush();
-}
+
 
 void UBoxBoundComponent::BeginPlay()
 {

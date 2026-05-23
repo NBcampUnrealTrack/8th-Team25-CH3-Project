@@ -10,24 +10,21 @@
 
 ULidarNiagaraComponent::ULidarNiagaraComponent()
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("RenderPointCloudNiagara 생성자 발동"));
 }
 
 void ULidarNiagaraComponent::RenderPointCloudNiagara(const FLidarPointCloudData& PointCloud)
 {
+	if (!bIsActivate) return;
+	
+	UE_LOG(LogTemp, Warning, TEXT("RenderPointCloudNiagara 발동"));
 	DeactivateImmediate(); 
-	UE_LOG(LogTemp, Warning, TEXT("RenderPointCloudNiagara 발동"))
 	const int32 IntensityCount = PointCloud.Intensities.Num();
 	const int32 PointCount = PointCloud.PointCount;
 	
 	PendingColors.SetNum(PointCloud.PointCount);
 	//RESTRICT : 해당 함수 Scope 내에서 같은 메모리를 참조하지 않는다.
-
-	if (!this)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Niagara 멈춤 "));
-		return;
-	}
+	
 	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector(
 		this,
 		FName("PointCloudPositions"),
@@ -64,14 +61,29 @@ void ULidarNiagaraComponent::RenderPointCloudNiagara(const FLidarPointCloudData&
 	
 	if (this->IsActive())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CloudPointCount : %d "), PointCount);
+		/*UE_LOG(LogTemp, Warning, TEXT("Niagara 작동 !"));*/
 	}
+}
+
+void ULidarNiagaraComponent::NiagaraDeactivate()
+{
+	bIsActivate = false;
+}
+
+void ULidarNiagaraComponent::NiagaraActivate()
+{
+	bIsActivate = true;
+}
+
+void ULidarNiagaraComponent::ToggleIsActive()
+{
+	bIsActivate = !bIsActivate;
 }
 
 void ULidarNiagaraComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	UE_LOG(LogTemp, Warning, TEXT("RenderPointCloudNiagara BeginPlay발동"));
 	BuildColorLUT();
 	Activate();
 }
@@ -84,6 +96,7 @@ void ULidarNiagaraComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
 
 void ULidarNiagaraComponent::BuildColorLUT()
 {
+	UE_LOG(LogTemp, Warning, TEXT("BuildColorLUT 발동"));
 	const FLinearColor DarkGreen(0.0f, 0.3f, 0.0f, 1.0f);
 	const FLinearColor Bright(0.0f, 1.0f, 0.2f, 1.0f);
 	

@@ -99,6 +99,19 @@ private:
 	UPROPERTY()
 	TObjectPtr<UUserWidget> CyberHUDWidget;
 	
+	// WorldMap 담당
+	UPROPERTY(EditAnywhere, Category = "UI|WorldMap")
+	TObjectPtr<UInputAction> WorldMapAction;
+
+	UPROPERTY(EditAnywhere, Category = "UI|WorldMap")
+	TSubclassOf<UUserWidget> WorldMapWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<UUserWidget> WorldMapWidget;
+
+	UFUNCTION()
+	void OnWorldMapTriggered();
+	
 	// Pause 담당
 	UPROPERTY(EditAnywhere, Category = "UI|Pause")
 	TObjectPtr<UInputAction> PauseAction;
