@@ -3,6 +3,8 @@
 
 #include "Actor/WeatherBase.h"
 
+#include "Manager/WeatherSubsystem.h"
+
 // Sets default values
 AWeatherBase::AWeatherBase()
 {
@@ -25,3 +27,13 @@ void AWeatherBase::Tick(float DeltaTime)
 
 }
 
+void AWeatherBase::NotifyEndWeatherFinished()
+{
+	if (UWorld* World = GetWorld())
+	{
+		if (UWeatherSubsystem* WeatherSubsystem = World->GetSubsystem<UWeatherSubsystem>())
+		{
+			WeatherSubsystem->OnCurrentWeatherEndFinished();
+		}
+	}
+}
