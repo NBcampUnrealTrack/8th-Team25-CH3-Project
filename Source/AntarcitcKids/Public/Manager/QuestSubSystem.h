@@ -13,7 +13,7 @@
 class ACityVehiclePawn; //HUD연결용
 class UQuestBase;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnQuestListChange, EQuestClass, CQuestClass, FQuestStats, QuestStats);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnQuestListChange);
 
 
 UCLASS()

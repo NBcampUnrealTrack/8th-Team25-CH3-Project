@@ -7,6 +7,7 @@
 #include "CityVehiclePawn.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/TextureRenderTarget2D.h"
+#include "Manager/QuestSubSystem.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "System/AntarcitcKidsPlayerController.h"
 
@@ -53,11 +54,11 @@ ATriggerMissionBase::ATriggerMissionBase()
 void ATriggerMissionBase::BeginPlay()
 {
 	Super::BeginPlay();
-	SetQuestInfo();
+
 	
 	UClass* ClassToUse = QuestClass ? QuestClass.Get() : UQuestBase::StaticClass();
 	Quest = NewObject<UQuestBase>(this, ClassToUse);
-	Quest->OnInitialized(QuestInfo);
+
 	Quest->SetEffect(SuccessEffect);
 	
 	//렌더 타겟은 CreateSubObject를 통해서 생성하여 UpdateResource를 할 경우, GPU 리소스가 할당되기 전이라서 검은 화면만이 나오게 된다.
@@ -130,6 +131,9 @@ void ATriggerMissionBase::Tick(float DeltaTime)
 
 void ATriggerMissionBase::SetQuestInfo()
 {
+	
+
+	
 	if (NiagaraAnchor)
 	{
 		QuestInfo.QuestLocation = NiagaraAnchor->GetComponentLocation();	

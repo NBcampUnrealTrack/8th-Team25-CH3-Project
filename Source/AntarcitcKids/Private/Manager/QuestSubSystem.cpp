@@ -28,12 +28,24 @@ void UQuestSubSystem::SetVehiclePawn(ACityVehiclePawn* InPawn)
 void UQuestSubSystem::OnRegisterQuest(UQuestBase* RegisterQuest)
 {
 	RegisterQuest->OnQuestCompleted.AddUObject(this,&UQuestSubSystem::OnQuestsCompleted);
-	UE_LOG(LogTemp, Warning, TEXT("퀘스트 만들어짐."));
+	
 	
 	QuestsList.Add(RegisterQuest);
 	EQuestClass RQuestClass = RegisterQuest->GetCurrentQuestInfo().QuestType;
-	QuestStatus.FindOrAdd(RQuestClass).AttemptCount +=1;
-	QuestStatus.Find(RQuestClass)->QuestName = RegisterQuest->GetCurrentQuestInfo().QuestName;
+	FString EnumString = UEnum::GetValueAsString(RQuestClass);
+	UE_LOG(LogTemp, Warning, TEXT("퀘스트 만들어짐. Type: %s"),*EnumString);
+	FQuestStats& Stats = QuestStatus.FindOrAdd(RQuestClass);
+	Stats.AttemptCount += 1;
+	
+	for (const TPair<EQuestClass, FQuestStats>& Pair : QuestStatus)
+	{
+		FString KeyString = UEnum::GetValueAsString(Pair.Key);
+		UE_LOG(LogTemp, Warning, TEXT("Key: %s | AttemptCount: %d | SuccessCount: %d"),
+			*KeyString,
+			Pair.Value.AttemptCount,
+			Pair.Value.SuccessCount
+		);
+	}
 	
 	
 }
@@ -50,7 +62,16 @@ void UQuestSubSystem::OnQuestsCompleted(UQuestBase* CompleteQuest)
 	if (CompleteQuest->GetCurrentQuestInfo().QuestProgress == EQuestAchivmentType::Succeed)
 	{
 		QuestStatus.Find(CQuestClass)->SuccessCount++;
-		OnQuestListChange.Broadcast(CQuestClass, *QuestStatus.Find(CQuestClass));
+		for (const TPair<EQuestClass, FQuestStats>& Pair : QuestStatus)
+		{
+			FString KeyString = UEnum::GetValueAsString(Pair.Key);
+			UE_LOG(LogTemp, Warning, TEXT("Key: %s | AttemptCount: %d | SuccessCount: %d"),
+				*KeyString,
+				Pair.Value.AttemptCount,
+				Pair.Value.SuccessCount
+			);
+		}
+		OnQuestListChange.Broadcast();
 	}
 }
 

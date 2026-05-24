@@ -38,7 +38,8 @@ void ASpeedTrap::SetPawnSpeed(float SpeedKMH)
 void ASpeedTrap::BeginPlay()
 {
 	Super::BeginPlay();
-
+	SetQuestInfo();
+	Quest->OnInitialized(QuestInfo);
 }
 
 void ASpeedTrap::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
@@ -130,10 +131,11 @@ void ASpeedTrap::OnEndGateOverlap(UPrimitiveComponent* OverlappedComp, AActor* O
 
 void ASpeedTrap::SetQuestInfo()
 {
-	Super::SetQuestInfo();
 	QuestInfo.QuestType = EQuestClass::SpeedTrap;
 	QuestInfo.QuestName = TEXT("과속 금지");
 	QuestInfo.Description = TEXT("일정 속도 이상 금지");
+	Super::SetQuestInfo();
+
 	
 }
 
