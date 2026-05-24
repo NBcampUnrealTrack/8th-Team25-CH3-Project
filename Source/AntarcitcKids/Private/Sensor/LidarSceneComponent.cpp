@@ -30,6 +30,13 @@ void ULidarSceneComponent::BeginPlay()
 	InitializeSensor();
 	StartScan();
 	
+	/*GetWorld()->GetTimerManager().SetTimer(
+		MakeBoundingBox,
+		this,
+		&ULidarSceneComponent::BroadCastActor,
+		0.1f,
+		true);*/
+	
 }
 
 void ULidarSceneComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -151,6 +158,11 @@ void ULidarSceneComponent::DetectActor(TArray<AActor*> DetectedTagActors)
 		
 }
 
+void ULidarSceneComponent::BroadCastActor()
+{
+	ImpactActorReady.Broadcast(PendingDetectedActor,Tag);
+}
+
 
 //스캔 타이머 시작
 void ULidarSceneComponent::StartScanTimer()
@@ -247,12 +259,14 @@ void ULidarSceneComponent::CollectAsyncResults()
 	ScanPoints.Reset();
 	ScanIntensities.Reset();
 	DetectedActors.Reset();
+	PendingDetectedActor.Empty();
 
 	const float MaxRange = Config.MaxRange;
 	const float MinRange = Config.MinRange;
 	const float NoiseStd = Config.NoiseStdDev;
 	
 	TArray<AActor*> DetectedTagActors;
+	AActor* DetectedTagActor = nullptr;
 	
 	for (int32 i = 0; i < PendingHandles.Num(); ++i)
 	{
@@ -267,8 +281,9 @@ void ULidarSceneComponent::CollectAsyncResults()
 		
 		if (Hit.GetActor()->ActorHasTag(Tag))
 		{
-
+			/*UE_LOG(LogTemp, Warning, TEXT("특정 액터 탐지됨"));*/
 			DetectedTagActors.Add(Hit.GetActor());
+			DetectedTagActor = Hit.GetActor();
 		}
 		
 		
@@ -317,8 +332,8 @@ void ULidarSceneComponent::CollectAsyncResults()
 
 	
 	
-	
-	/*DetectActor(DetectedTagActors);*/
+	PendingDetectedActor = DetectedTagActors;
+	/*ImpactActorReady.Broadcast(DetectedTagActors,Tag);*/
 
 	
 

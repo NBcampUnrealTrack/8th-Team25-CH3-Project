@@ -10,6 +10,7 @@
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPointCloudReady, const FLidarPointCloudData&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FImpactActorReady, TArray<AActor*>, FName);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FImpactOneActorReady, AActor*, FName);
 
 
 class ULidarBevRenderer;
@@ -27,6 +28,7 @@ public:
 	
 	FOnPointCloudReady OnPointCloudReady;
 	FImpactActorReady ImpactActorReady;
+	FImpactOneActorReady ImpactOneActorReady;
 	
 	UFUNCTION(BlueprintCallable, Category = "LidarSensor")
 	void StartScan();
@@ -73,6 +75,7 @@ private:
 
 	void RebuildDirectionCache();
 	void DetectActor(TArray<AActor*>DetectedTagActors);
+	void BroadCastActor();
 	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LidarSensor|Config",
@@ -125,6 +128,12 @@ private:
 	TArray<FTraceHandle> PendingHandles;
 	TArray<FVector> PendingWorldDirs;
 	FTransform PendingTransform;
+	
+	FTimerHandle MakeBoundingBox;
+	
+	UPROPERTY()
+	TArray<AActor*> PendingDetectedActor;
+	
 	
 	
 	bool bHasPendingTraces = false;

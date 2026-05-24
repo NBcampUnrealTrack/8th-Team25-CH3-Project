@@ -16,7 +16,8 @@ class ANTARCITCKIDS_API UBoxBoundComponent : public ULineBatchComponent
 	GENERATED_BODY()
 public:
 	void RenderBoundingBox(TArray<AActor*> DetectedActor, FName Tag);
-	
+	void RenderOneBoundingBox(AActor* DetectedActors, FName Tag);
+
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Color")
 	float Thickness;
 	
