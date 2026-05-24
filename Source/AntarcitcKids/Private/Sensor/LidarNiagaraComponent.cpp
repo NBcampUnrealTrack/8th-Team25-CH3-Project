@@ -15,9 +15,13 @@ ULidarNiagaraComponent::ULidarNiagaraComponent()
 
 void ULidarNiagaraComponent::RenderPointCloudNiagara(const FLidarPointCloudData& PointCloud)
 {
-	if (!bIsActivate) return;
+	if (!bIsActivate)
+	{
+		/*UE_LOG(LogTemp, Warning, TEXT("bIsActive: %d"), bIsActivate);*/
+		return;
+	}
 	
-	UE_LOG(LogTemp, Warning, TEXT("RenderPointCloudNiagara 발동"));
+	/*UE_LOG(LogTemp, Warning, TEXT("RenderPointCloudNiagara 발동"));*/
 	DeactivateImmediate(); 
 	const int32 IntensityCount = PointCloud.Intensities.Num();
 	const int32 PointCount = PointCloud.PointCount;
@@ -59,10 +63,10 @@ void ULidarNiagaraComponent::RenderPointCloudNiagara(const FLidarPointCloudData&
 	SetIntParameter(TEXT("CloudPointCount"),PointCount);
 	Activate(true);
 	
-	if (this->IsActive())
+	/*if (this->IsActive())
 	{
-		/*UE_LOG(LogTemp, Warning, TEXT("Niagara 작동 !"));*/
-	}
+		UE_LOG(LogTemp, Warning, TEXT("Niagara 작동 !"));
+	}*/
 }
 
 void ULidarNiagaraComponent::NiagaraDeactivate()
@@ -77,6 +81,7 @@ void ULidarNiagaraComponent::NiagaraActivate()
 
 void ULidarNiagaraComponent::ToggleIsActive()
 {
+	DeactivateImmediate();
 	bIsActivate = !bIsActivate;
 }
 

@@ -188,7 +188,7 @@ void ACityVehiclePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(ResetVehicleAction, ETriggerEvent::Triggered, this, &ACityVehiclePawn::ResetVehicle);
 		EnhancedInputComponent->BindAction(ToggleCameraViewAction, ETriggerEvent::Started, this, &ACityVehiclePawn::ToggleSensorView);
 		EnhancedInputComponent->BindAction(ToggleLidarViewAction, ETriggerEvent::Started, this, &ACityVehiclePawn::ToggleLidarView);
-		EnhancedInputComponent->BindAction(ToggleVisLidarAction, ETriggerEvent::Started, this, &ACityVehiclePawn::ToggleLidarView);
+		EnhancedInputComponent->BindAction(ToggleVisLidarAction, ETriggerEvent::Started, this, &ACityVehiclePawn::ToggleVisLidar);
 	}
 	else
 	{
@@ -213,6 +213,7 @@ void ACityVehiclePawn::BeginPlay()
 	{
 		RealLidarSensor->OnPointCloudReady.AddUObject(NiagaraComponent,&ULidarNiagaraComponent::RenderPointCloudNiagara);
 		RealLidarSensor->ImpactActorReady.AddUObject(BoxBoundComponent,&UBoxBoundComponent::RenderBoundingBox);
+		RealLidarSensor->ImpactOneActorReady.AddUObject(BoxBoundComponent,&UBoxBoundComponent::RenderOneBoundingBox);
 		/*
 		LidarSensor->OnPointCloudReady.AddLambda([](const FLidarPointCloudData& Data) {
 		UE_LOG(LogTemp, Error, TEXT("🔥 방송국에서 신호 송신 확인! 데이터 개수: %d"), Data.PointCount);
@@ -448,7 +449,7 @@ void ACityVehiclePawn::DoToggleLidarView()
 void ACityVehiclePawn::DoToggleVisLidar()
 {
 	UE_LOG(LogTemp,Warning, TEXT("DoToggleVisLidar 발동"));
-	LidarSensor->ToggleActive();
+	NiagaraComponent->ToggleIsActive();
 }
 
 void ACityVehiclePawn::FlippedCheck()
