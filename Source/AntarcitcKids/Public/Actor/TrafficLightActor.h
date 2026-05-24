@@ -76,13 +76,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Traffic Light")
 	float GreenDuration = 5.0f;
 
+	
+	void SetQuestInfo() override;
 private:
 	FTimerHandle TrafficLightTimerHandle;
 
 	ETrafficLightState CurrentState;
 
 	void SetTrafficLightState(ETrafficLightState NewState);
-	void SetQuestInfo() override;
+
 	void SwitchToRed();
 	void SwitchToYellow();
 	void SwitchToGreen();

@@ -89,6 +89,9 @@ void AEmergencyImpact::OnImpactOverlap(UPrimitiveComponent* OverlappedComp, AAct
 void AEmergencyImpact::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	SetQuestInfo();
+	Quest->OnInitialized(QuestInfo);
 	SetActorTickEnabled(false);
 	StartLocation = GetActorLocation();
 	MoveSpeed = 0.f;

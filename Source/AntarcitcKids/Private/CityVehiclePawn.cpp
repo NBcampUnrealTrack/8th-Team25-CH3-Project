@@ -433,8 +433,16 @@ void ACityVehiclePawn::DoToggleLidarView()
 	AAntarcitcKidsPlayerController* PC = Cast<AAntarcitcKidsPlayerController>(GetController());
 	if (PC == nullptr) return;
 	
-	//UTextureRenderTarget2D* CamRT = CameraSensor ? CameraSensor->GetRednerTarget() : nullptr;
-	//PC->ToggleSensorView(CamRT);
+	UTexture2D* LidarRT = LidarSensor ? LidarSensor->GetBevRenderTarget() : nullptr;
+	PC->ToggleLidarView(LidarRT);
+
+	if (LidarSensor)
+	{
+		if (PC->IsLidarViewVisible())
+			LidarSensor->StartScan();
+		else
+			LidarSensor->StopScan();
+	}
 }
 
 void ACityVehiclePawn::DoToggleVisLidar()

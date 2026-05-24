@@ -13,7 +13,7 @@ void UQuestBase::OnInitialized(const FQuestInfo& QuestInfo)
 {
 	
 	
-	CurrentQuestInfo.QuestType = EQuestClass::TrafficSignal;
+	CurrentQuestInfo.QuestType = QuestInfo.QuestType;
 	CurrentQuestInfo.QuestID = GetWorld()->GetGameInstance()->GetSubsystem<UQuestSubSystem>()->SetQuestID();
 	CurrentQuestInfo.QuestClass = QuestInfo.QuestClass;
 	CurrentQuestInfo.QuestID = QuestInfo.QuestID;
@@ -26,11 +26,11 @@ void UQuestBase::OnInitialized(const FQuestInfo& QuestInfo)
 	QuestCompletedEvent.QuestClass = CurrentQuestInfo.QuestType;
 	QuestCompletedEvent.QuestID = QuestInfo.QuestID;
 	QuestCompletedEvent.QuestProgress = QuestInfo.QuestProgress;
-	
 	if (UQuestSubSystem* QuestSubSystem = GetWorld()->GetGameInstance()->GetSubsystem<UQuestSubSystem>())
 	{
 		QuestSubSystem->OnRegisterQuest(this);
 	}
+
 }
 
 void UQuestBase::OnProgress()

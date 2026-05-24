@@ -37,7 +37,8 @@ ATrafficLightActor::ATrafficLightActor()
 void ATrafficLightActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	SetQuestInfo();
+	Quest->OnInitialized(QuestInfo);
 	SwitchToRed();
 }
 
@@ -93,10 +94,11 @@ void ATrafficLightActor::SetTrafficLightState(ETrafficLightState NewState)
 
 void ATrafficLightActor::SetQuestInfo()
 {
-	Super::SetQuestInfo();
 	QuestInfo.QuestType = EQuestClass::TrafficSignal;
 	QuestInfo.QuestName = TEXT("신호등 준수 퀘스트");
 	QuestInfo.Description = TEXT("신호등 알맞게 진행");
+	Super::SetQuestInfo();
+
 }
 
 void ATrafficLightActor::SwitchToRed()

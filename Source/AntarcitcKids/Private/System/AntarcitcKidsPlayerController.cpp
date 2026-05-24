@@ -262,11 +262,14 @@ void AAntarcitcKidsPlayerController::ToggleLidarView(UTexture2D* InLidarRT)
 	SensorViewWidget->ToggleLidarView();
 	*/
 }
-/*
+
+
+
+
 bool AAntarcitcKidsPlayerController::IsLidarViewVisible() const
 {
-	return SensorViewWidget && SensorViewWidget->IsLidarViewVisible();
-}*/
+	return true;
+}
 
 
 //=======================CyberHUD=========================
