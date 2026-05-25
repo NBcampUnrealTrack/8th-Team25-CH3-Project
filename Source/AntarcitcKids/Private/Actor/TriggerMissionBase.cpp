@@ -75,20 +75,12 @@ void ATriggerMissionBase::BeginPlay()
 void ATriggerMissionBase::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
-	{
-		OnVehicleEntered.Broadcast(this, Vehicle);
-		
-	}
 }
 
 void ATriggerMissionBase::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
                                            UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
-	{
-		OnVehicleExited.Broadcast(this, Vehicle);
-	}
+
 }
 
 void ATriggerMissionBase::OnAreaOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -100,7 +92,9 @@ void ATriggerMissionBase::OnAreaOverlap(UPrimitiveComponent* OverlappedComp, AAc
 		VehiclePawn = Vehicle;
 		PlayerController = Cast<AAntarcitcKidsPlayerController>(GetWorld()->GetFirstPlayerController());
 		TurnOnQuestCamera();
+		OnVehicleEntered.Broadcast(this, Vehicle);
 	}
+	
 }
 
 void ATriggerMissionBase::OnAreaEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -114,6 +108,11 @@ void ATriggerMissionBase::OnAreaEndOverlap(UPrimitiveComponent* OverlappedComp, 
 		PlayerController = nullptr;
 		TurnOffQuestCamera();
 		
+	}
+	
+	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
+	{
+		OnVehicleExited.Broadcast(this, Vehicle);
 	}
 }
 
