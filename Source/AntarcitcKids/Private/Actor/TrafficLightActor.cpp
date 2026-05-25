@@ -63,7 +63,6 @@ void ATrafficLightActor::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AAct
 				Quest->OnSuccess();
 		}
 		
-		OnStateChanged.Broadcast(CurrentState);
 		UE_LOG(LogTemp, Warning, TEXT(">>> Vehicle ENTERED traffic light"));
 	}
 }
@@ -75,8 +74,8 @@ void ATrafficLightActor::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, A
 	
 	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
 	{
-		OnTrafficLightCleared.Broadcast();
 		UE_LOG(LogTemp, Warning, TEXT(">>> Vehicle EXITED traffic light"));
+		OnTrafficLightCleared.Broadcast();
 	}
 }
 

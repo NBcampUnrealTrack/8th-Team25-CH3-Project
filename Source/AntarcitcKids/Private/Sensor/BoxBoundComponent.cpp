@@ -10,12 +10,12 @@ void UBoxBoundComponent::RenderBoundingBox(TArray<AActor*> DetectedActors, FName
 	
 	if (DetectedActors.IsEmpty())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("DetectedActor Empty()"));
+		/*UE_LOG(LogTemp, Warning, TEXT("DetectedActor Empty()"));*/
 		return;
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("DetectedActor Has Something"));
+		/*UE_LOG(LogTemp, Warning, TEXT("DetectedActor Has Something"));*/
 		
 	}
 	

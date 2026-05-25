@@ -21,6 +21,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetWeather(EWeatherType WeatherType);
 	
+	//=========================================
+	UFUNCTION(BlueprintCallable)
+	void OnCurrentWeatherEndFinished();
+	//===========================================
+	
 	void GetCurrentWeather();
 	
 	void OnWorldBeginPlay(UWorld& InWorld) override;
@@ -28,9 +33,17 @@ public:
 	class UWeatherDataAsset* WeatherDataAsset;
 	
 protected:
+	//===========================================
+	void SpawnWeather(EWeatherType WeatherType);
+	//===========================================
+	
 	TSharedPtr<FStreamableHandle> LoadingHandle;
 	TMap<EWeatherType, TSubclassOf<AWeatherBase>> LoadedWeatherMap;
 	TPair<EWeatherType, AWeatherBase*> CurrentWeather;
-
+	
+	//==================================
+	EWeatherType PendingWeatherType;
+	bool bIsChangingWeather = false;
+//========================================
 	
 };

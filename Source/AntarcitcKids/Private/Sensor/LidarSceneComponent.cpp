@@ -30,12 +30,12 @@ void ULidarSceneComponent::BeginPlay()
 	InitializeSensor();
 	StartScan();
 	
-	/*GetWorld()->GetTimerManager().SetTimer(
+	GetWorld()->GetTimerManager().SetTimer(
 		MakeBoundingBox,
 		this,
 		&ULidarSceneComponent::BroadCastActor,
 		0.1f,
-		true);*/
+		true);
 	
 }
 
@@ -332,7 +332,7 @@ void ULidarSceneComponent::CollectAsyncResults()
 
 	
 	
-	PendingDetectedActor = DetectedTagActors;
+	/*PendingDetectedActor = DetectedTagActors;*/
 	/*ImpactActorReady.Broadcast(DetectedTagActors,Tag);*/
 
 	
