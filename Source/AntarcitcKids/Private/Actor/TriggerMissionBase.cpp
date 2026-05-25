@@ -142,6 +142,7 @@ void ATriggerMissionBase::SetQuestInfo()
 
 void ATriggerMissionBase::TurnOnQuestCamera()
 {
+	UE_LOG(LogTemp,Warning, TEXT("TurnOnQuestCamera 발동"));
 	SetActorTickEnabled(true);
 		SceneTarget->bCaptureEveryFrame = true;
 		SceneTarget->CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
