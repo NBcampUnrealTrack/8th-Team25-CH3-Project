@@ -195,7 +195,7 @@ void ACityVehiclePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(ToggleLidarViewAction, ETriggerEvent::Started, this, &ACityVehiclePawn::ToggleLidarView);
 		EnhancedInputComponent->BindAction(ToggleVisLidarAction, ETriggerEvent::Started, this, &ACityVehiclePawn::ToggleVisLidar);
 		
-		UE_LOG(LogTemp, Warning, TEXT("Input bindings completed. Total: %d"), EnhancedInputComponent->GetNumActionEventBindings());
+		UE_LOG(LogTemp, Warning, TEXT("Input bindings completed."));
 	}
 	else
 	{
