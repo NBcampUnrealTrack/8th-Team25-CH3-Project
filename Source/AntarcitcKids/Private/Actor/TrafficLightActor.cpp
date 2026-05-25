@@ -75,6 +75,7 @@ void ATrafficLightActor::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, A
 	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
 	{
 		UE_LOG(LogTemp, Warning, TEXT(">>> Vehicle EXITED traffic light"));
+		OnTrafficLightCleared.Broadcast();
 	}
 }
 
