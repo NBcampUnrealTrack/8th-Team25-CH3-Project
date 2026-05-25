@@ -271,6 +271,7 @@ void ACityVehiclePawn::Tick(float Delta)
 	const float RoundedSpeed = FMath::IsNearlyZero(SpeedKMH, 0.9f) ? 0.f : 
 	FMath::RoundToFloat(SpeedKMH * 10.f) / 10.f;
 	OnHUDSpeedUpdated.Broadcast(SpeedKMH);
+	OnHUDPedalUpdated.Broadcast(ChaosVehicleMovement->GetThrottleInput(), ChaosVehicleMovement->GetBrakeInput());
 	
 	// RPM 브로드캐스트 (매 프레임)
 	const float CurrentRPM = ChaosVehicleMovement->GetEngineRotationSpeed();

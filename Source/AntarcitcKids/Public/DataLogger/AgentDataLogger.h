@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include "CoreMinimal.h" //¾ğ¸®¾ó ±âº» ÀÚ·áÇü
+#include "CoreMinimal.h" //ì–¸ë¦¬ì–¼ ê¸°ë³¸ ìë£Œí˜•
 #include "Components/ActorComponent.h" // UActorComponent
-#include "AgentDataLogger.generated.h" // ¾ğ¸®¾ó ¸®ÇÃ·º¼Ç ½Ã½ºÅÛ
+#include "AgentDataLogger.generated.h" // ì–¸ë¦¬ì–¼ ë¦¬í”Œë ‰ì…˜ ì‹œìŠ¤í…œ
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 
@@ -13,8 +13,35 @@ class ANTARCITCKIDS_API UAgentDataLogger : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	UAgentDataLogger(); //»ı¼ºÀÚ
-	void SetSteeringInputLog(double FrontLeftAngle, double FrontRightAngle); //¿ÜºÎ¿¡¼­µµ °ªÀ» ¹ŞÀ» ¼ö ÀÖµµ·Ï ÇÏ´Â ÇÔ¼ö, ÇÚµé È¸Àü°ª
+	UAgentDataLogger(); //ìƒì„±ì
+	void SetSteeringInputLog(double FrontLeftAngle, double FrontRightAngle);
+ 
+	// â”€â”€ HUD ì—°ë™ìš© public getter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+	UFUNCTION(BlueprintPure, Category = "Data Logger|Runtime")
+	double GetCurrentSpeedKmh()      const { return CachedSpeedKmh; }
+ 
+	UFUNCTION(BlueprintPure, Category = "Data Logger|Runtime")
+	double GetCurrentUtmEasting()    const { return CachedUtmEasting; }
+ 
+	UFUNCTION(BlueprintPure, Category = "Data Logger|Runtime")
+	double GetCurrentUtmNorthing()   const { return CachedUtmNorthing; }
+ 
+	UFUNCTION(BlueprintPure, Category = "Data Logger|Runtime")
+	int32  GetOriginUtmZone()        const { return OriginUtmZone; }
+ 
+	UFUNCTION(BlueprintPure, Category = "Data Logger|Runtime")
+	float  GetElapsedRecordingTime() const { return ElapsedRecordingTime; }
+ 
+	// ê¸°ì¡´ private â†’ public ìœ¼ë¡œ ì´ë™
+	double GetSteeringLeftValue()    const;
+	double GetSteeringRightValue()   const;
+	double GetAccelerationsMps2()    const;
+	double GetDecelerationMps2()     const;
+	double GetTotalDistanceM()       const;
+	
+	UFUNCTION(BlueprintPure, Category = "Data Logger")
+	bool IsRecording() const { return bIsRecording; } //ë ˆì½”ë”©ì¤‘, ë…¹í™”ì¤‘ì¸ì§€ í™•ì¸
+	// ì‚¬ìš©í•˜ê¸° ìœ„í•´ Publicìœ¼ë¡œ ì˜®ê¹€
 
 
 
@@ -27,59 +54,50 @@ protected:
 
 private:
 	
-	//============ºñÇÏÅ¬ Âü/°ÅÁş Ã¼Å©¿ë===================
+	//============ë¹„í•˜í´ ì°¸/ê±°ì§“ ì²´í¬ìš©===================
 	bool IsValidVehicleOwner() const;
 	
-	//====================================Á¶Çâ°ª °ü·Ã=========================================
-	double CurrentSteeringRightInput = 0.0; //ÇöÁ¦ÀÇ È¸Àü°ªÀ» ³ÖÀ» ÇÔ¼ö
-	double CurrentSteeringLeftInput = 0.0; //ÇöÁ¦ÀÇ È¸Àü °ª ³ÖÀ» ÇÔ¼ö
-	
-	double GetSteeringRightValue() const; //¿À¸¥ÂÊ ¾Õ ¹ÙÄû
-	double GetSteeringLeftValue() const; //¿ŞÂÊ ¾Õ ¹ÙÄû
+	//====================================ì¡°í–¥ê°’ ê´€ë ¨=========================================
+	double CurrentSteeringRightInput = 0.0; //í˜„ì œì˜ íšŒì „ê°’ì„ ë„£ì„ í•¨ìˆ˜
+	double CurrentSteeringLeftInput = 0.0; //í˜„ì œì˜ íšŒì „ ê°’ ë„£ì„ í•¨ìˆ˜
 	//=============================================================
 	
 	
-	// =============================ÃÑ ÀÌµ¿°Å¸® °è»ê °ü·Ã=============================
+	// =============================ì´ ì´ë™ê±°ë¦¬ ê³„ì‚° ê´€ë ¨=============================
 	
-	FVector StartWorldLocation = FVector::ZeroVector; //Ã¹ Ãâ¹ßÀ§Ä¡¸¦ ÀúÀå
-	bool bHasStartedLocation = false; //ÀÌ¹Ì ÀúÀåÀ» Çß´Â°¡ ¹°¾îº¸´Â ¿©ºÎ
+	FVector StartWorldLocation = FVector::ZeroVector; //ì²« ì¶œë°œìœ„ì¹˜ë¥¼ ì €ì¥
+	bool bHasStartedLocation = false; //ì´ë¯¸ ì €ì¥ì„ í–ˆëŠ”ê°€ ë¬¼ì–´ë³´ëŠ” ì—¬ë¶€
 	
 	FVector PreviousWorldLocation = FVector::ZeroVector; 
 	bool bHasPreviousWorldLocation = false;
 	
-	double GetDistanceFromStartM() const; //Ã¹ ½ÃÀÛÁ¡Àº ¹Ù²îÁö ¾ÊÀ»°Å´Ï±î
-	double TotalDistanceM = 0.0; //´Ş¸®´Â °ªÀ» ½Ç½Ã°£À¸·Î ÀúÀåÇÔ
-	double GetTotalDistanceM() const; //¿Ö ÄÁ½ºÆ®³Ä? ¾ê´Â ¿©ÅÂ²¯ ´Ş¸®´ø °ªÀ» ±×Àú Ãâ·ÂÇÏ´Â ÇÔ¼ö¿¡ ºÒ°úÇÔ
+	double GetDistanceFromStartM() const; //ì²« ì‹œì‘ì ì€ ë°”ë€Œì§€ ì•Šì„ê±°ë‹ˆê¹Œ
+	double TotalDistanceM = 0.0; //ë‹¬ë¦¬ëŠ” ê°’ì„ ì‹¤ì‹œê°„ìœ¼ë¡œ ì €ì¥í•¨
 	// =================================================================================================
 	
 	
-	//=====================================°¡¼Ó/°¨¼Ó °ü·Ã====================================================
+	//=====================================ê°€ì†/ê°ì† ê´€ë ¨====================================================
 	
-	double PreviousSpeedMps = 0.0; //ÀÌÀü ¼Óµµ ÀúÀå
+	double PreviousSpeedMps = 0.0; //ì´ì „ ì†ë„ ì €ì¥
 	bool bHasPreviousSpeed = false; 
 	
-	double CurrentAccelerationMps2 = 0.0; //ÇöÁ¦ °¡¼Óµµ
-	double GetAccelerationsMps2() const; //°¡¼Ó
+	double CurrentAccelerationMps2 = 0.0; //í˜„ì œ ê°€ì†ë„
 	
-	double CurrentDecelerationMps2 = 0.0;//ÇöÁ¦ °¨¼Óµµ
-	double GetDecelerationMps2() const; //°¨¼Ó
+	double CurrentDecelerationMps2 = 0.0;//í˜„ì œ ê°ì†ë„
 	//===================================================================================================
 	
 	
-	static int32 GetUtmZone(double Longitude); //UTMÀº Áö±¸¸¦ ¼¼·Î ±¸¿ªÀ¸·Î ³ª´©´Â ÁÂÇ¥°è, °æµµ ±âÁØÀ¸·Î UTM Zone ¹øÈ£¸¦ ±¸ÇÏ´Â ÇÔ¼ö
-	static void LatLonToUtm(double Lat, double Lon, int32 Zone, double& OutEasting, double& OutNorthing); //À§µµ, °æµµ¸¦ UTM ÁÂÇ¥·Î º¯È¯ÇÏ´Â ÇÔ¼ö
+	static int32 GetUtmZone(double Longitude); //UTMì€ ì§€êµ¬ë¥¼ ì„¸ë¡œ êµ¬ì—­ìœ¼ë¡œ ë‚˜ëˆ„ëŠ” ì¢Œí‘œê³„, ê²½ë„ ê¸°ì¤€ìœ¼ë¡œ UTM Zone ë²ˆí˜¸ë¥¼ êµ¬í•˜ëŠ” í•¨ìˆ˜
+	static void LatLonToUtm(double Lat, double Lon, int32 Zone, double& OutEasting, double& OutNorthing); //ìœ„ë„, ê²½ë„ë¥¼ UTM ì¢Œí‘œë¡œ ë³€í™˜í•˜ëŠ” í•¨ìˆ˜
 	void WorldToUtm(const FVector& WorldLocation, double& OutEasting, double& OutNorthing) const;
-	void CreateCsvFile(); //CsvÆÄÀÏ »ı¼º ¹× Á¦ÀÛ
+	void CreateCsvFile(); //CsvíŒŒì¼ ìƒì„± ë° ì œì‘
 	void AppendRow();
 
 	UFUNCTION(BlueprintCallable, Category = "Data Logger")
-	void StartRecording(); //³ìÈ­ ½ÃÀÛ
+	void StartRecording(); //ë…¹í™” ì‹œì‘
 
 	UFUNCTION(BlueprintCallable, Category = "Data Logger")
-	void StopRecording(); //³ìÈ­ ³¡
-
-	UFUNCTION(BlueprintPure, Category = "Data Logger")
-	bool IsRecording() const { return bIsRecording; } //·¹ÄÚµùÁß, ³ìÈ­ÁßÀÎÁö È®ÀÎ
+	void StopRecording(); //ë…¹í™” ë
 
 
 
@@ -87,31 +105,35 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data Logger",
 		meta = (AllowPrivateAccess = "true"))
-	bool bEnableLogging = true; //·Î±× ±â´ÉÀ» »ç¿ëÇÒ°ÍÀÎ°¡?, Á¶Àı ½Ô°¡´É
+	bool bEnableLogging = true; //ë¡œê·¸ ê¸°ëŠ¥ì„ ì‚¬ìš©í• ê²ƒì¸ê°€?, ì¡°ì ˆ ìŒ‰ê°€ëŠ¥
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data Logger",
 		meta = (ClampMin = "0.1", ClampMax = "100.0", Units = "Hz", AllowPrivateAccess = "true"))
-	float SaveFrequencyHz = 10.0f; //ÃÊ´ç ¸î ¹øÀ» ÀúÀåÇÒ°ÍÀÎ°¡?, Á¶Àı ½Ô°¡´É
+	float SaveFrequencyHz = 10.0f; //ì´ˆë‹¹ ëª‡ ë²ˆì„ ì €ì¥í• ê²ƒì¸ê°€?, ì¡°ì ˆ ìŒ‰ê°€ëŠ¥
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data Logger|UTM Reference",
 		meta = (ClampMin = "-90.0", ClampMax = "90.0", Units = "deg", AllowPrivateAccess = "true"))
-	double OriginLatitude = 36.4800; //¾ğ¸®¾ó ±âÁØ À§µµ, ¿øÁ¡ÀÌ ½ÇÁ¦ Áö±¸»óÀÇ ¾îµğ¿¡ ÇØ´çÇÏ´Â°¡? ±âÁØÀº ºÏÀ§ 37µµ, Á¶Àı ½Ô°¡´É
+	double OriginLatitude = 36.4800; //ì–¸ë¦¬ì–¼ ê¸°ì¤€ ìœ„ë„, ì›ì ì´ ì‹¤ì œ ì§€êµ¬ìƒì˜ ì–´ë””ì— í•´ë‹¹í•˜ëŠ”ê°€? ê¸°ì¤€ì€ ë¶ìœ„ 37ë„, ì¡°ì ˆ ìŒ‰ê°€ëŠ¥
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data Logger|UTM Reference",
 		meta = (ClampMin = "-180.0", ClampMax = "180.0", Units = "deg", AllowPrivateAccess = "true"))
-	double OriginLongitude = 127.0000; //±âÁØ °æµµ, ÇÑ±¹ÀÇ ±âÁØ °æµµ´Â µ¿°æ 127µµ, Á¶Àı ½Ô°¡´É
+	double OriginLongitude = 127.0000; //ê¸°ì¤€ ê²½ë„, í•œêµ­ì˜ ê¸°ì¤€ ê²½ë„ëŠ” ë™ê²½ 127ë„, ì¡°ì ˆ ìŒ‰ê°€ëŠ¥
 
 private:
-	double OriginUtmEasting = 0.0; //À§µµ
-	double OriginUtmNorthing = 0.0; //°æµµ
-	int32 OriginUtmZone = 0; // ¾ğ¸®¾ó ¿£Áø »ó¿¡¼­ UTM(º¸Åë 1~60ÀÇ ¼ıÀÚ°¡ ¾²ÀÓ)
+	double OriginUtmEasting = 0.0; //ìœ„ë„
+	double OriginUtmNorthing = 0.0; //ê²½ë„
+	int32 OriginUtmZone = 0; // ì–¸ë¦¬ì–¼ ì—”ì§„ ìƒì—ì„œ UTM(ë³´í†µ 1~60ì˜ ìˆ«ìê°€ ì“°ì„)
 
 
-	//UTM °è»êÈÄ ÀúÀåÇÏ´Â º¯¼ö 
+	//UTM ê³„ì‚°í›„ ì €ì¥í•˜ëŠ” ë³€ìˆ˜ 
 
+	// â”€â”€ HUD ì—°ë™ ìºì‹œ ë³€ìˆ˜ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+	double CachedSpeedKmh    = 0.0;
+	double CachedUtmEasting  = 0.0;
+	double CachedUtmNorthing = 0.0;
+ 
 	FString CsvFilePath;
 	bool bIsRecording = false;
 	float TimeSinceLastSave = 0.0f;
 	float ElapsedRecordingTime = 0.0f;
-
 };

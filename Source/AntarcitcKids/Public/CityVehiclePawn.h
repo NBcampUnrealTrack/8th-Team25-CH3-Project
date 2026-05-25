@@ -18,6 +18,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDGearUpdated, FText, GearText);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDRPMUpdated, float, CurrentRPM);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEmergencyBrake, float, BrakeValue);// 급정거 카메라 무빙
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHUDTireTemperatureUpdated, float, TempFL, float, TempFR, float, TempRL, float, TempRR);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHUDPedalUpdated, float, ThrottleValue, float, BrakeValue);
 
 class UCameraComponent;
 class USpringArmComponent;
@@ -84,6 +85,9 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, Category="HUD")
 	FOnHUDTireTemperatureUpdated OnHUDTireTemperatureUpdated;
+	
+	UPROPERTY(BlueprintAssignable, Category="HUD")
+	FOnHUDPedalUpdated OnHUDPedalUpdated;
 	
 	// HUD API
 	UFUNCTION(BlueprintCallable, Category="HUD|Mission")
