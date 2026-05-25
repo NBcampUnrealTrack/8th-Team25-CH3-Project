@@ -77,7 +77,7 @@ void ATriggerMissionBase::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AAc
 {
 	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
 	{
-		OnVehicleEntered.Broadcast(this, Vehicle);
+		
 		
 	}
 }
@@ -87,7 +87,7 @@ void ATriggerMissionBase::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, 
 {
 	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
 	{
-		OnVehicleExited.Broadcast(this, Vehicle);
+		
 	}
 }
 
@@ -98,6 +98,7 @@ void ATriggerMissionBase::OnAreaOverlap(UPrimitiveComponent* OverlappedComp, AAc
 	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
 	{
 		VehiclePawn = Vehicle;
+		OnVehicleEntered.Broadcast(this, Vehicle);
 		PlayerController = Cast<AAntarcitcKidsPlayerController>(GetWorld()->GetFirstPlayerController());
 		TurnOnQuestCamera();
 	}
@@ -112,6 +113,7 @@ void ATriggerMissionBase::OnAreaEndOverlap(UPrimitiveComponent* OverlappedComp, 
 	{
 		VehiclePawn = nullptr;
 		PlayerController = nullptr;
+		OnVehicleExited.Broadcast(this, Vehicle);
 		TurnOffQuestCamera();
 		
 	}

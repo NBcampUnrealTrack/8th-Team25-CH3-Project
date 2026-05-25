@@ -70,7 +70,16 @@ void UBoxBoundComponent::RenderOneBoundingBox(AActor* DetectedActor, FName Tag)
 	
 	/*UE_LOG(LogTemp, Warning, TEXT("DetectedActor Activate"));*/
 
-	
+	if (!DetectedActor)
+	{
+		/*UE_LOG(LogTemp, Warning, TEXT("DetectedActor Empty()"));*/
+		return;
+	}
+	else
+	{
+		/*UE_LOG(LogTemp, Warning, TEXT("DetectedActor Has Something"));*/
+		
+	}
 	
 
 

@@ -121,9 +121,21 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<USimPauseWidget> PauseWidget;
+	
+public:
+	//VisLidar
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "UI|VisLidar")
+	TObjectPtr<UInputAction> VisLidarAction;
+protected:
+	UFUNCTION()
+	void OnToggleVisLidar();
+	
+	void DoToggleVisLidar();
 
+private:
 	UFUNCTION()
 	void OnPauseTriggered();
+
 
 	void CreateAndBindCyberHUD();
 

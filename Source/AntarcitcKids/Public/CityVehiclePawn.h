@@ -147,6 +147,11 @@ public:
 	UFUNCTION(BlueprintPure, Category="Vehicle")
 	float GetCurrentSpeedKMH() const{ return FMath:: Abs(GetForwardSpeed()) * 0.036f; } // cm/s → km/h 변환
 	
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	void DoToggleVisLidar();
+	
+	ULidarNiagaraComponent* GetNiagaraComponent() {return NiagaraComponent;}
+	
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	virtual void BeginPlay() override;
@@ -175,8 +180,7 @@ private:
 	UFUNCTION(BlueprintCallable, Category="Input")
 	void DoToggleLidarView();
 	
-	UFUNCTION(BlueprintCallable, Category = "Input")
-	void DoToggleVisLidar();
+
 	
 	void UpdateTireTemperatures(float DeltaTime);
 	
@@ -255,8 +259,6 @@ private:
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputAction> ToggleLidarViewAction;
 	
-	UPROPERTY(EditAnywhere,Category="Input")
-	TObjectPtr<UInputAction> ToggleVisLidarAction;
 	
 	UPROPERTY(EditAnywhere, Category="Flip Check", meta = (Units = "s"))
 	float FlipCheckTime = 3.0f;
