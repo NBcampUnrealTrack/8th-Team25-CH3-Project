@@ -25,7 +25,7 @@ AStreetLightSource::AStreetLightSource()
 	SpotLight->SetVisibility(false);
 }
 
-void AStreetLightSource::SetLightEnabled(bool bEnabled) const
+void AStreetLightSource::SetLightEnabled(bool bEnabled) 
 {
 	if (SpotLight)
 	{
