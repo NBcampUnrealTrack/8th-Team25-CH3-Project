@@ -17,7 +17,7 @@ void ULidarNiagaraComponent::RenderPointCloudNiagara(const FLidarPointCloudData&
 {
 	if (!bIsActivate)
 	{
-		/*UE_LOG(LogTemp, Warning, TEXT("bIsActive: %d"), bIsActivate);*/
+		//UE_LOG(LogTemp, Warning, TEXT("bIsActive: %d"), bIsActivate);
 		return;
 	}
 	

@@ -2,21 +2,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Light/LightSourceBase.h"
 #include "StreetLightSource.generated.h"
 
 class USpotLightComponent;
 
 UCLASS()
-class ANTARCITCKIDS_API AStreetLightSource : public AActor
+class ANTARCITCKIDS_API AStreetLightSource : public ALightSourceBase
 {
 	GENERATED_BODY()
 	
 public:	
 	AStreetLightSource();
 	
-	UFUNCTION(category="Street Light")
-	void SetLightEnabled(bool bEnabled) const;
+
+	virtual void SetLightEnabled(bool bEnabled) override;
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Street Light")
