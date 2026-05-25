@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "QuestCameraWidget.h"
+#include "Widget/QuestCameraWidget.h"
 
 #include "Components/Border.h"
 #include "Components/Image.h"
