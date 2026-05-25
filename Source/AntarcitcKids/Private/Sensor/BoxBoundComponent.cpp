@@ -23,7 +23,7 @@ void UBoxBoundComponent::RenderBoundingBox(TArray<AActor*> DetectedActors, FName
 
 	for (AActor* DetectedActor: DetectedActors)
 	{
-		FBox Box= DetectedActor->GetComponentsBoundingBox(false);
+		FBox Box= DetectedActor->GetComponentsBoundingBox();
 		FVector Min = Box.Min;
 		FVector Max = Box.Max;
 		
@@ -81,9 +81,10 @@ void UBoxBoundComponent::RenderOneBoundingBox(AActor* DetectedActor, FName Tag)
 		
 	}
 	
-
-
-		FBox Box = DetectedActor->GetComponentsBoundingBox(true);
+	
+		UStaticMeshComponent* MeshComp = DetectedActor->FindComponentByClass<UStaticMeshComponent>();
+	
+		FBox Box = MeshComp->Bounds.GetBox();
 		FVector Min = Box.Min;
 		FVector Max = Box.Max;
 		
