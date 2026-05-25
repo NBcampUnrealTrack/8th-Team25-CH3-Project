@@ -55,6 +55,11 @@ ACityVehiclePawn::ACityVehiclePawn()
 	BackSpringArm->CameraRotationLagSpeed = 2.0f;
 	BackSpringArm->CameraLagMaxDistance = 50.0f;
 	
+	TireTempFL = 40.f;
+	TireTempFR = 40.f;
+	TireTempRL = 40.f;
+	TireTempRR = 40.f;
+	
 	BackCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Back Camera"));
 	BackCamera->SetupAttachment(BackSpringArm);
 	
@@ -297,6 +302,7 @@ void ACityVehiclePawn::Tick(float Delta)
 	OnHUDGearUpdated.Broadcast(GearText);
 	
 	UpdateWheelSteerAngleLog(); //실시간으로 바뀌는 바퀴 계산 
+	UpdateTireTemperatures(Delta); //실시간으로 바뀌는 바퀴 온도 계산 
 	
 	if (EngineAudioComponent && EngineAudioComponent->IsPlaying())// 사운드
 	{
@@ -450,6 +456,12 @@ void ACityVehiclePawn::DoToggleVisLidar()
 {
 	UE_LOG(LogTemp,Warning, TEXT("DoToggleVisLidar 발동"));
 	NiagaraComponent->ToggleIsActive();
+}
+
+void ACityVehiclePawn::UpdateTireTemperatures(float DeltaTime)
+{
+	// 추가 예정
+	OnHUDTireTemperatureUpdated.Broadcast(TireTempFL, TireTempFR, TireTempRL, TireTempRR);
 }
 
 void ACityVehiclePawn::FlippedCheck()

@@ -17,6 +17,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDTimerUpdated, float, Remaining
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDGearUpdated, FText, GearText);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHUDRPMUpdated, float, CurrentRPM);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEmergencyBrake, float, BrakeValue);// 급정거 카메라 무빙
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHUDTireTemperatureUpdated, float, TempFL, float, TempFR, float, TempRL, float, TempRR);
 
 class UCameraComponent;
 class USpringArmComponent;
@@ -80,6 +81,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category="HUD")
 	FOnHUDRPMUpdated OnHUDRPMUpdated;
+	
+	UPROPERTY(BlueprintAssignable, Category="HUD")
+	FOnHUDTireTemperatureUpdated OnHUDTireTemperatureUpdated;
 	
 	// HUD API
 	UFUNCTION(BlueprintCallable, Category="HUD|Mission")
@@ -170,6 +174,8 @@ private:
 	UFUNCTION(BlueprintCallable, Category = "Input")
 	void DoToggleVisLidar();
 	
+	void UpdateTireTemperatures(float DeltaTime);
+	
 protected:
 	
 	UFUNCTION(BlueprintImplementableEvent, Category="Vehicle")
@@ -177,6 +183,18 @@ protected:
 	
 	UFUNCTION()
 	void FlippedCheck();
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Tire")
+	float TireTempFL;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Tire")
+	float TireTempFR;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Tire")
+	float TireTempRL;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Tire")
+	float TireTempRR;
 	
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
