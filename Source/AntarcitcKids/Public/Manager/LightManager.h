@@ -6,6 +6,7 @@
 #include "LightManager.generated.h"
 
 class ADirectionalLight;
+class ALightSourceBase;
 
 UCLASS()
 class ANTARCITCKIDS_API ALightManager : public AActor
@@ -20,4 +21,7 @@ protected:
 
 	UFUNCTION()
 	void UpdateLights(double Pitch, FTimeOfDay TimeData);
+	
+	UPROPERTY()
+	TArray<TObjectPtr<ALightSourceBase>> ManagedLights;
 };
