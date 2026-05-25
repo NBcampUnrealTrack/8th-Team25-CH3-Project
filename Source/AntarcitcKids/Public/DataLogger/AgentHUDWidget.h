@@ -43,7 +43,7 @@ public:
  
 	// ─── 버튼에서 호출 (블루프린트 버튼 OnClicked에 직접 연결) ──────────
 	UFUNCTION(BlueprintCallable, Category = "HUD|Navigation")
-	void RestartLevel();
+	void QuitGame();
  
 	UFUNCTION(BlueprintCallable, Category = "HUD|Navigation")
 	void GoToLobby();

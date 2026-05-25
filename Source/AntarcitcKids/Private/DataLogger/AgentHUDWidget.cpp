@@ -2,6 +2,7 @@
 #include "DataLogger/AgentLoggerSubsystem.h"
 #include "DataLogger/AgentDataLogger.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
  
 void UAgentHudWidget::NativeConstruct()
 {
@@ -52,10 +53,10 @@ void UAgentHudWidget::PollDataLogger()
  
 // ─── 버튼 이벤트 ─────────────────────────────────────────────────────────────
  
-void UAgentHudWidget::RestartLevel()
+void UAgentHudWidget::QuitGame()
 {
-	UGameplayStatics::OpenLevel(this,
-		*UGameplayStatics::GetCurrentLevelName(this, true));
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	UKismetSystemLibrary::QuitGame(GetWorld(), PC, EQuitPreference::Quit, false);
 }
  
 void UAgentHudWidget::GoToLobby()

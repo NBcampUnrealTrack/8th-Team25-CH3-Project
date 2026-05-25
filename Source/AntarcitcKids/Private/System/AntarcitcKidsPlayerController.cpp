@@ -27,6 +27,14 @@ void AAntarcitcKidsPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	PauseWidget = nullptr;
+	WorldMapWidget = nullptr;
+	CyberHUDWidget = nullptr;
+	
+	FInputModeGameOnly GameMode;
+	SetInputMode(GameMode);
+	SetShowMouseCursor(true);
+	
 	bAttachToPawn = true;
 	
 	// 한 프레임 대기 후 차량 찾기 (차량 스폰되는 시간 주기)
