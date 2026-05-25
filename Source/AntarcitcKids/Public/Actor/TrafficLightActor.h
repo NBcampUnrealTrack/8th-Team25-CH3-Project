@@ -66,6 +66,8 @@ protected:
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex) override;
 	
+	
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Traffic Light")
 	float RedDuration = 5.0f;
