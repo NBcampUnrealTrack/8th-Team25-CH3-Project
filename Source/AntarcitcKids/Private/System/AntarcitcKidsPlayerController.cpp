@@ -17,7 +17,7 @@
 #include "Manager/SimControlSubsystem.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-
+#include "Sensor/LidarNiagaraComponent.h"
 
 
 // 커스텀 로그 카테고리를 정의
@@ -76,6 +76,17 @@ void AAntarcitcKidsPlayerController::SetupInputComponent()
 				&AAntarcitcKidsPlayerController::OnWorldMapTriggered
 			);
 		}
+		
+		if (VisLidarAction)
+		{
+			EIC->BindAction(
+				VisLidarAction,
+				ETriggerEvent::Started, 
+				this, 
+				&AAntarcitcKidsPlayerController::OnToggleVisLidar);
+		}
+		
+
 	}
 	
 	
@@ -419,4 +430,38 @@ void AAntarcitcKidsPlayerController::OnPauseTriggered()
 		SetShowMouseCursor(true);
 		SetInputMode(FInputModeUIOnly());
 	}
+}
+
+void AAntarcitcKidsPlayerController::OnToggleVisLidar()
+{
+	DoToggleVisLidar();
+}
+
+void AAntarcitcKidsPlayerController::DoToggleVisLidar()
+{
+	UE_LOG(LogTemp,Warning, TEXT("DoToggleVisLidar 발동"));
+	if (!VehiclePawn)
+	{
+		UE_LOG(LogTemp,Warning, TEXT("TempPlayer 부재함"));
+		return;
+	}
+	else
+	{
+		
+		UE_LOG(LogTemp,Warning, TEXT("TempPlayer 존재함"));
+	}
+	
+	if (ULidarNiagaraComponent* NiagaraComponent =  VehiclePawn->GetNiagaraComponent())
+	{
+		UE_LOG(LogTemp,Warning, TEXT("NiagaraComponent 있음"));
+		NiagaraComponent->ToggleIsActive();
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning, TEXT("NiagaraComponent 없음"));
+		
+	}
+	
+	
+	
 }

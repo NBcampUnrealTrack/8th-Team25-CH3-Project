@@ -187,15 +187,14 @@ void ACityVehiclePawn::DoLookAround(float YawDelta)
 void ACityVehiclePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	UE_LOG(LogTemp, Warning, TEXT("SetupPlayerInputComponent 발동"));
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
+		
 		EnhancedInputComponent->BindAction(ResetVehicleAction, ETriggerEvent::Triggered, this, &ACityVehiclePawn::ResetVehicle);
 		EnhancedInputComponent->BindAction(ToggleCameraViewAction, ETriggerEvent::Started, this, &ACityVehiclePawn::ToggleSensorView);
 		EnhancedInputComponent->BindAction(ToggleLidarViewAction, ETriggerEvent::Started, this, &ACityVehiclePawn::ToggleLidarView);
-		EnhancedInputComponent->BindAction(ToggleVisLidarAction, ETriggerEvent::Started, this, &ACityVehiclePawn::ToggleVisLidar);
 		
-		UE_LOG(LogTemp, Warning, TEXT("Input bindings completed. Total: %d"), EnhancedInputComponent->GetNumActionEventBindings());
 	}
 	else
 	{
@@ -456,7 +455,12 @@ void ACityVehiclePawn::DoToggleLidarView()
 
 void ACityVehiclePawn::DoToggleVisLidar()
 {
-	UE_LOG(LogTemp,Warning, TEXT("DoToggleVisLidar 발동"));
+	
+	if (!NiagaraComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("NiagaraComponent is NULL!"));
+		return;
+	}
 	NiagaraComponent->ToggleIsActive();
 }
 

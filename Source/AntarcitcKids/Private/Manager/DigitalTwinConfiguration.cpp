@@ -3,3 +3,11 @@
 
 #include "Manager/DigitalTwinConfiguration.h"
 
+
+void UDigitalTwinConfiguration::InitializeSetting(FDigitialTwinSetting IDTS)
+{
+	DTS = IDTS;
+	
+}
+
+

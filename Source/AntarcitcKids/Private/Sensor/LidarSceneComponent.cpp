@@ -334,6 +334,7 @@ void ULidarSceneComponent::CollectAsyncResults()
 	
 	/*PendingDetectedActor = DetectedTagActors;*/
 	/*ImpactActorReady.Broadcast(DetectedTagActors,Tag);*/
+	ImpactOneActorReady.Broadcast(DetectedTagActor,Tag);
 
 	
 
