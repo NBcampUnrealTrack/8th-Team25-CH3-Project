@@ -26,4 +26,12 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Weather")
 	EWeatherType CurrentWeatherType;
 
+	//===============================================================================
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category="Weather")
+	void RequestEndWeather();
+
+	UFUNCTION(BlueprintCallable, Category="Weather")
+	void NotifyEndWeatherFinished();
+	//===============================================================================
+	
 };
