@@ -7,6 +7,7 @@
 #include "Misc/Paths.h" //프로젝트 경로 가져오기
 #include "CityVehiclePawn.h"
 #include "Vehicle/CyberTruckWheelFront.h"
+#include "DataLogger/AgentLoggerSubsystem.h"
 
 //결국 최종 목표는 언리얼과 현실세계를 잇기 위한 실제 위도, 경도를 값으로 추출하는 과정
 
@@ -37,6 +38,16 @@ void UAgentDataLogger::BeginPlay()
 	{
 		StartRecording();
 	} //로그 기능이 켜져있습니까?
+	
+	// Subsystem에 자신을 등록
+	
+	if (const UGameInstance* GI = GetWorld()->GetGameInstance())
+	{
+		if (UAgentLoggerSubsystem* Sub = GI->GetSubsystem<UAgentLoggerSubsystem>())
+		{
+			Sub->RegisterLogger(this);
+		}
+	} 
 } 
 
 //여기가 기준 위도/경도를 UTM좌표로 변환 및 CSV파일 준비하는 과정, 보통 엑셀로 염, 실제 위치가 어디인가?
@@ -44,6 +55,15 @@ void UAgentDataLogger::BeginPlay()
 
 void UAgentDataLogger::EndPlay(EEndPlayReason::Type EndPlayReason)
 {
+	// Subsystem에서 해제
+	if (const UGameInstance* GI = GetWorld()->GetGameInstance())
+	{
+		if (UAgentLoggerSubsystem* Sub = GI->GetSubsystem<UAgentLoggerSubsystem>())
+		{
+			Sub->UnregisterLogger(this);
+		}
+	}
+	
 	StopRecording();
 	Super::EndPlay(EndPlayReason);
 }

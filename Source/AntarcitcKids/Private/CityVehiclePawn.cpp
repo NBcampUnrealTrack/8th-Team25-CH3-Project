@@ -195,6 +195,8 @@ void ACityVehiclePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(ToggleCameraViewAction, ETriggerEvent::Started, this, &ACityVehiclePawn::ToggleSensorView);
 		EnhancedInputComponent->BindAction(ToggleLidarViewAction, ETriggerEvent::Started, this, &ACityVehiclePawn::ToggleLidarView);
 		
+
+		UE_LOG(LogTemp, Warning, TEXT("Input bindings completed."));
 	}
 	else
 	{
@@ -270,6 +272,7 @@ void ACityVehiclePawn::Tick(float Delta)
 	const float RoundedSpeed = FMath::IsNearlyZero(SpeedKMH, 0.9f) ? 0.f : 
 	FMath::RoundToFloat(SpeedKMH * 10.f) / 10.f;
 	OnHUDSpeedUpdated.Broadcast(SpeedKMH);
+	OnHUDPedalUpdated.Broadcast(ChaosVehicleMovement->GetThrottleInput(), ChaosVehicleMovement->GetBrakeInput());
 	
 	// RPM 브로드캐스트 (매 프레임)
 	const float CurrentRPM = ChaosVehicleMovement->GetEngineRotationSpeed();
@@ -466,7 +469,61 @@ void ACityVehiclePawn::DoToggleVisLidar()
 
 void ACityVehiclePawn::UpdateTireTemperatures(float DeltaTime)
 {
-	// 추가 예정
+	if (!ChaosVehicleMovement) return;
+
+    const float SpeedKMH    = GetCurrentSpeedKMH();
+    const float Throttle    = ChaosVehicleMovement->GetThrottleInput();
+    const float Brake       = ChaosVehicleMovement->GetBrakeInput();
+    const float Steer       = ChaosVehicleMovement->GetSteeringInput(); // -1~+1
+
+    // 코너링 하중 이동
+    const float OuterBoost  = FMath::Abs(Steer) * SpeedKMH * 0.0008f;
+    const float FL_S = (Steer > 0.f) ? OuterBoost       : 0.f;
+    const float FR_S = (Steer < 0.f) ? OuterBoost       : 0.f;
+    const float RL_S = (Steer > 0.f) ? OuterBoost*0.6f  : 0.f;
+    const float RR_S = (Steer < 0.f) ? OuterBoost*0.6f  : 0.f;
+
+    // 제동 열 (앞바퀴 더 강함)
+    const float BrakeF = Brake * 0.08f;
+    const float BrakeR = Brake * 0.04f;
+
+    // 구동 열 (후륜)
+    const float Drive  = Throttle * SpeedKMH * 0.0003f;
+
+    // 속도 기본 열
+    const float SpeedH = SpeedKMH * 0.0004f;
+
+    // 서스펜션 충격 열
+    float SuspFL=0.f, SuspFR=0.f, SuspRL=0.f, SuspRR=0.f;
+    if (ChaosVehicleMovement->Wheels.Num() >= 4)
+    {
+        if (ChaosVehicleMovement->Wheels[0])
+            SuspFL = FMath::Abs(ChaosVehicleMovement->Wheels[0]->GetSuspensionOffset()) * 0.02f;
+        if (ChaosVehicleMovement->Wheels[1])
+            SuspFR = FMath::Abs(ChaosVehicleMovement->Wheels[1]->GetSuspensionOffset()) * 0.02f;
+        if (ChaosVehicleMovement->Wheels[2])
+            SuspRL = FMath::Abs(ChaosVehicleMovement->Wheels[2]->GetSuspensionOffset()) * 0.02f;
+        if (ChaosVehicleMovement->Wheels[3])
+            SuspRR = FMath::Abs(ChaosVehicleMovement->Wheels[3]->GetSuspensionOffset()) * 0.02f;
+    }
+
+    // 온도 계산 람다
+    const float Ambient = 40.f;
+    const float Cool    = 0.6f;
+    const float MaxT    = 150.f;
+
+    auto Calc = [&](float& T, float SH, float BH, float DH, float SuspH)
+    {
+        const float Heat = SpeedH + SH + BH + DH + SuspH;
+        const float CoolAmt = (T - Ambient) * Cool * DeltaTime;
+        T = FMath::Clamp(T + Heat * DeltaTime - CoolAmt, Ambient, MaxT);
+    };
+
+    Calc(TireTempFL, FL_S, BrakeF, 0.f,  SuspFL);
+    Calc(TireTempFR, FR_S, BrakeF, 0.f,  SuspFR);
+    Calc(TireTempRL, RL_S, BrakeR, Drive, SuspRL);
+    Calc(TireTempRR, RR_S, BrakeR, Drive, SuspRR);
+	
 	OnHUDTireTemperatureUpdated.Broadcast(TireTempFL, TireTempFR, TireTempRL, TireTempRR);
 }
 
