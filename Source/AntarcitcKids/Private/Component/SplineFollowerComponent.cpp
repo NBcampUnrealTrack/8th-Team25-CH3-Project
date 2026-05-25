@@ -48,6 +48,7 @@ void USplineFollowerComponent::EmergencyStop()
 	{
 		FollowState = ESplineFollowState::EmergencyStopping;
 		UE_LOG(LogSplineFollower, Log, TEXT("EmergencyStop: Transition to EmergencyStopping state."));
+		OnEmergencyStop.Broadcast();
 	}
 }
 

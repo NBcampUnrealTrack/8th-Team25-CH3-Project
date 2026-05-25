@@ -26,12 +26,17 @@ class USplineComponent;
  *   - 직접 물리 입력 (← ACityVehiclePawn이 담당)
  */
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEmergencyStop);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ANTARCITCKIDS_API USplineFollowerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 public:
 	USplineFollowerComponent();
+	
+	UPROPERTY(BlueprintAssignable, Category="HUD")
+	FOnEmergencyStop OnEmergencyStop;
 	
 	// ────────────────────────────────────────────────────────
 	// 외부(AI Controller) 명령 인터페이스
