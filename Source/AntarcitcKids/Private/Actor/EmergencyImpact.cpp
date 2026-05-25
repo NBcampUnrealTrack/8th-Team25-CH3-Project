@@ -121,7 +121,7 @@ void AEmergencyImpact::Tick(float DeltaSeconds)
 
 	if (FVector::Dist(GetActorLocation(), DestLocation) < 1.f)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("길이 일정 이하라 MoveSpeed 0 "));
+		/*UE_LOG(LogTemp,Warning,TEXT("길이 일정 이하라 MoveSpeed 0 "));*/
 		MoveSpeed = 0.f;
 	}
 }
