@@ -40,7 +40,7 @@ void AEmergencyImpact::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor
 	Super::OnItemOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
 	{
-		OnEmergencyDetected.Broadcast();
+		
 		SetActorTickEnabled(true);
 		MoveSpeed = 300.f;
 		
@@ -68,12 +68,26 @@ void AEmergencyImpact::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AAc
 		}
 		bIsImpact = false;
 
-		OnEmergencyCleared.Broadcast();
+		
 	}
 }
 
-void AEmergencyImpact::OnImpactOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+void AEmergencyImpact::OnAreaOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	Super::OnAreaOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+	OnEmergencyDetected.Broadcast();
+}
+
+void AEmergencyImpact::OnAreaEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	Super::OnAreaEndOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex);
+	OnEmergencyCleared.Broadcast();
+}
+
+void AEmergencyImpact::OnImpactOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+                                       UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
 	{
@@ -121,7 +135,7 @@ void AEmergencyImpact::Tick(float DeltaSeconds)
 
 	if (FVector::Dist(GetActorLocation(), DestLocation) < 1.f)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("길이 일정 이하라 MoveSpeed 0 "));
+		/*UE_LOG(LogTemp,Warning,TEXT("길이 일정 이하라 MoveSpeed 0 "));*/
 		MoveSpeed = 0.f;
 	}
 }
