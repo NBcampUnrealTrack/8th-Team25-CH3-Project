@@ -35,6 +35,22 @@ void ASpeedTrap::SetPawnSpeed(float SpeedKMH)
 	PawnSpeedKMH = SpeedKMH;
 }
 
+void ASpeedTrap::OnAreaOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	Super::OnAreaOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+	OnSpeedLimitEntered.Broadcast(SpeedUpperLimitKHM);
+	
+}
+
+void ASpeedTrap::OnAreaEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	Super::OnAreaEndOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex);
+	OnSpeedLimitExited.Broadcast();
+	
+}
+
 void ASpeedTrap::BeginPlay()
 {
 	Super::BeginPlay();
@@ -74,7 +90,7 @@ void ASpeedTrap::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 				Quest->OnFailed();
 		}
 		
-		OnSpeedLimitEntered.Broadcast(SpeedUpperLimitKHM);
+		
 	}
 }
 
@@ -124,7 +140,7 @@ void ASpeedTrap::OnEndGateOverlap(UPrimitiveComponent* OverlappedComp, AActor* O
 				Quest->OnSuccess();
 		}
 	
-		OnSpeedLimitExited.Broadcast();
+		
 	}
 	
 }
