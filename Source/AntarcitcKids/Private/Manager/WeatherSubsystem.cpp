@@ -116,7 +116,6 @@ void UWeatherSubsystem::SetWeather(EWeatherType WeatherType)
 
 EWeatherType UWeatherSubsystem::GetCurrentWeather()
 {
-	UE_LOG(LogTemp,Warning, TEXT("GetCurrentWeather 발동"));
 	if (AActor* Actor = UGameplayStatics::GetActorOfClass(GetWorld(),AWeatherBase::StaticClass()))
 	{
 		if (AWeatherBase* WeatherActor = Cast<AWeatherBase>(Actor))
@@ -131,7 +130,7 @@ EWeatherType UWeatherSubsystem::GetCurrentWeather()
 	}
 	else
 	{
-		UE_LOG(LogTemp,Warning, TEXT("탐색 불가"));
+		/*UE_LOG(LogTemp,Warning, TEXT("탐색 불가"));*/
 	}
 	return CurrentWeather.Key;
 }

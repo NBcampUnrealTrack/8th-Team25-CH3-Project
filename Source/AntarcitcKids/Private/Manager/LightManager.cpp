@@ -51,12 +51,13 @@ void ALightManager::UpdateLights(double Pitch, FTimeOfDay TimeData)
 	EWeatherType CurrentWeatherType = GetWorld()->GetSubsystem<UWeatherSubsystem>()->GetCurrentWeather();
 	const bool bIsDarkWeather = (CurrentWeatherType == EWeatherType::Rainy) || (CurrentWeatherType == EWeatherType::Snowy);
 	
-	if (bIsNight || bIsDarkWeather) return;
+	if (!bIsNight && !bIsDarkWeather) return;
 	
 	for (ALightSourceBase* Light : ManagedLights)
 	{
 		if (Light)
 		{
+			UE_LOG(LogTemp,Warning, TEXT("Light is Activate"));
 			Light->SetLightEnabled(bIsNight);
 		}
 	}
