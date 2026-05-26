@@ -47,7 +47,7 @@ struct FQuestCompletedEvent
 	EQuestClass QuestClass; 
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Quest")
-	int32 QuestID;
+	FString QuestID;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Quest")
 	FName QuestName;
@@ -96,7 +96,7 @@ struct FQuestInfo : public FTableRowBase
 	EQuestClass QuestType;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Quest")
-	int32 QuestID;
+	FString QuestID;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Quest")
 	FName QuestName;
