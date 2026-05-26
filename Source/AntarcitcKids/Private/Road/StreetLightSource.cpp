@@ -13,6 +13,10 @@ AStreetLightSource::AStreetLightSource()
 	SpotLight = CreateDefaultSubobject<USpotLightComponent>(TEXT("SpotLight"));
 	SpotLight->SetupAttachment(Root);
 	
+	GlowPlane = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GlowPlane"));
+	GlowPlane->SetupAttachment(Root);
+	GlowPlane->SetVisibility(false);
+	
 	//빛이 아래를 비추도록 설정
 	SpotLight->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
 	
@@ -25,10 +29,15 @@ AStreetLightSource::AStreetLightSource()
 	SpotLight->SetVisibility(false);
 }
 
-void AStreetLightSource::SetLightEnabled(bool bEnabled) const
+void AStreetLightSource::SetLightEnabled(bool bEnabled) 
 {
 	if (SpotLight)
 	{
 		SpotLight->SetVisibility(bEnabled);
+	}
+	
+	if (GlowPlane)
+	{
+		GlowPlane->SetVisibility(bEnabled);
 	}
 }
