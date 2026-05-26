@@ -98,8 +98,23 @@ void UBoxBoundComponent::RenderOneBoundingBox(AActor* DetectedActor, FName Tag)
 	float LifeTime = 15.f;
 
 	
-		UStaticMeshComponent* MeshComp = DetectedActor->FindComponentByClass<UStaticMeshComponent>();
-		FBox LocalBox = MeshComp->GetStaticMesh()->GetBoundingBox();
+	UStaticMeshComponent* MeshComp = DetectedActor->FindComponentByClass<UStaticMeshComponent>();
+	FBox LocalBox;
+	if (!MeshComp)
+	{
+		USkeletalMeshComponent* MeshCompSK = DetectedActor->FindComponentByClass<USkeletalMeshComponent>();
+		FBoxSphereBounds SkelBounds = MeshCompSK->CalcBounds(MeshCompSK->GetComponentTransform());
+		LocalBox = SkelBounds.GetBox();
+	}
+	else
+	{
+		
+		LocalBox = MeshComp->GetStaticMesh()->GetBoundingBox();
+	}
+	
+	
+	
+		
 		FVector Min = LocalBox.Min;
 		FVector Max = LocalBox.Max;
 		
