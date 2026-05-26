@@ -25,8 +25,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnCurrentWeatherEndFinished();
 	//===========================================
-	
-	void GetCurrentWeather();
+	UFUNCTION(BlueprintCallable)
+	EWeatherType GetCurrentWeather();
 	
 	void OnWorldBeginPlay(UWorld& InWorld) override;
 	
