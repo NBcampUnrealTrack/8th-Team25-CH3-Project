@@ -2,21 +2,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Light/LightSourceBase.h"
 #include "StreetLightSource.generated.h"
 
 class USpotLightComponent;
+class UStaticMeshComponent;
 
 UCLASS()
-class ANTARCITCKIDS_API AStreetLightSource : public AActor
+class ANTARCITCKIDS_API AStreetLightSource : public ALightSourceBase
 {
 	GENERATED_BODY()
 	
 public:	
 	AStreetLightSource();
 	
-	UFUNCTION(category="Street Light")
-	void SetLightEnabled(bool bEnabled) const;
+
+	virtual void SetLightEnabled(bool bEnabled) override;
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Street Light")
@@ -24,6 +25,10 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Street Light")
 	TObjectPtr<USpotLightComponent>	SpotLight;
+	
+	//가로등 켜지는게 눈에 잘 안보이길래  메쉬 추가
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Street Light")
+	TObjectPtr<UStaticMeshComponent> GlowPlane;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Street Light|Settings")
 	bool bUseSpotLight = true;

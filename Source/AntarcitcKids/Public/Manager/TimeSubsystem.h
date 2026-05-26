@@ -51,7 +51,7 @@ public:
     float GetCurrentTimeSeconds() const { return CurrentTimeSeconds; }
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
-    float TimeScale = 120.f;
+    float TimeScale = 1.f;
 
 private:
     UPROPERTY()
