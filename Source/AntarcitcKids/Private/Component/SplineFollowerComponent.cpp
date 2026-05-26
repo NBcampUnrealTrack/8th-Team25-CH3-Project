@@ -262,12 +262,13 @@ void USplineFollowerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	
 	if (bReachedEnd)
 	{
-		OwnerPawn->DoFullStop();
+		//OwnerPawn->DoFullStop();
 		
 		// NextRoads가 있으면 여기서 다음 도로로 전환 (현재는 정차)
-		FollowState = ESplineFollowState::EmergencyStopping;
-		UE_LOG(LogSplineFollower, Log, TEXT("Tick: Reached end of road. Stopping."));
-		return;
+		//FollowState = ESplineFollowState::EmergencyStopping;
+		//UE_LOG(LogSplineFollower, Log, TEXT("Tick: Reached end of road. Stopping."));
+		//return;
+		BuildPath();
 	}
 	
 	// ── 제어값 산출 및 적용 ──────────────────────────────────────
