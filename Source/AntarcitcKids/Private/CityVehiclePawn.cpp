@@ -123,7 +123,7 @@ void ACityVehiclePawn::DoFullStop()
 	
 	if (EngineAudioComponent && EngineAudioComponent->IsPlaying())
 	{
-		EngineAudioComponent->Stop();
+		EngineAudioComponent->SetPaused(true);
 	}
 }
 
@@ -144,6 +144,11 @@ void ACityVehiclePawn::ResumeMovement()
     
 	// 즉시 출발을 돕기 위해 스로틀 살짝 건듬
 	ChaosVehicleMovement->SetThrottleInput(0.1f);
+	
+	if (EngineAudioComponent && EngineAudioComponent->IsPlaying())
+	{
+		EngineAudioComponent->SetPaused(false);
+	}
 	
 }
 
