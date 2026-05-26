@@ -2,6 +2,10 @@
 // Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #include "Manager/DigitalTwinConfiguration.h"
+#include "MoviePlayer.h"
+#include "Blueprint/UserWidget.h"
+#include "Widget/LoadingWidget.h"
+#include "Widgets/SWeakWidget.h"
 
 
 void UDigitalTwinConfiguration::InitializeSetting(FDigitialTwinSetting IDTS)
@@ -23,4 +27,36 @@ void UDigitalTwinConfiguration::UpdateDTS()
 	
 }
 
+//=============================로딩==========================
+
+void UDigitalTwinConfiguration::Init()
+{
+	Super::Init();
+	
+	GetMoviePlayer()->OnPrepareLoadingScreen().AddUObject(this, &UDigitalTwinConfiguration::BeginLoadingScreen);
+	FCoreUObjectDelegates::PostLoadMapWithWorld.AddUObject(this, &UDigitalTwinConfiguration::EndLoadingScreen);
+}
+
+void UDigitalTwinConfiguration::BeginLoadingScreen()
+{
+	FLoadingScreenAttributes LoadingScreen;
+	LoadingScreen.bAutoCompleteWhenLoadingCompletes = true;
+	LoadingScreen.MinimumLoadingScreenDisplayTime = 2.0f;
+	
+	if (LoadingWidgetClass)
+	{j
+		TSharedRef<SWidget> Widget =
+			SNew(SWeakWidget).PossiblyNullContent(
+				CreateWidget<ULoadingWidget>(this, LoadingWidgetClass)->TakeWidget()
+			);
+		LoadingScreen.WidgetLoadingScreen = Widget;
+	}
+
+	GetMoviePlayer()->SetupLoadingScreen(LoadingScreen);
+}
+
+void UDigitalTwinConfiguration::EndLoadingScreen(UWorld* InLoadedWorld)
+{
+	// 로딩 완료 후 처리 이건 과제에선 사용 X
+}
 
