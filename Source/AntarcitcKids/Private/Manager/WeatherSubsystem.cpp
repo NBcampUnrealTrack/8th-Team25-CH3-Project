@@ -114,7 +114,7 @@ void UWeatherSubsystem::SetWeather(EWeatherType WeatherType)
 }
 
 
-void UWeatherSubsystem::GetCurrentWeather()
+EWeatherType UWeatherSubsystem::GetCurrentWeather()
 {
 	UE_LOG(LogTemp,Warning, TEXT("GetCurrentWeather 발동"));
 	if (AActor* Actor = UGameplayStatics::GetActorOfClass(GetWorld(),AWeatherBase::StaticClass()))
@@ -133,6 +133,7 @@ void UWeatherSubsystem::GetCurrentWeather()
 	{
 		UE_LOG(LogTemp,Warning, TEXT("탐색 불가"));
 	}
+	return CurrentWeather.Key;
 }
 
 void UWeatherSubsystem::OnWorldBeginPlay(UWorld& InWorld)

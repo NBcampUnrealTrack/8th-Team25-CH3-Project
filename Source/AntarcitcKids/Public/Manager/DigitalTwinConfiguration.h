@@ -13,6 +13,9 @@
 #include "Engine/GameInstance.h"
 #include "DigitalTwinConfiguration.generated.h"
 
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FWeatherChange, EWeatherType)
+
 USTRUCT(BlueprintType)
 struct FDigitialTwinSetting
 {
@@ -32,15 +35,22 @@ class ANTARCITCKIDS_API UDigitalTwinConfiguration : public UGameInstance
 {
 	GENERATED_BODY()
 public:
+	FWeatherChange WeatherChange;
+	
+	
 	UFUNCTION(BlueprintCallable)
 	void InitializeSetting(FDigitialTwinSetting IDTS);
 	
 	UFUNCTION(BlueprintCallable)
 	FDigitialTwinSetting GetDigitialTwinSetting() {return DTS;}
 	
+	void UpdateDTS();
+	
 	
 private:
 	FDigitialTwinSetting DTS;
+	UTimeSubsystem* TimeSubsystem;
+	UWeatherSubsystem* WeatherSubsystem;
 
 	
 };

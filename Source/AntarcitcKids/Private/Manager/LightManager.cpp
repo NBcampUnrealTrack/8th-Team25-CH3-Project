@@ -3,6 +3,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Manager/TimeSubsystem.h"
 #include "Light/LightSourceBase.h"
+#include "Manager/WeatherSubsystem.h"
 
 ALightManager::ALightManager()
 {
@@ -35,6 +36,11 @@ void ALightManager::BeginPlay()
 			&ALightManager::UpdateLights
 		);
 	}
+	
+	if (UWeatherSubsystem* WeatherSubsystem = GetWorld()->GetSubsystem<UWeatherSubsystem>())
+	{
+		
+	}
 }
 
 void ALightManager::UpdateLights(double Pitch, FTimeOfDay TimeData)
@@ -42,6 +48,11 @@ void ALightManager::UpdateLights(double Pitch, FTimeOfDay TimeData)
 	const bool bIsNight = (TimeData.Period == ETimeOfDay::Night ||
 						   TimeData.Period == ETimeOfDay::Dawn);
 
+	EWeatherType CurrentWeatherType = GetWorld()->GetSubsystem<UWeatherSubsystem>()->GetCurrentWeather();
+	const bool bIsDarkWeather = (CurrentWeatherType == EWeatherType::Rainy) || (CurrentWeatherType == EWeatherType::Snowy);
+	
+	if (bIsNight || bIsDarkWeather) return;
+	
 	for (ALightSourceBase* Light : ManagedLights)
 	{
 		if (Light)
