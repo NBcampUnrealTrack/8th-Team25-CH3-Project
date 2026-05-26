@@ -171,7 +171,13 @@ void ATriggerMissionBase::TurnOffQuestCamera()
 		}
 		else
 		{
-			PC->ResetHightlight();
+			
+			GetWorld()->GetTimerManager().SetTimer(
+				ResetTimerHandle,
+				PC,
+				&AAntarcitcKidsPlayerController::ResetHightlight,
+				0.01f,
+				true);
 		}
 		
 		
