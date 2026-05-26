@@ -124,7 +124,6 @@ void ATriggerMissionBase::Tick(float DeltaTime)
 	/*UE_LOG(LogTemp,Warning, TEXT("Tick 활성화"));*/
 	if (IsValid(VehiclePawn))
 	{
-		
 		FocusOn();
 		
 	}
@@ -202,7 +201,6 @@ void ATriggerMissionBase::FocusOn()
 
 void ATriggerMissionBase::ResetFocus()
 {
-	
 }
 
 

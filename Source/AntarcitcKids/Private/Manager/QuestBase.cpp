@@ -14,7 +14,7 @@ void UQuestBase::OnInitialized(const FQuestInfo& QuestInfo)
 	
 	
 	CurrentQuestInfo.QuestType = QuestInfo.QuestType;
-	CurrentQuestInfo.QuestID = GetWorld()->GetGameInstance()->GetSubsystem<UQuestSubSystem>()->SetQuestID();
+	CurrentQuestInfo.QuestID = GetWorld()->GetGameInstance()->GetSubsystem<UQuestSubSystem>()->GenerateQuestID(this);
 	CurrentQuestInfo.QuestClass = QuestInfo.QuestClass;
 	CurrentQuestInfo.QuestID = QuestInfo.QuestID;
 	CurrentQuestInfo.QuestName = QuestInfo.QuestName;

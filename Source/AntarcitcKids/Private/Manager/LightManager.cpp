@@ -57,7 +57,7 @@ void ALightManager::UpdateLights(double Pitch, FTimeOfDay TimeData)
 	{
 		if (Light)
 		{
-			UE_LOG(LogTemp,Warning, TEXT("Light is Activate"));
+		/*UE_LOG(LogTemp,Warning, TEXT("Light is Activate"));*/
 			Light->SetLightEnabled(bIsNight);
 		}
 	}
