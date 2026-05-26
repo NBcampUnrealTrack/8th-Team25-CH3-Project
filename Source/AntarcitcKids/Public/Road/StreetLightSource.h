@@ -6,6 +6,7 @@
 #include "StreetLightSource.generated.h"
 
 class USpotLightComponent;
+class UStaticMeshComponent;
 
 UCLASS()
 class ANTARCITCKIDS_API AStreetLightSource : public ALightSourceBase
@@ -24,6 +25,10 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Street Light")
 	TObjectPtr<USpotLightComponent>	SpotLight;
+	
+	//가로등 켜지는게 눈에 잘 안보이길래  메쉬 추가
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Street Light")
+	TObjectPtr<UStaticMeshComponent> GlowPlane;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Street Light|Settings")
 	bool bUseSpotLight = true;
