@@ -44,7 +44,7 @@ void UDigitalTwinConfiguration::BeginLoadingScreen()
 	LoadingScreen.MinimumLoadingScreenDisplayTime = 2.0f;
 	
 	if (LoadingWidgetClass)
-	{j
+	{
 		TSharedRef<SWidget> Widget =
 			SNew(SWeakWidget).PossiblyNullContent(
 				CreateWidget<ULoadingWidget>(this, LoadingWidgetClass)->TakeWidget()
