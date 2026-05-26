@@ -46,5 +46,8 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> CameraImage;
 	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UBorder> MissionCamBD;
+	
 	
 };
