@@ -133,5 +133,7 @@ private:
 	ACityVehiclePawn* VehiclePawn;
 	AAntarcitcKidsPlayerController* PlayerController;
 	
+	FTimerHandle ResetTimerHandle;
+	
 
 };
