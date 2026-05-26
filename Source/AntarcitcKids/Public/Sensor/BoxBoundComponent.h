@@ -21,13 +21,16 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Color")
 	float Thickness;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Color")
-	float LifeTime;
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Color")
+	float LifeTime;*/
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "LidarSensor")
 	TMap<FName, FLinearColor> TagDetectInfos;
 	
+	void ToggleIsActive();
+	
 protected:
 
 	virtual void BeginPlay() override;
+	bool bIsBoxActive;
 };

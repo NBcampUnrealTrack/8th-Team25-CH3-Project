@@ -151,6 +151,7 @@ public:
 	void DoToggleVisLidar();
 	
 	ULidarNiagaraComponent* GetNiagaraComponent() {return NiagaraComponent;}
+	UBoxBoundComponent* GetBoxBoundComponent() { return BoxBoundComponent;}
 	
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;

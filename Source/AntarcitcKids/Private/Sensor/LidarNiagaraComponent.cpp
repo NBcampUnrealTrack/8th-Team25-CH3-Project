@@ -63,10 +63,10 @@ void ULidarNiagaraComponent::RenderPointCloudNiagara(const FLidarPointCloudData&
 	SetIntParameter(TEXT("CloudPointCount"),PointCount);
 	Activate(true);
 	
-	if (this->IsActive())
+	/*if (this->IsActive())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Niagara 작동 !"));
-	}
+	}*/
 }
 
 void ULidarNiagaraComponent::NiagaraDeactivate()

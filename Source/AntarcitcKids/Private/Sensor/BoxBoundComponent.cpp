@@ -8,6 +8,8 @@
 void UBoxBoundComponent::RenderBoundingBox(TArray<AActor*> DetectedActors, FName Tag)
 {
 	
+	BatchedLines.Empty();
+	float LifeTime = GetWorld()->GetDeltaSeconds();
 	if (DetectedActors.IsEmpty())
 	{
 		/*UE_LOG(LogTemp, Warning, TEXT("DetectedActor Empty()"));*/
@@ -67,7 +69,8 @@ void UBoxBoundComponent::RenderBoundingBox(TArray<AActor*> DetectedActors, FName
 
 void UBoxBoundComponent::RenderOneBoundingBox(AActor* DetectedActor, FName Tag)
 {
-	
+
+
 	/*UE_LOG(LogTemp, Warning, TEXT("DetectedActor Activate"));*/
 
 	if (!DetectedActor)
@@ -81,14 +84,26 @@ void UBoxBoundComponent::RenderOneBoundingBox(AActor* DetectedActor, FName Tag)
 		
 	}
 	
+	if (!bIsBoxActive)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("bIsActive: %d"), bIsBoxActive);
+		return;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("bIsActive: %d"), bIsBoxActive);
+	}
+	
+	UE_LOG(LogTemp, Warning, TEXT("RenderBoundBox Successful"));
+	float LifeTime = 15.f;
+
 	
 		UStaticMeshComponent* MeshComp = DetectedActor->FindComponentByClass<UStaticMeshComponent>();
-	
-		FBox Box = MeshComp->Bounds.GetBox();
-		FVector Min = Box.Min;
-		FVector Max = Box.Max;
+		FBox LocalBox = MeshComp->GetStaticMesh()->GetBoundingBox();
+		FVector Min = LocalBox.Min;
+		FVector Max = LocalBox.Max;
 		
-		FVector V[8] = {
+		FVector LocalV[8] = {
 			{Min.X, Min.Y, Min.Z},
 			{Max.X, Min.Y, Min.Z},
 			{Max.X, Max.Y, Min.Z},
@@ -98,6 +113,14 @@ void UBoxBoundComponent::RenderOneBoundingBox(AActor* DetectedActor, FName Tag)
 			{Max.X, Max.Y, Max.Z},
 			{Min.X, Max.Y, Max.Z}
 		};
+	
+		FTransform MeshTransform = MeshComp->GetComponentTransform();
+		FVector V[8];
+		for (int32 i = 0; i < 8; i++)
+		{
+			V[i] = MeshTransform.TransformPosition(LocalV[i]);
+		}
+
 		
 		FLinearColor Color;
 		
@@ -111,27 +134,32 @@ void UBoxBoundComponent::RenderOneBoundingBox(AActor* DetectedActor, FName Tag)
 		}
 		FColor LineColor = Color.ToFColor(true);
 		
-		DrawLine(V[0], V[1], LineColor, 0, Thickness, LifeTime);
-		DrawLine(V[1], V[2], LineColor, 0, Thickness, LifeTime);
-		DrawLine(V[2], V[3], LineColor, 0, Thickness, LifeTime);
-		DrawLine(V[3], V[0], LineColor, 0, Thickness, LifeTime);
-		DrawLine(V[4], V[5], LineColor, 0, Thickness, LifeTime);
-		DrawLine(V[5], V[6], LineColor, 0, Thickness, LifeTime);
-		DrawLine(V[6], V[7], LineColor, 0, Thickness, LifeTime);
-		DrawLine(V[7], V[4], LineColor, 0, Thickness, LifeTime);
-		DrawLine(V[0], V[4], LineColor, 0, Thickness, LifeTime);
-		DrawLine(V[1], V[5], LineColor, 0, Thickness, LifeTime);
-		DrawLine(V[2], V[6], LineColor, 0, Thickness, LifeTime);
-		DrawLine(V[3], V[7], LineColor, 0, Thickness, LifeTime);
+		DrawLine(V[0], V[1], LineColor, SDPG_Foreground, Thickness, LifeTime);
+		DrawLine(V[1], V[2], LineColor, SDPG_Foreground, Thickness, LifeTime);
+		DrawLine(V[2], V[3], LineColor, SDPG_Foreground, Thickness, LifeTime);
+		DrawLine(V[3], V[0], LineColor, SDPG_Foreground, Thickness, LifeTime);
+		DrawLine(V[4], V[5], LineColor, SDPG_Foreground, Thickness, LifeTime);
+		DrawLine(V[5], V[6], LineColor, SDPG_Foreground, Thickness, LifeTime);
+		DrawLine(V[6], V[7], LineColor, SDPG_Foreground, Thickness, LifeTime);
+		DrawLine(V[7], V[4], LineColor, SDPG_Foreground, Thickness, LifeTime);
+		DrawLine(V[0], V[4], LineColor, SDPG_Foreground, Thickness, LifeTime);
+		DrawLine(V[1], V[5], LineColor, SDPG_Foreground, Thickness, LifeTime);
+		DrawLine(V[2], V[6], LineColor, SDPG_Foreground, Thickness, LifeTime);
+		DrawLine(V[3], V[7], LineColor, SDPG_Foreground, Thickness, LifeTime);
 
 }
 
 
+void UBoxBoundComponent::ToggleIsActive()
+{
+	BatchedLines.Empty();
+	bIsBoxActive = !bIsBoxActive;
+}
 
 void UBoxBoundComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	bIsBoxActive = false;
 
 	
 }
