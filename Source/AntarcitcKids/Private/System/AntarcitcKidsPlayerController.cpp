@@ -17,7 +17,9 @@
 #include "Manager/SimControlSubsystem.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Sensor/BoxBoundComponent.h"
 #include "Sensor/LidarNiagaraComponent.h"
+
 
 
 // 커스텀 로그 카테고리를 정의
@@ -474,6 +476,9 @@ void AAntarcitcKidsPlayerController::DoToggleVisLidar()
 		
 	}
 	
-	
+	if (UBoxBoundComponent* BoxBoundComponent =  VehiclePawn->GetBoxBoundComponent())
+	{
+		BoxBoundComponent->ToggleIsActive();
+	}
 	
 }

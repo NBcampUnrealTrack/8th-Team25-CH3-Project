@@ -334,7 +334,16 @@ void ULidarSceneComponent::CollectAsyncResults()
 	
 	/*PendingDetectedActor = DetectedTagActors;*/
 	/*ImpactActorReady.Broadcast(DetectedTagActors,Tag);*/
-	/*ImpactOneActorReady.Broadcast(DetectedTagActor,Tag);*/
+	if (DetectedTagActor)
+	{
+		/*UE_LOG(LogTemp, Error, TEXT("감지액터 존재"));*/
+		ImpactOneActorReady.Broadcast(DetectedTagActor,Tag);
+	}
+	else
+	{
+		/*UE_LOG(LogTemp, Error, TEXT("감지액터 없음"));*/
+	}
+		
 
 	
 
