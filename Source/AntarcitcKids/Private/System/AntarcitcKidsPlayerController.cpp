@@ -210,15 +210,15 @@ void AAntarcitcKidsPlayerController::ResetHightlight()
 	
 	if (!CameraComponent || !SpringArmComponent) return;
 	
-	UE_LOG(LogTemp, Warning, TEXT("ResetHightLightActor 발동"));
+	/*UE_LOG(LogTemp, Warning, TEXT("ResetHightLightActor 발동"));*/
 	
-	/*FRotator Smoothed = FMath::RInterpTo(
+	FRotator Smoothed = FMath::RInterpTo(
 	 CameraComponent->GetComponentRotation(),
 	 DefaultRotator,
 	 GetWorld()->GetDeltaSeconds(),
-	 1.f);*/
+	 1.f);
 	
-	CameraComponent->SetWorldRotation(DefaultRotator);
+	CameraComponent->SetWorldRotation(Smoothed);
 	CameraComponent->PostProcessSettings.bOverride_DepthOfFieldFocalDistance = false;
 	CameraComponent->PostProcessSettings.DepthOfFieldFocalDistance = DefaultDepthOfFieldFocalDistance;
 }
