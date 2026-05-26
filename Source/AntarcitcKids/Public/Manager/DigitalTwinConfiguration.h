@@ -13,6 +13,7 @@
 #include "Engine/GameInstance.h"
 #include "DigitalTwinConfiguration.generated.h"
 
+class ULoadingWidget;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FWeatherChange, EWeatherType)
 
@@ -46,6 +47,14 @@ public:
 	
 	void UpdateDTS();
 	
+	//=========================== 로딩 ==========================
+	virtual void Init() override;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Loading")
+	TSubclassOf<ULoadingWidget> LoadingWidgetClass;
+	
+	void BeginLoadingScreen();
+	void EndLoadingScreen(UWorld* InLoadedWorld);
 	
 private:
 	FDigitialTwinSetting DTS;

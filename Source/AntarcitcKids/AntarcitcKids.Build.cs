@@ -15,7 +15,8 @@ public class AntarcitcKids : ModuleRules
 		{
 
 			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "ChaosVehicles",
-			"Landscape", "UMG", "AdvancedWidgets", "Slate", "SlateCore"
+			"Landscape", "UMG", "AdvancedWidgets", "Slate", "SlateCore", "MoviePlayer"
+			
 
 		});
 		
