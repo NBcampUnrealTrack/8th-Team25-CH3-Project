@@ -187,7 +187,7 @@ void AAntarcitcKidsPlayerController::HighLightActor(USceneCaptureComponent2D* Ta
 		TargetActor->GetComponentLocation(), 
 		VehiclePawn->GetActorLocation());
 	
-	UE_LOG(LogTemp, Warning, TEXT("HightLightActor 발동"));
+	/*UE_LOG(LogTemp, Warning, TEXT("HightLightActor 발동"));*/
 
 	
 	FRotator Smoothed = FMath::RInterpTo(
@@ -210,11 +210,15 @@ void AAntarcitcKidsPlayerController::ResetHightlight()
 	
 	if (!CameraComponent || !SpringArmComponent) return;
 	
-	FRotator Smoothed = FMath::RInterpTo(
+	UE_LOG(LogTemp, Warning, TEXT("ResetHightLightActor 발동"));
+	
+	/*FRotator Smoothed = FMath::RInterpTo(
 	 CameraComponent->GetComponentRotation(),
 	 DefaultRotator,
 	 GetWorld()->GetDeltaSeconds(),
-	 1.f);
+	 1.f);*/
+	
+	CameraComponent->SetWorldRotation(DefaultRotator);
 	CameraComponent->PostProcessSettings.bOverride_DepthOfFieldFocalDistance = false;
 	CameraComponent->PostProcessSettings.DepthOfFieldFocalDistance = DefaultDepthOfFieldFocalDistance;
 }
