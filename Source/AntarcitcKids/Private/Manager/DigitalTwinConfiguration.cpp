@@ -41,15 +41,15 @@ void UDigitalTwinConfiguration::BeginLoadingScreen()
 {
 	FLoadingScreenAttributes LoadingScreen;
 	LoadingScreen.bAutoCompleteWhenLoadingCompletes = true;
-	LoadingScreen.MinimumLoadingScreenDisplayTime = 2.0f;
-	
+	LoadingScreen.MinimumLoadingScreenDisplayTime = 5.0f;
+
 	if (LoadingWidgetClass)
 	{
-		TSharedRef<SWidget> Widget =
-			SNew(SWeakWidget).PossiblyNullContent(
-				CreateWidget<ULoadingWidget>(this, LoadingWidgetClass)->TakeWidget()
-			);
-		LoadingScreen.WidgetLoadingScreen = Widget;
+		ULoadingWidget* LoadingWidgetInstance = CreateWidget<ULoadingWidget>(this, LoadingWidgetClass);
+		if (LoadingWidgetInstance)
+		{
+			LoadingScreen.WidgetLoadingScreen = LoadingWidgetInstance->TakeWidget();
+		}
 	}
 
 	GetMoviePlayer()->SetupLoadingScreen(LoadingScreen);
