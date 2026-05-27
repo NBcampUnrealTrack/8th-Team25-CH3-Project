@@ -1,9 +1,12 @@
+// LightManager.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
 #include "Manager/LightManager.h"
 #include "Engine/DirectionalLight.h"
 #include "Kismet/GameplayStatics.h"
-#include "Manager/TimeSubsystem.h"
+#include "Subsystem/TimeSubsystem.h"
 #include "Light/LightSourceBase.h"
-#include "Manager/WeatherSubsystem.h"
+#include "Subsystem/WeatherSubsystem.h"
 
 ALightManager::ALightManager()
 {

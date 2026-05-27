@@ -1,7 +1,7 @@
 // SensorSubSystem.cpp
 // Copyright (c) 2026 AntarcticKids. All rights reserved.
 
-#include "Manager/SensorSubSystem.h"
+#include "Subsystem/SensorSubSystem.h"
 
 void USensorSubSystem::Initialize(FSubsystemCollectionBase& Collection)
 {

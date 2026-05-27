@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// BoxBoundComponent.h
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #pragma once
 
@@ -7,9 +8,7 @@
 #include "Sensor/CameraSensorTypes.h"
 #include "BoxBoundComponent.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class ANTARCITCKIDS_API UBoxBoundComponent : public ULineBatchComponent
 {

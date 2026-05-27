@@ -5,7 +5,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "Manager/QuestsTypes.h"
+#include "Quest/QuestsTypes.h"
 #include "Actor/TriggerMissionBase.h"
 #include "QuestSubSystem.generated.h"
 

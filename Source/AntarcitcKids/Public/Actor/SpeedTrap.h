@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Actor/TriggerMissionBase.h"
-#include "Manager/QuestBase.h"
+#include "Quest/QuestBase.h"
 #include "SpeedTrap.generated.h"
 
 class UBoxComponent;

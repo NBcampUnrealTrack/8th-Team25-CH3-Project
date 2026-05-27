@@ -1,3 +1,6 @@
+// WeatherTimeWidget.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
 #include "Widget/WeatherTimeWidget.h"
 #include "Components/RadialSlider.h"
 #include "Components/TextBlock.h"

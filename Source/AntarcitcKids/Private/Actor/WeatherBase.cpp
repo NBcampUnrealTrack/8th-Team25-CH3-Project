@@ -1,9 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// WeatherSubsystem.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #include "Actor/WeatherBase.h"
 
-#include "Manager/WeatherSubsystem.h"
+#include "Subsystem/WeatherSubsystem.h"
 
 // Sets default values
 AWeatherBase::AWeatherBase()

@@ -1,5 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// RoadSpeedZone.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #include "Actor/RoadSpeedZone.h"
 

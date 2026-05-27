@@ -4,7 +4,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Manager/QuestBase.h"
+#include "Quest/QuestBase.h"
 #include "TrafficLightQuest.generated.h"
 
 UCLASS()

@@ -1,12 +1,12 @@
 // QuestSubSystem.cpp
 // Copyright (c) 2026 AntarcticKids. All rights reserved.
 
-#include "Manager/QuestSubSystem.h"
-#include "Manager/QuestSubSystem.h"
+#include "Subsystem/QuestSubSystem.h"
+#include "Subsystem/QuestSubSystem.h"
 #include "CityVehiclePawn.h"
 #include "AnimNodes/AnimNode_RandomPlayer.h"
 #include "EntitySystem/MovieSceneEntitySystemRunner.h"
-#include "Manager/QuestBase.h"
+#include "Quest/QuestBase.h"
 
 
 UQuestSubSystem::UQuestSubSystem()

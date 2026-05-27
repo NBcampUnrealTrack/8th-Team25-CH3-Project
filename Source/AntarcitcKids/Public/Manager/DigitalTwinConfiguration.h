@@ -4,11 +4,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "QuestSubSystem.h"
-#include "SimControlSubsystem.h"
-#include "Manager/TimeSubsystem.h"
-#include "WeatherSubsystem.h"
-#include "QuestsTypes.h"
+#include "../Subsystem/QuestSubSystem.h"
+#include "../Subsystem/SimControlSubsystem.h"
+#include "Subsystem/TimeSubsystem.h"
+#include "../Subsystem/WeatherSubsystem.h"
+#include "../Quest/QuestsTypes.h"
 #include "Actor/WeatherType.h"
 #include "Engine/GameInstance.h"
 #include "DigitalTwinConfiguration.generated.h"

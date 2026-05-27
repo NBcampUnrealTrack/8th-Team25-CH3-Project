@@ -5,11 +5,11 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneComponent.h"
 #include "TimerManager.h"
-#include "Manager/TrafficLightQuest.h"
+#include "Quest/TrafficLightQuest.h"
 #include "CityVehiclePawn.h"
 #include "NiagaraDataInterfaceEmitterBinding.h"
 #include "Components/BoxComponent.h"
-#include "Manager/QuestsTypes.h"
+#include "Quest/QuestsTypes.h"
 
 ATrafficLightActor::ATrafficLightActor()
 {

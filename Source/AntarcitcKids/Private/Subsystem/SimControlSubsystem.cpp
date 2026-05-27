@@ -1,7 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// SimControlSubsystem.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
-
-#include "Manager/SimControlSubsystem.h"
+#include "Subsystem/SimControlSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 
 void USimControlSubsystem::Pause()

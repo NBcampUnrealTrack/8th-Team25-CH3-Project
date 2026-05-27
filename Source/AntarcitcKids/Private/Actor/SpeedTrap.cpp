@@ -5,7 +5,7 @@
 #include "CityVehiclePawn.h"
 #include "SNegativeActionButton.h"
 #include "Components/BoxComponent.h"
-#include "Manager/QuestBase.h"
+#include "Quest/QuestBase.h"
 
 
 

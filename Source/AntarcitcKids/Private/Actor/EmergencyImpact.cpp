@@ -5,7 +5,7 @@
 
 #include "AITypes.h"
 #include "Components/SphereComponent.h"
-#include "Manager/QuestBase.h"
+#include "Quest/QuestBase.h"
 #include "CityVehiclePawn.h"
 #include "Components/BoxComponent.h"
 #include "EntitySystem/MovieSceneEntitySystemRunner.h"

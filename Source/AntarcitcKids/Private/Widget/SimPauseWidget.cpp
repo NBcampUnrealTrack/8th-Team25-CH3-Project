@@ -1,5 +1,8 @@
+// SimPauseWidget.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
 #include "Widget/SimPauseWidget.h"
-#include "Manager/SimControlSubsystem.h"
+#include "Subsystem/SimControlSubsystem.h"
 #include "Framework/Application/SlateApplication.h"
 
 void USimPauseWidget::NativeConstruct()

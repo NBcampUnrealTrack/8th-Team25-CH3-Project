@@ -1,4 +1,7 @@
-#include "DataLogger/AgentHudWidget.h"
+// AgentHUDWidget.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
+#include "Widget/AgentHUDWidget.h"
 #include "DataLogger/AgentLoggerSubsystem.h"
 #include "DataLogger/AgentDataLogger.h"
 #include "Kismet/GameplayStatics.h"

@@ -1,8 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// BoxBoundComponent.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #include "Sensor/BoxBoundComponent.h"
-
 #include "MeshPaintVisualize.h"
 
 void UBoxBoundComponent::RenderBoundingBox(TArray<AActor*> DetectedActors, FName Tag)

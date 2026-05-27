@@ -11,9 +11,6 @@ class UImage;
 class UBorder;
 class UTextureRenderTarget2D;
 
-/**
- * 
- */
 UCLASS()
 class ANTARCITCKIDS_API USensorViewrWidget : public UUserWidget
 {

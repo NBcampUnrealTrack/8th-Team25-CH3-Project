@@ -6,7 +6,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 
-#include "Manager/QuestsTypes.h"
+#include "Quest/QuestsTypes.h"
 #include "QuestBase.generated.h"
 
 class UNiagaraSystem;

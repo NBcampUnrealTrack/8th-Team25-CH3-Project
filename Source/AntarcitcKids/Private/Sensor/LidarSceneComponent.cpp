@@ -8,7 +8,7 @@
 #include "Misc/Paths.h"
 #include "TimerManager.h"
 #include "Sensor/LidarNiagaraComponent.h"
-#include "Manager/SensorSubSystem.h"
+#include "Subsystem/SensorSubSystem.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogLidarSensor, Log, All);
 

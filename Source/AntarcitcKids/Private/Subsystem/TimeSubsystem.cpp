@@ -1,4 +1,7 @@
-#include "Manager/TimeSubsystem.h"
+// TimeSubsystem.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
+#include "Subsystem/TimeSubsystem.h"
 #include "Engine/DirectionalLight.h"
 #include "Kismet/GameplayStatics.h"
 

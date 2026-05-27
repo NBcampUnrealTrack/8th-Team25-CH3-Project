@@ -1,6 +1,7 @@
-#include "Widget/CyberHUDWidget.h"
+// CyberHUDWidget.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
-#include "AssetSelection.h"
+#include "Widget/CyberHUDWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/CheckBox.h"
 

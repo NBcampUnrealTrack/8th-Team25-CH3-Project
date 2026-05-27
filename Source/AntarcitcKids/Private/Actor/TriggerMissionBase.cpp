@@ -3,11 +3,11 @@
 
 #include "Actor/TriggerMissionBase.h"
 #include "Components/BoxComponent.h"
-#include "Manager/QuestBase.h"
+#include "Quest/QuestBase.h"
 #include "CityVehiclePawn.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/TextureRenderTarget2D.h"
-#include "Manager/QuestSubSystem.h"
+#include "Subsystem/QuestSubSystem.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "System/AntarcitcKidsPlayerController.h"
 

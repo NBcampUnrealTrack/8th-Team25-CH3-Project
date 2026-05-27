@@ -4,7 +4,7 @@
 
 #include "Actor/Parking.h"
 #include "CityVehiclePawn.h"
-#include "Manager/QuestBase.h"
+#include "Quest/QuestBase.h"
 #include "Math/UnitConversion.h"
 #include "Components/BoxComponent.h"
 

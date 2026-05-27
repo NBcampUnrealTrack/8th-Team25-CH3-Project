@@ -1,13 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// WeatherType.h
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "WeatherType.generated.h"
-
-/**
- * 
- */
 
 UENUM(BlueprintType)
 enum class EWeatherType : uint8

@@ -6,7 +6,7 @@
 #include "CoreMinimal.h"
 #include "TriggerMissionBase.h"
 #include "GameFramework/Actor.h"
-#include "Manager/QuestsTypes.h"
+#include "Quest/QuestsTypes.h"
 #include "TrafficLightActor.generated.h"
 
 class UBoxComponent;

@@ -1,11 +1,11 @@
 // QuestBase.cp
 // Copyright (c) 2026 AntarcticKids. All rights reserved.
 
-#include "Manager/QuestBase.h"
+#include "Quest/QuestBase.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "AnimNodes/AnimNode_RandomPlayer.h"
-#include "Manager/QuestSubSystem.h"
+#include "Subsystem/QuestSubSystem.h"
 #include "Kismet/GameplayStatics.h"
 
 

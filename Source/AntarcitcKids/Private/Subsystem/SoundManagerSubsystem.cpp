@@ -1,4 +1,7 @@
-#include "Manager/SoundManagerSubsystem.h"
+// SoundManagerSubsystem.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
+#include "Subsystem/SoundManagerSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 
 // 서브시스템 생명주기

@@ -2,7 +2,7 @@
  
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Manager/TimeSubsystem.h"
+#include "Subsystem/TimeSubsystem.h"
 #include "WeatherTimeWidget.generated.h"
  
 // 전방선언 - RadialSlider.h include 없이 사용 (헤더 경로 이슈 우회)
