@@ -13,7 +13,7 @@
 #include "Widget/QuestCameraWidget.h"
 #include "Camera/CameraComponent.h"
 #include "Chaos/SoftsSpring.h"
-#include "Widget/SimPauseWidget.h"
+#include "Widget/WeatherTimeWidget.h"
 #include "Subsystem/SimControlSubsystem.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -433,7 +433,7 @@ void AAntarcitcKidsPlayerController::OnPauseTriggered()
 		Ctrl->Pause();
 
 	if (!PauseWidget && PauseWidgetClass)
-		PauseWidget = CreateWidget<USimPauseWidget>(this, PauseWidgetClass);
+		PauseWidget = CreateWidget<UWeatherTimeWidget>(this, PauseWidgetClass);
 
 	if (PauseWidget)
 	{

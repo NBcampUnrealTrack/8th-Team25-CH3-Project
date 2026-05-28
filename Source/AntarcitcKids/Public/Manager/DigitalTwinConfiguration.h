@@ -48,13 +48,14 @@ public:
 	void UpdateDTS();
 	
 	//=========================== 로딩 ==========================
+	/*
 	virtual void Init() override;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Loading")
 	TSubclassOf<ULoadingWidget> LoadingWidgetClass;
 	
 	void BeginLoadingScreen();
-	void EndLoadingScreen(UWorld* InLoadedWorld);
+	void EndLoadingScreen(UWorld* InLoadedWorld);*/
 	
 private:
 	FDigitialTwinSetting DTS;

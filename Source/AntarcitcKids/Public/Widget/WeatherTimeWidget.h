@@ -20,6 +20,9 @@ public:
 	// 날씨 프리셋 - 실제 구현은 BP에서 오버라이드
 	UFUNCTION(BlueprintImplementableEvent, Category = "Weather")
 	void OnWeatherPresetChanged(int32 PresetIndex);
+	
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void CloseWidget();
  
 protected:
 	// -----------------------------------------------------------------------
@@ -45,6 +48,8 @@ protected:
  
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+	
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
  
 private:
 	UFUNCTION()

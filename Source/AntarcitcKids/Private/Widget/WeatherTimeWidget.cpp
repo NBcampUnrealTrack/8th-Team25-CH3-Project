@@ -7,14 +7,35 @@
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "Subsystem/SimControlSubsystem.h"
+#include "Framework/Application/SlateApplication.h"
  
 // ============================================================================
 // NativeConstruct / NativeDestruct
 // ============================================================================
- 
+
+void UWeatherTimeWidget::CloseWidget()
+{
+	// 시뮬 재개
+	if (UGameInstance* GI = GetGameInstance())
+		if (USimControlSubsystem* Ctrl = GI->GetSubsystem<USimControlSubsystem>())
+			Ctrl->Play();
+
+	// 마우스 숨기고 게임 입력으로 복귀
+	if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+	{
+		PC->SetShowMouseCursor(false);
+		PC->SetInputMode(FInputModeGameOnly());
+	}
+
+	RemoveFromParent();
+}
+
 void UWeatherTimeWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+	
+	SetIsFocusable(true); // x 키 입력 받으려면 필요
  
 	// TimeSubsystem 델리게이트 바인딩 + 초기값 설정
 	if (UTimeSubsystem* TimeSys = GetWorld()->GetSubsystem<UTimeSubsystem>())
@@ -58,7 +79,18 @@ void UWeatherTimeWidget::NativeDestruct()
  
 	Super::NativeDestruct();
 }
- 
+
+FReply UWeatherTimeWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	// ESC로도 닫기
+	if (InKeyEvent.GetKey() == EKeys::Escape)
+	{
+		CloseWidget();
+		return FReply::Handled();
+	}
+	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
+}
+
 // ============================================================================
 // TimeSubsystem → 위젯 방향 (Tick에서 호출됨)
 // ============================================================================

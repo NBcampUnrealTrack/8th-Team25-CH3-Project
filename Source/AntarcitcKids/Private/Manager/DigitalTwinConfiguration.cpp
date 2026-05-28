@@ -28,7 +28,7 @@ void UDigitalTwinConfiguration::UpdateDTS()
 }
 
 //=============================로딩==========================
-
+/*
 void UDigitalTwinConfiguration::Init()
 {
 	Super::Init();
@@ -66,4 +66,4 @@ void UDigitalTwinConfiguration::EndLoadingScreen(UWorld* InLoadedWorld)
 {
 	// 로딩 완료 후 처리 이건 과제에선 사용 X
 }
-
+*/

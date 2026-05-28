@@ -8,7 +8,7 @@
 void USimPauseWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	SetIsFocusable(true); // ESC 키 입력 받으려면 필요
+	SetIsFocusable(true); // x 키 입력 받으려면 필요
 }
 
 void USimPauseWidget::CloseWidget()
