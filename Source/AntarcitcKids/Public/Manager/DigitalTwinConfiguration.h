@@ -60,6 +60,7 @@ private:
 	FDigitialTwinSetting DTS;
 	UTimeSubsystem* TimeSubsystem;
 	UWeatherSubsystem* WeatherSubsystem;
-
+	
+	bool bIsFirstLoad = true;
 	
 };

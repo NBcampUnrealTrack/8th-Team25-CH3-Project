@@ -39,10 +39,17 @@ void UDigitalTwinConfiguration::Init()
 
 void UDigitalTwinConfiguration::BeginLoadingScreen()
 {
+	if (bIsFirstLoad)
+	{
+		bIsFirstLoad = false;
+		
+		return;
+	}
+	
 	FLoadingScreenAttributes LoadingScreen;
-	LoadingScreen.bAutoCompleteWhenLoadingCompletes = true;
-	LoadingScreen.MinimumLoadingScreenDisplayTime = 5.0f;
-
+	LoadingScreen.bAutoCompleteWhenLoadingCompletes = true; // 맵 초기화 로딩 완료 Bool값
+	// LoadingScreen.MinimumLoadingScreenDisplayTime = 1.0f; // 로딩 최소시간 재사용 가능성 낮음
+	
 	if (LoadingWidgetClass)
 	{
 		ULoadingWidget* LoadingWidgetInstance = CreateWidget<ULoadingWidget>(this, LoadingWidgetClass);
