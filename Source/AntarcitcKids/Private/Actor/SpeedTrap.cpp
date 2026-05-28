@@ -36,6 +36,8 @@ void ASpeedTrap::SetPawnSpeed(float SpeedKMH)
 	PawnSpeedKMH = SpeedKMH;
 }
 
+
+
 void ASpeedTrap::OnAreaOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -75,16 +77,6 @@ void ASpeedTrap::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 		StartSpeedKMH = PawnSpeedKMH;
 		// [Note] 현재 차량 속도를 즉시 직접 조회하여 PawnSpeed를 갱신, 현재 프레임에서 바로 판정 가능
 		
-		if (bIsPersistence)
-		{
-			/*GetWorld()->GetTimerManager().SetTimer(
-				PersistenceSpeedCheckTimer,
-				this,
-				&ASpeedTrap::PersistentSpeedCheck,
-				0.5f,
-				true
-				);*/
-		}
 	
 	}
 }
@@ -100,21 +92,10 @@ void ASpeedTrap::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* O
 		Vehicle->OnHUDSpeedUpdated.RemoveDynamic(this, &ASpeedTrap::SetPawnSpeed);
 		
 		
-		/*if (bIsPersistence)
-		{
-			GetWorld()->GetTimerManager().ClearTimer(PersistenceSpeedCheckTimer);	
-		}
-	
-		if (bIsPersistence && PawnSpeedKMH <= SpeedUpperLimitKHM)
-		{
-			if (Quest)
-				Quest->OnSuccess();
-		}
-	
-		OnSpeedLimitExited.Broadcast();*/
 	}
 }
 
+//엔드 게이트의 오버랩에 따라, 임계 속력 이상이면 실패, 아니면 성공으로 판정
 void ASpeedTrap::OnEndGateOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {	
@@ -130,7 +111,7 @@ void ASpeedTrap::OnEndGateOverlap(UPrimitiveComponent* OverlappedComp, AActor* O
 		
 
 		float FinalSpeed = (StartSpeedKMH + EndSpeedKMH)/2;
-		UE_LOG(LogTemp,Warning,TEXT("finalSpeed : %f"),FinalSpeed);
+		
 		OnSpeedLimitExited.Broadcast();
 		if (FinalSpeed <= SpeedUpperLimitKHM)
 		{
@@ -138,16 +119,13 @@ void ASpeedTrap::OnEndGateOverlap(UPrimitiveComponent* OverlappedComp, AActor* O
 			if (Quest && Quest->IsQuestEnd())
 			{
 				Quest->OnSuccess();
-				UE_LOG(LogTemp,Warning,TEXT("missionSuccessful"));
 			}
+			
 		}
 	
 		
 	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("is not cityvehiclepawn"))
-	}
+
 }
 
 void ASpeedTrap::SetQuestInfo()

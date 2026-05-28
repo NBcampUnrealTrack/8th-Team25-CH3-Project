@@ -26,7 +26,7 @@ class ANTARCITCKIDS_API USensorSubSystem : public UWorldSubsystem
 	
 	virtual void Deinitialize() override;
 	
-	
+	//라이더, 카메라 센서의 변화를 알리기 위한 코드
 	UFUNCTION(BlueprintCallable)
 	void LidarSenserPresetChange(ELidarSensorPreset SelectedSensor);
 	
@@ -40,11 +40,13 @@ class ANTARCITCKIDS_API USensorSubSystem : public UWorldSubsystem
 	void LidarSensorHzChange(float Hz);
 	
 public:
+	//센서 카메라 변화를 위한 델리게이트 
 	FOnSensorPresetChanged OnSensorPresetChanged;
 	FOnCameraPresetChanged OnCameraPresetChanged;
 	FOnSetSensorHz OnSetSensorHz;
 	FOnSetCameraHz OnSetCameraHz;
 	
+	//센서 카메라 현재 상태를 가져오기 위한 함수
 	ELidarSensorPreset GetCurrentLidarSensorPreset() {return CurrentLidarSensorPreset;}
 	ECameraSensorPreset GetCurrentCameraSensorPreset() {return CurrentCameraSensorPreset;}
 	float GetCurrentLidarSensorHz() {return CurrentLidarSensorHz;}

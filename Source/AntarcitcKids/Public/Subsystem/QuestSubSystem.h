@@ -24,8 +24,7 @@ class ANTARCITCKIDS_API UQuestSubSystem : public UGameInstanceSubsystem
 public:
 	// HUD 연결용
 	UFUNCTION(BlueprintCallable)
-	void SetVehiclePawn(ACityVehiclePawn* InPawn);
-	int32 SetQuestID() {return QuestID++;}
+	
 	
 	FString GenerateQuestID(UQuestBase* Quest);
 	
@@ -33,18 +32,21 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Quest")
 	FOnQuestListChange OnQuestListChange;
 	
-	UQuestSubSystem();
-	void Initialize(FSubsystemCollectionBase& Collection) override;
+	//Quest를 QuestList에 등록, 제거하는 함수들
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	void OnRegisterQuest( UQuestBase* RegisterQuest);
 	void OnQuestsCompleted( UQuestBase* CompleteQuest);
 	void OnQuestAborted();
-	void OnLoadQuest();
 	
+	
+	//퀘스트 리스트 맵 언로드 시의 초기화
 	void OnPreLoadMap(const FString& MapName);
-	void OnPostLoadMap(UWorld* LoadedWorld);
-	void OnWorldCleanup(UWorld* World, bool bSessionEnded, bool bCleanupResources);
 
 	
+	//디버그용 함수
+	void DebugQuestStatus();
+	
+	//UI에게 정보를 전달해 주기 위한 인터페이스 함수
 	UFUNCTION(BlueprintCallable)
 	TArray<UQuestBase*> GetQuestList() { return QuestsList;}
 	UFUNCTION(BlueprintCallable)
@@ -68,8 +70,5 @@ private:
 	//EQuestClass : 퀘스트 종류
 	//FQuestStats : 시도 횟수, 성공 횟수
 	
-	
-	
-	int QuestID = 1;
 	
 };

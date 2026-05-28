@@ -71,7 +71,7 @@ struct FLidarPointCloudData
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PointCloud")
 	int64 FrameNumber = 0;
-
+	
 	void Reset()
 	{
 		Points.Reset();

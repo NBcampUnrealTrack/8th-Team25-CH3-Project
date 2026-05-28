@@ -30,12 +30,6 @@ void ULidarSceneComponent::BeginPlay()
 	InitializeSensor();
 	StartScan();
 	
-	/*GetWorld()->GetTimerManager().SetTimer(
-		MakeBoundingBox,
-		this,
-		&ULidarSceneComponent::BroadCastActor,
-		0.1f,
-		true);*/
 	
 }
 
@@ -81,9 +75,6 @@ void ULidarSceneComponent::InitializeSensor()
 	BevRenderer->Initialize(BevConfig);
 	
 	
-	/*LidarSensorRenderer = NewObject<ULidarNiagaraComponent>(this, TEXT("LidarRenderer"));
-	LidarSensorRenderer->SetupAttachment(this);
-	LidarSensorRenderer->RegisterComponent();*/
 	
 	//센서 서브시스템 제어 추가
 	USensorSubSystem* SensorSubSystem =  GetWorld()->GetSubsystem<USensorSubSystem>();
@@ -148,19 +139,6 @@ void ULidarSceneComponent::RebuildDirectionCache()
 	}
 
 	bDirectionsDirty = false;
-}
-
-void ULidarSceneComponent::DetectActor(TArray<AActor*> DetectedTagActors)
-{
-	/*UE_LOG(LogTemp, Error, TEXT("DetectActor 작동!"));*/
-	ImpactActorReady.Broadcast(DetectedTagActors,Tag);
-	
-		
-}
-
-void ULidarSceneComponent::BroadCastActor()
-{
-	ImpactActorReady.Broadcast(PendingDetectedActor,Tag);
 }
 
 
@@ -252,7 +230,6 @@ void ULidarSceneComponent::FireAsyncTraces()
 //비동기 레이 트레이스의 결과를 모은다.
 void ULidarSceneComponent::CollectAsyncResults()
 {
-	/*UE_LOG(LogTemp, Warning, TEXT("CollectAsyncResults 발동"));*/
 	UWorld* World = GetWorld();
 	if (!World) return;
 
@@ -265,7 +242,6 @@ void ULidarSceneComponent::CollectAsyncResults()
 	const float MinRange = Config.MinRange;
 	const float NoiseStd = Config.NoiseStdDev;
 	
-	TArray<AActor*> DetectedTagActors;
 	AActor* DetectedTagActor = nullptr;
 	
 	for (int32 i = 0; i < PendingHandles.Num(); ++i)
@@ -281,8 +257,6 @@ void ULidarSceneComponent::CollectAsyncResults()
 		
 		if (Hit.GetActor()->ActorHasTag(Tag))
 		{
-			/*UE_LOG(LogTemp, Warning, TEXT("특정 액터 탐지됨"));*/
-			DetectedTagActors.Add(Hit.GetActor());
 			DetectedTagActor = Hit.GetActor();
 		}
 		
@@ -313,36 +287,26 @@ void ULidarSceneComponent::CollectAsyncResults()
 	if (BevRenderer)
 		BevRenderer->RenderPointCloud(LastPointCloud, PendingTransform);
 	
-	/*if (LidarSensorRenderer)
-		LidarSensorRenderer->RenderPointCloudNiagara(LastPointCloud);*/
 	
 	
 
 	if (OnPointCloudReady.IsBound())
 	{
-		/*UE_LOG(LogTemp, Warning, TEXT("LastPointCloudReady!"));*/
 		OnPointCloudReady.Broadcast(LastPointCloud);
 	}
 	else
 	{
-		
 		UE_LOG(LogTemp, Error, TEXT("[Liadar] %p 번지 센서에 바인딩이 존재하지 않습니다!!"), this);
 	}
 
 
 	
-	
-	/*PendingDetectedActor = DetectedTagActors;*/
-	/*ImpactActorReady.Broadcast(DetectedTagActors,Tag);*/
 	if (DetectedTagActor)
 	{
-		/*UE_LOG(LogTemp, Error, TEXT("감지액터 존재"));*/
+		
 		ImpactOneActorReady.Broadcast(DetectedTagActor,Tag);
 	}
-	else
-	{
-		/*UE_LOG(LogTemp, Error, TEXT("감지액터 없음"));*/
-	}
+
 		
 
 	

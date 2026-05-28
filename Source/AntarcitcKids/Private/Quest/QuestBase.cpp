@@ -40,8 +40,6 @@ void UQuestBase::OnProgress()
 
 void UQuestBase::OnCompletetd()
 {
-	
-	
 	CurrentQuestInfo.QuestState = EQuestProgressType::Completed;
 	OnQuestCompleted.Broadcast(this);
 }

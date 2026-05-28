@@ -121,7 +121,6 @@ void ATriggerMissionBase::OnAreaEndOverlap(UPrimitiveComponent* OverlappedComp, 
 void ATriggerMissionBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	/*UE_LOG(LogTemp,Warning, TEXT("Tick 활성화"));*/
 	if (IsValid(VehiclePawn))
 	{
 		FocusOn();
@@ -131,9 +130,6 @@ void ATriggerMissionBase::Tick(float DeltaTime)
 
 void ATriggerMissionBase::SetQuestInfo()
 {
-	
-
-	
 	if (NiagaraAnchor)
 	{
 		QuestInfo.QuestLocation = NiagaraAnchor->GetComponentLocation();	
@@ -189,7 +185,6 @@ void ATriggerMissionBase::FocusOn()
 	FRotator LookAt = UKismetMathLibrary::FindLookAtRotation(
 	SceneTarget->GetComponentLocation(), 
 	VehiclePawn->GetActorLocation());
-	/*UE_LOG(LogTemp,Warning, TEXT("LookAt 활성화"));*/
 	SceneTarget->SetWorldRotation(LookAt);
 		
 	float Distance = FVector::Dist(

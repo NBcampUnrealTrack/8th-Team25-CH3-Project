@@ -74,6 +74,7 @@ protected:
 		int32 OtherBodyIndex) override;
 	
 	
+	//평균 속력을 재기 위한 게이트 추가
 	UFUNCTION()
 	virtual void OnEndGateOverlap(
 	UPrimitiveComponent* OverlappedComp,

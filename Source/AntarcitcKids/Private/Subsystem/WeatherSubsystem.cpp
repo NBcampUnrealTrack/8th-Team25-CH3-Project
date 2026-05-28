@@ -26,7 +26,7 @@ void UWeatherSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	}
 		
 	
-	
+	//
 	LoadingHandle = AssetManager.LoadPrimaryAssets(
 		AssetIds,
 		TArray<FName>()
@@ -49,19 +49,6 @@ void UWeatherSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	
 }
 
-//비동기 로딩을 위해 만들어졌으나, 비동기 로딩 시에 시작 시 나오지 않는 현상 발견
-
-/*void UWeatherSubsystem::OnLoadedFinished(FPrimaryAssetId LoadedId)
-{
-	WeatherDataAsset = Cast<UWeatherDataAsset>(UAssetManager::Get().GetPrimaryAssetObject(LoadedId));
-	
-	if (WeatherDataAsset)
-	{
-		LoadedWeatherMap = WeatherDataAsset->WeatherMap;
-		UE_LOG(LogTemp,Warning, TEXT("OnLoadedFinish 발동"));
-		GetCurrentWeather();
-	}
-}*/
 
 void UWeatherSubsystem::SetWeather(EWeatherType WeatherType)
 {
@@ -88,28 +75,6 @@ void UWeatherSubsystem::SetWeather(EWeatherType WeatherType)
 		return;
 	}
 	//===================================================================
-
-	/*
-	TSubclassOf<AWeatherBase>* FoundClass = LoadedWeatherMap.Find(WeatherType);
-	UE_LOG(LogTemp,Warning, TEXT("SetWeather 발동"));
-	/*UE_LOG(LogTemp,Warning, TEXT("CurrentWeather: {%s, %s}"), *UEnum::GetValueAsString(CurrentWeather.Key),*CurrentWeather.Value->GetFName().ToString());*/
-	/*
-	if (IsValid(CurrentWeather.Value))
-	{
-		CurrentWeather.Value->Destroy();
-		UE_LOG(LogTemp,Warning, TEXT("CurrentWeather 삭제"));
-	}
-	
-	
-	
-	if (!FoundClass) return;
-		
-		
-	AWeatherBase* SpawnedActor = GetWorld()->SpawnActor<AWeatherBase>(*FoundClass);
-	CurrentWeather = TPair<EWeatherType, AWeatherBase*>(WeatherType, SpawnedActor);
-	/*UE_LOG(LogTemp,Warning, TEXT("CurrentWeather: {%s, %s}"), *UEnum::GetValueAsString(CurrentWeather.Key),*CurrentWeather.Value->GetFName().ToString());*/
-	
-	
 	SpawnWeather(WeatherType);
 }
 

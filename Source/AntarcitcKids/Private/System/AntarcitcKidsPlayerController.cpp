@@ -156,10 +156,7 @@ void AAntarcitcKidsPlayerController::FindAndBindVehicle()
 			// HUD 바인딩
 			CreateAndBindCyberHUD();
 			
-			if (UQuestSubSystem* QuestSub = GetGameInstance()->GetSubsystem<UQuestSubSystem>())
-			{
-				QuestSub->SetVehiclePawn(VehiclePawn);
-			}
+
 		}
 		else
 		{

@@ -4,6 +4,7 @@
 #include "Subsystem/SimControlSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 
+//게임 화면을 정지시키기 위함
 void USimControlSubsystem::Pause()
 {
 	if (CurrentState == ESimulationState::Pause) return;
@@ -17,6 +18,7 @@ void USimControlSubsystem::Pause()
 	}
 }
 
+//게임 시간을 작동시키기 위함
 void USimControlSubsystem::Play()
 {
 	if (CurrentState == ESimulationState::Play) return;
@@ -33,6 +35,8 @@ void USimControlSubsystem::Play()
 	}
 }
 
+
+//게임 시간 가속
 void USimControlSubsystem::SetAccelation(float TimeDliation)
 {
 	if (CurrentState == ESimulationState::Accelation) return;
@@ -47,6 +51,8 @@ void USimControlSubsystem::SetAccelation(float TimeDliation)
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(),CurrentTimeDliation);
 }
 
+
+//재생과 정지를 하나의 키 입력으로 작동시키기 위한 함수
 void USimControlSubsystem::TogglePlayPause()
 {
 	if (CurrentState == ESimulationState::Pause)
