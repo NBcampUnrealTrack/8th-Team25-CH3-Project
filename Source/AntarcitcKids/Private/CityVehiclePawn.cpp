@@ -147,7 +147,7 @@ void ACityVehiclePawn::ResumeMovement()
 	
 	if (EngineAudioComponent && EngineAudioComponent->IsPlaying())
 	{
-		EngineAudioComponent->SetPaused(false);
+		EngineAudioComponent->FadeIn(1.0f, 1.0f);
 	}
 	
 }
