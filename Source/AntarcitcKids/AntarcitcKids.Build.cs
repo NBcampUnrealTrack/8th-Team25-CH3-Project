@@ -20,7 +20,6 @@ public class AntarcitcKids : ModuleRules
 
 		});
 		
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
 		PrivateDependencyModuleNames.AddRange(new string[] { "Niagara","NiagaraCore" });
 	}
 }

@@ -123,7 +123,7 @@ void ACityVehiclePawn::DoFullStop()
 	
 	if (EngineAudioComponent && EngineAudioComponent->IsPlaying())
 	{
-		EngineAudioComponent->SetPaused(true);
+		EngineAudioComponent->FadeOut(2.0f, 0.0f);
 	}
 }
 
