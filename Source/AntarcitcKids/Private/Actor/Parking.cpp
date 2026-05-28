@@ -91,6 +91,8 @@ void AParking::CheckParking(AActor* Player)
 	bool bIsParallel = AngleDiff < LimitAngle || FMath::Abs(AngleDiff - 180.f) < LimitAngle;
 	if (bIsParallel)
 	{
+		OnParkingEnd.Broadcast();
+		
 		if (Quest && Quest->IsQuestEnd())
 			Quest->OnSuccess();
 		

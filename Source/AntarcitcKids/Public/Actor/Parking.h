@@ -18,9 +18,13 @@ public:
 	float LimitAngle;
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnParkingZoneEntered, AParking*, Zone);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnParkingEnd);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnParkingZoneEntered OnParkingZoneEntered;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnParkingEnd OnParkingEnd;
 	
 protected:
 	
