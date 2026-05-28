@@ -5,8 +5,9 @@
 #include "Subsystem/TimeSubsystem.h"
 #include "WeatherTimeWidget.generated.h"
  
-// 전방선언 - RadialSlider.h include 없이 사용 (헤더 경로 이슈 우회)
+// 전방선언
 class URadialSlider;
+class UImage;
 class UTextBlock;
 class UButton;
 
@@ -27,6 +28,9 @@ protected:
  
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<URadialSlider> Time;
+	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> Timer;
  
 	UPROPERTY(meta = (BindWidgetOptional))
 	TObjectPtr<UTextBlock> TimeText;
@@ -48,6 +52,8 @@ private:
  
 	UFUNCTION()
 	void HandleSliderValueChanged(float Value);
+	
+	TObjectPtr<UMaterialInstanceDynamic> TimerMID;
  
 	UFUNCTION() void HandleSliderMouseCaptureBegin();
 	UFUNCTION() void HandleSliderMouseCaptureEnd();

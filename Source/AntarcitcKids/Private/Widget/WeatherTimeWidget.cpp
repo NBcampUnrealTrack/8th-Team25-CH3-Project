@@ -2,9 +2,11 @@
 // Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #include "Widget/WeatherTimeWidget.h"
+#include "Components/Image.h"
 #include "Components/RadialSlider.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
+#include "Materials/MaterialInstanceDynamic.h"
  
 // ============================================================================
 // NativeConstruct / NativeDestruct
@@ -23,17 +25,22 @@ void UWeatherTimeWidget::NativeConstruct()
 		{
 			Time->SetValue(TimeSys->GetCurrentTimeSeconds() / 86400.f);
 		}
+		
+		if (Timer)
+		{
+			TimerMID = Timer->GetDynamicMaterial();
+		
+			if (TimerMID)
+			{
+				TimerMID->SetScalarParameterValue(
+					TEXT("Progress"),
+					TimeSys->GetCurrentTimeSeconds() / 86400.f
+					);
+			}
+		}
 		UpdateVisuals(TimeSys->GetCurrentTimeData());
 	}
- 
-	// RadialSlider 이벤트 바인딩
-	if (Time)
-	{
-		Time->OnValueChanged.AddDynamic(this, &UWeatherTimeWidget::HandleSliderValueChanged);
-		Time->OnMouseCaptureBegin.AddDynamic(this, &UWeatherTimeWidget::HandleSliderMouseCaptureBegin);
-		Time->OnMouseCaptureEnd.AddDynamic(this, &UWeatherTimeWidget::HandleSliderMouseCaptureEnd);
-	}
- 
+	
 	// 날씨 버튼 바인딩
 	BindWeatherButtons();
 }
@@ -59,10 +66,13 @@ void UWeatherTimeWidget::NativeDestruct()
 void UWeatherTimeWidget::HandleTimeChanged(double Pitch, FTimeOfDay TimeData)
 {
 	// 유저가 드래그 중이면 슬라이더 값 갱신 스킵 → 피드백 루프 방지
-	if (!bUserDragging && Time)
+	if (!bUserDragging && Timer)
 	{
 		// Pitch(0~360) → 슬라이더(0~1)
-		Time->SetValue(static_cast<float>(Pitch) / 360.f);
+		TimerMID->SetScalarParameterValue(
+				TEXT("Progress"),
+				static_cast<float>(Pitch) / 360.f
+				);
 	}
  
 	UpdateVisuals(TimeData);
