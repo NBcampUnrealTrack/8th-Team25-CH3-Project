@@ -121,7 +121,7 @@ void ACityVehiclePawn::DoFullStop()
 	ChaosVehicleMovement->SetUseAutomaticGears(false);
 	ChaosVehicleMovement->SetTargetGear(0, true); // 기어 중립
 	
-	if (EngineAudioComponent && EngineAudioComponent->IsPlaying())
+	if (EngineAudioComponent)
 	{
 		EngineAudioComponent->FadeOut(2.0f, 0.0f);
 	}
@@ -145,8 +145,9 @@ void ACityVehiclePawn::ResumeMovement()
 	// 즉시 출발을 돕기 위해 스로틀 살짝 건듬
 	ChaosVehicleMovement->SetThrottleInput(0.1f);
 	
-	if (EngineAudioComponent && EngineAudioComponent->IsPlaying())
+	if (EngineAudioComponent)
 	{
+		// IsPlaying() 체크 제거 — FadeOut 후엔 false라 FadeIn 코드가 실행을 안했음
 		EngineAudioComponent->FadeIn(1.0f, 1.0f);
 	}
 	
