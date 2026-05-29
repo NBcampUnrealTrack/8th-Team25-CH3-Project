@@ -3,7 +3,6 @@
 
 #include "Actor/SpeedTrap.h"
 #include "CityVehiclePawn.h"
-#include "SNegativeActionButton.h"
 #include "Components/BoxComponent.h"
 #include "Quest/QuestBase.h"
 
