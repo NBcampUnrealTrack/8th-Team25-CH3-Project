@@ -51,7 +51,7 @@ private:
 	void CreateRenderTarget();
 	//CameraSensor의 RenderTarget을 설정(UI 표기 및 저장을 수행)
 	void ConfigureSceneCapture();
-	//
+	
 	void ApplyPostProcessSettings();
 	void ApplyLensDistortion();
 	

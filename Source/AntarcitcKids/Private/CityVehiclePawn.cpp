@@ -123,7 +123,7 @@ void ACityVehiclePawn::DoFullStop()
 	
 	if (EngineAudioComponent && EngineAudioComponent->IsPlaying())
 	{
-		EngineAudioComponent->SetPaused(true);
+		EngineAudioComponent->FadeOut(2.0f, 0.0f);
 	}
 }
 
@@ -147,7 +147,7 @@ void ACityVehiclePawn::ResumeMovement()
 	
 	if (EngineAudioComponent && EngineAudioComponent->IsPlaying())
 	{
-		EngineAudioComponent->SetPaused(false);
+		EngineAudioComponent->FadeIn(1.0f, 1.0f);
 	}
 	
 }
@@ -215,22 +215,12 @@ void ACityVehiclePawn::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(FlipCheckTimer, this, &ACityVehiclePawn::FlippedCheck, FlipCheckTime, true);
 	
 	
-	//여기서 선언된 LidarSensorCOmponent의 장소와 LidarSensorCOmponent의 주소 위치가 달라서 임시 조치를 취함
-	/*if (LidarSensor == nullptr)
-	{
-		LidarSensor = FindComponentByClass<ULidarSceneComponent>();
-		
-	}*/
 	ULidarSceneComponent* RealLidarSensor = FindComponentByClass<ULidarSceneComponent>();
 	if (IsValid(RealLidarSensor))
 	{
 		RealLidarSensor->OnPointCloudReady.AddUObject(NiagaraComponent,&ULidarNiagaraComponent::RenderPointCloudNiagara);
-		RealLidarSensor->ImpactActorReady.AddUObject(BoxBoundComponent,&UBoxBoundComponent::RenderBoundingBox);
 		RealLidarSensor->ImpactOneActorReady.AddUObject(BoxBoundComponent,&UBoxBoundComponent::RenderOneBoundingBox);
-		/*
-		LidarSensor->OnPointCloudReady.AddLambda([](const FLidarPointCloudData& Data) {
-		UE_LOG(LogTemp, Error, TEXT("🔥 방송국에서 신호 송신 확인! 데이터 개수: %d"), Data.PointCount);
-	});*/
+
 		UE_LOG(LogTemp, Error, TEXT("[Pawn] %p 번지 센서에 바인딩을 걸었습니다!"), LidarSensor.Get());
 	}
 	else

@@ -1,8 +1,11 @@
+// LightManager.h
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Manager/TimeSubsystem.h"
+#include "Subsystem/TimeSubsystem.h"
 #include "LightManager.generated.h"
 
 class ADirectionalLight;

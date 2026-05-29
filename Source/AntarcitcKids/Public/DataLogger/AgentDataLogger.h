@@ -31,13 +31,15 @@ public:
  
 	UFUNCTION(BlueprintPure, Category = "Data Logger|Runtime")
 	float  GetElapsedRecordingTime() const { return ElapsedRecordingTime; }
+	
+	UFUNCTION(BlueprintPure, Category = "Data Logger|Runtime")
+	double GetTotalDistanceM() const { return TotalDistanceM; }
  
 	// 기존 private → public 으로 이동
 	double GetSteeringLeftValue()    const;
 	double GetSteeringRightValue()   const;
 	double GetAccelerationsMps2()    const;
 	double GetDecelerationMps2()     const;
-	double GetTotalDistanceM()       const;
 	
 	UFUNCTION(BlueprintPure, Category = "Data Logger")
 	bool IsRecording() const { return bIsRecording; } //레코딩중, 녹화중인지 확인

@@ -1,5 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// WeatherDataAsset.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #include "Actor/WeatherDataAsset.h"
 

@@ -5,7 +5,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Manager/QuestsTypes.h"
+#include "Quest/QuestsTypes.h"
 #include "TriggerMissionBase.generated.h"
 
 
@@ -35,9 +35,7 @@ class ANTARCITCKIDS_API ATriggerMissionBase : public AActor
 public:	
 	ATriggerMissionBase();
 	
-
-	
-	
+	//해당 미션 영역을 입장을 감지하기 위한 함수
 	UFUNCTION()
 	virtual void OnAreaOverlap(
 		UPrimitiveComponent* OverlappedComp,
@@ -47,6 +45,7 @@ public:
 		bool bFromSweep,
 		const FHitResult& SweepResult);
 
+	//해당 미션 영역에 퇴장을 감지하기 위한 함수
 	UFUNCTION()
 	virtual void OnAreaEndOverlap(
 		UPrimitiveComponent* OverlappedComp,
@@ -97,6 +96,7 @@ protected:
 	FOnTriggerVehicleExited OnVehicleExited;
 	
 	
+	//Quest의 성패 여부를 감지하기 위한 함수
 	UFUNCTION()
 	virtual void OnItemOverlap(
 		UPrimitiveComponent* OverlappedComp,
@@ -105,7 +105,7 @@ protected:
 		int32 OtherBodyIndex,
 		bool bFromSweep,
 		const FHitResult& SweepResult);
-
+	
 	UFUNCTION()
 	virtual void OnItemEndOverlap(
 		UPrimitiveComponent* OverlappedComp,
@@ -114,11 +114,13 @@ protected:
 		int32 OtherBodyIndex);
 	
 
-	
+	//퀘스트 관련 함수
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Quest")
 	FQuestInfo QuestInfo;
 	
 	virtual void SetQuestInfo();
+	
+	//퀘스트 하이라이트 카메라 관련 함수
 	virtual void TurnOnQuestCamera();
 	virtual void TurnOffQuestCamera();
 	
@@ -132,6 +134,8 @@ public:
 private:
 	ACityVehiclePawn* VehiclePawn;
 	AAntarcitcKidsPlayerController* PlayerController;
+	
+	FTimerHandle ResetTimerHandle;
 	
 
 };

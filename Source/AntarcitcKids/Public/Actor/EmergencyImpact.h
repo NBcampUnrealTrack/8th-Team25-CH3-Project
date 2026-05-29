@@ -36,7 +36,6 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character")
 	USkeletalMeshComponent* CharacterMesh;
-	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	UAnimMontage* ImpactMontage;

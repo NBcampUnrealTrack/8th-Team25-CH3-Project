@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// WeatherBase.h
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
 
 #pragma once
 

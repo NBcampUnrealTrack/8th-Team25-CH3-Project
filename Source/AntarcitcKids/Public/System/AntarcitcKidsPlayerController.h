@@ -14,7 +14,7 @@ class USensorViewrWidget;
 class UTextureRenderTarget2D;
 class USpringArmComponent;
 class UQuestCameraWidget;
-class USimPauseWidget;
+class UWeatherTimeWidget;
 
 
 UCLASS()
@@ -117,10 +117,10 @@ private:
 	TObjectPtr<UInputAction> PauseAction;
 
 	UPROPERTY(EditAnywhere, Category = "UI|Pause")
-	TSubclassOf<USimPauseWidget> PauseWidgetClass;
+	TSubclassOf<UWeatherTimeWidget> PauseWidgetClass;
 
 	UPROPERTY()
-	TObjectPtr<USimPauseWidget> PauseWidget;
+	TObjectPtr<UWeatherTimeWidget> PauseWidget;
 	
 public:
 	//VisLidar

@@ -4,7 +4,7 @@
 
 #include "Actor/Parking.h"
 #include "CityVehiclePawn.h"
-#include "Manager/QuestBase.h"
+#include "Quest/QuestBase.h"
 #include "Math/UnitConversion.h"
 #include "Components/BoxComponent.h"
 
@@ -78,7 +78,6 @@ void AParking::CheckParking(AActor* Player)
 	
 	if (!ParkingBox.IsInsideOrOn(PlayerBox.Min) || !ParkingBox.IsInsideOrOn(PlayerBox.Max))
 	{
-		UE_LOG(LogTemp, Log, TEXT("완전히 주차영역에 들어오지 않음"));
 		return;
 	}
 	
@@ -90,9 +89,10 @@ void AParking::CheckParking(AActor* Player)
 	
 	
 	bool bIsParallel = AngleDiff < LimitAngle || FMath::Abs(AngleDiff - 180.f) < LimitAngle;
-	UE_LOG(LogTemp, Warning, TEXT("AngleDiff: %f"), AngleDiff);
 	if (bIsParallel)
 	{
+		OnParkingEnd.Broadcast();
+		
 		if (Quest && Quest->IsQuestEnd())
 			Quest->OnSuccess();
 		

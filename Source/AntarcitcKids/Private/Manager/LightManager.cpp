@@ -1,8 +1,12 @@
+// LightManager.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
 #include "Manager/LightManager.h"
 #include "Engine/DirectionalLight.h"
 #include "Kismet/GameplayStatics.h"
-#include "Manager/TimeSubsystem.h"
+#include "Subsystem/TimeSubsystem.h"
 #include "Light/LightSourceBase.h"
+#include "Subsystem/WeatherSubsystem.h"
 
 ALightManager::ALightManager()
 {
@@ -35,6 +39,11 @@ void ALightManager::BeginPlay()
 			&ALightManager::UpdateLights
 		);
 	}
+	
+	if (UWeatherSubsystem* WeatherSubsystem = GetWorld()->GetSubsystem<UWeatherSubsystem>())
+	{
+		
+	}
 }
 
 void ALightManager::UpdateLights(double Pitch, FTimeOfDay TimeData)
@@ -42,10 +51,16 @@ void ALightManager::UpdateLights(double Pitch, FTimeOfDay TimeData)
 	const bool bIsNight = (TimeData.Period == ETimeOfDay::Night ||
 						   TimeData.Period == ETimeOfDay::Dawn);
 
+	EWeatherType CurrentWeatherType = GetWorld()->GetSubsystem<UWeatherSubsystem>()->GetCurrentWeather();
+	const bool bIsDarkWeather = (CurrentWeatherType == EWeatherType::Rainy) || (CurrentWeatherType == EWeatherType::Snowy);
+	
+	if (!bIsNight && !bIsDarkWeather) return;
+	
 	for (ALightSourceBase* Light : ManagedLights)
 	{
 		if (Light)
 		{
+		/*UE_LOG(LogTemp,Warning, TEXT("Light is Activate"));*/
 			Light->SetLightEnabled(bIsNight);
 		}
 	}

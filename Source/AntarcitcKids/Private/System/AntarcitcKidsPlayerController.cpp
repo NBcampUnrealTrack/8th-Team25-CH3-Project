@@ -4,7 +4,7 @@
 #include "System/AntarcitcKidsPlayerController.h"
 #include "CityVehiclePawn.h"
 #include "Sensor/SensorViewrWidget.h"
-#include "Manager/QuestSubSystem.h"
+#include "Subsystem/QuestSubSystem.h"
 #include "EnhancedInputSubsystems.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
@@ -13,11 +13,13 @@
 #include "Widget/QuestCameraWidget.h"
 #include "Camera/CameraComponent.h"
 #include "Chaos/SoftsSpring.h"
-#include "Widget/SimPauseWidget.h"
-#include "Manager/SimControlSubsystem.h"
+#include "Widget/WeatherTimeWidget.h"
+#include "Subsystem/SimControlSubsystem.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Sensor/BoxBoundComponent.h"
 #include "Sensor/LidarNiagaraComponent.h"
+
 
 
 // 커스텀 로그 카테고리를 정의
@@ -154,10 +156,7 @@ void AAntarcitcKidsPlayerController::FindAndBindVehicle()
 			// HUD 바인딩
 			CreateAndBindCyberHUD();
 			
-			if (UQuestSubSystem* QuestSub = GetGameInstance()->GetSubsystem<UQuestSubSystem>())
-			{
-				QuestSub->SetVehiclePawn(VehiclePawn);
-			}
+
 		}
 		else
 		{
@@ -187,7 +186,7 @@ void AAntarcitcKidsPlayerController::HighLightActor(USceneCaptureComponent2D* Ta
 		TargetActor->GetComponentLocation(), 
 		VehiclePawn->GetActorLocation());
 	
-	UE_LOG(LogTemp, Warning, TEXT("HightLightActor 발동"));
+	/*UE_LOG(LogTemp, Warning, TEXT("HightLightActor 발동"));*/
 
 	
 	FRotator Smoothed = FMath::RInterpTo(
@@ -210,11 +209,15 @@ void AAntarcitcKidsPlayerController::ResetHightlight()
 	
 	if (!CameraComponent || !SpringArmComponent) return;
 	
+	/*UE_LOG(LogTemp, Warning, TEXT("ResetHightLightActor 발동"));*/
+	
 	FRotator Smoothed = FMath::RInterpTo(
 	 CameraComponent->GetComponentRotation(),
 	 DefaultRotator,
 	 GetWorld()->GetDeltaSeconds(),
 	 1.f);
+	
+	CameraComponent->SetWorldRotation(Smoothed);
 	CameraComponent->PostProcessSettings.bOverride_DepthOfFieldFocalDistance = false;
 	CameraComponent->PostProcessSettings.DepthOfFieldFocalDistance = DefaultDepthOfFieldFocalDistance;
 }
@@ -430,7 +433,7 @@ void AAntarcitcKidsPlayerController::OnPauseTriggered()
 		Ctrl->Pause();
 
 	if (!PauseWidget && PauseWidgetClass)
-		PauseWidget = CreateWidget<USimPauseWidget>(this, PauseWidgetClass);
+		PauseWidget = CreateWidget<UWeatherTimeWidget>(this, PauseWidgetClass);
 
 	if (PauseWidget)
 	{
@@ -470,6 +473,9 @@ void AAntarcitcKidsPlayerController::DoToggleVisLidar()
 		
 	}
 	
-	
+	if (UBoxBoundComponent* BoxBoundComponent =  VehiclePawn->GetBoxBoundComponent())
+	{
+		BoxBoundComponent->ToggleIsActive();
+	}
 	
 }

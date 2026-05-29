@@ -3,11 +3,11 @@
 
 #include "Actor/TriggerMissionBase.h"
 #include "Components/BoxComponent.h"
-#include "Manager/QuestBase.h"
+#include "Quest/QuestBase.h"
 #include "CityVehiclePawn.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/TextureRenderTarget2D.h"
-#include "Manager/QuestSubSystem.h"
+#include "Subsystem/QuestSubSystem.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "System/AntarcitcKidsPlayerController.h"
 
@@ -121,10 +121,8 @@ void ATriggerMissionBase::OnAreaEndOverlap(UPrimitiveComponent* OverlappedComp, 
 void ATriggerMissionBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	/*UE_LOG(LogTemp,Warning, TEXT("Tick 활성화"));*/
 	if (IsValid(VehiclePawn))
 	{
-		
 		FocusOn();
 		
 	}
@@ -132,9 +130,6 @@ void ATriggerMissionBase::Tick(float DeltaTime)
 
 void ATriggerMissionBase::SetQuestInfo()
 {
-	
-
-	
 	if (NiagaraAnchor)
 	{
 		QuestInfo.QuestLocation = NiagaraAnchor->GetComponentLocation();	
@@ -172,7 +167,13 @@ void ATriggerMissionBase::TurnOffQuestCamera()
 		}
 		else
 		{
-			PC->ResetHightlight();
+			
+			GetWorld()->GetTimerManager().SetTimer(
+				ResetTimerHandle,
+				PC,
+				&AAntarcitcKidsPlayerController::ResetHightlight,
+				0.01f,
+				true);
 		}
 		
 		
@@ -184,7 +185,6 @@ void ATriggerMissionBase::FocusOn()
 	FRotator LookAt = UKismetMathLibrary::FindLookAtRotation(
 	SceneTarget->GetComponentLocation(), 
 	VehiclePawn->GetActorLocation());
-	/*UE_LOG(LogTemp,Warning, TEXT("LookAt 활성화"));*/
 	SceneTarget->SetWorldRotation(LookAt);
 		
 	float Distance = FVector::Dist(
@@ -202,7 +202,6 @@ void ATriggerMissionBase::FocusOn()
 
 void ATriggerMissionBase::ResetFocus()
 {
-	
 }
 
 

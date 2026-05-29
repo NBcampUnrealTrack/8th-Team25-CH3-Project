@@ -1,3 +1,6 @@
+// AgentLoggerSubsystem.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
 #include "DataLogger/AgentLoggerSubsystem.h"
 #include "DataLogger/AgentDataLogger.h"
  

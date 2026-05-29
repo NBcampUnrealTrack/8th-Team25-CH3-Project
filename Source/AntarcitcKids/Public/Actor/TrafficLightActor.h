@@ -6,7 +6,7 @@
 #include "CoreMinimal.h"
 #include "TriggerMissionBase.h"
 #include "GameFramework/Actor.h"
-#include "Manager/QuestsTypes.h"
+#include "Quest/QuestsTypes.h"
 #include "TrafficLightActor.generated.h"
 
 class UBoxComponent;
@@ -28,7 +28,7 @@ class ANTARCITCKIDS_API ATrafficLightActor : public ATriggerMissionBase
 
 public:
 	ATrafficLightActor();
-	
+	//퀘스트 영역을 확인하기 위한 델리게이트
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTrafficLightStateChanged, ETrafficLightState, NewState);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTrafficLightCleared);
 	

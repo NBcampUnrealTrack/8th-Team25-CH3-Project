@@ -1,15 +1,41 @@
+// WeatherTimeWidget.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
 #include "Widget/WeatherTimeWidget.h"
+#include "Components/Image.h"
 #include "Components/RadialSlider.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Subsystem/SimControlSubsystem.h"
+#include "Framework/Application/SlateApplication.h"
  
 // ============================================================================
 // NativeConstruct / NativeDestruct
 // ============================================================================
- 
+
+void UWeatherTimeWidget::CloseWidget()
+{
+	// 시뮬 재개
+	if (UGameInstance* GI = GetGameInstance())
+		if (USimControlSubsystem* Ctrl = GI->GetSubsystem<USimControlSubsystem>())
+			Ctrl->Play();
+
+	// 마우스 숨기고 게임 입력으로 복귀
+	if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+	{
+		PC->SetShowMouseCursor(false);
+		PC->SetInputMode(FInputModeGameOnly());
+	}
+
+	RemoveFromParent();
+}
+
 void UWeatherTimeWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+	
+	SetIsFocusable(true); // x 키 입력 받으려면 필요
  
 	// TimeSubsystem 델리게이트 바인딩 + 초기값 설정
 	if (UTimeSubsystem* TimeSys = GetWorld()->GetSubsystem<UTimeSubsystem>())
@@ -20,17 +46,22 @@ void UWeatherTimeWidget::NativeConstruct()
 		{
 			Time->SetValue(TimeSys->GetCurrentTimeSeconds() / 86400.f);
 		}
+		
+		if (Timer)
+		{
+			TimerMID = Timer->GetDynamicMaterial();
+		
+			if (TimerMID)
+			{
+				TimerMID->SetScalarParameterValue(
+					TEXT("Progress"),
+					TimeSys->GetCurrentTimeSeconds() / 86400.f
+					);
+			}
+		}
 		UpdateVisuals(TimeSys->GetCurrentTimeData());
 	}
- 
-	// RadialSlider 이벤트 바인딩
-	if (Time)
-	{
-		Time->OnValueChanged.AddDynamic(this, &UWeatherTimeWidget::HandleSliderValueChanged);
-		Time->OnMouseCaptureBegin.AddDynamic(this, &UWeatherTimeWidget::HandleSliderMouseCaptureBegin);
-		Time->OnMouseCaptureEnd.AddDynamic(this, &UWeatherTimeWidget::HandleSliderMouseCaptureEnd);
-	}
- 
+	
 	// 날씨 버튼 바인딩
 	BindWeatherButtons();
 }
@@ -48,7 +79,18 @@ void UWeatherTimeWidget::NativeDestruct()
  
 	Super::NativeDestruct();
 }
- 
+
+FReply UWeatherTimeWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	// ESC로도 닫기
+	if (InKeyEvent.GetKey() == EKeys::Escape)
+	{
+		CloseWidget();
+		return FReply::Handled();
+	}
+	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
+}
+
 // ============================================================================
 // TimeSubsystem → 위젯 방향 (Tick에서 호출됨)
 // ============================================================================
@@ -56,10 +98,13 @@ void UWeatherTimeWidget::NativeDestruct()
 void UWeatherTimeWidget::HandleTimeChanged(double Pitch, FTimeOfDay TimeData)
 {
 	// 유저가 드래그 중이면 슬라이더 값 갱신 스킵 → 피드백 루프 방지
-	if (!bUserDragging && Time)
+	if (!bUserDragging && Timer)
 	{
 		// Pitch(0~360) → 슬라이더(0~1)
-		Time->SetValue(static_cast<float>(Pitch) / 360.f);
+		TimerMID->SetScalarParameterValue(
+				TEXT("Progress"),
+				static_cast<float>(Pitch) / 360.f
+				);
 	}
  
 	UpdateVisuals(TimeData);

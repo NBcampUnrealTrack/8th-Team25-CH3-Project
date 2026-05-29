@@ -5,11 +5,11 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneComponent.h"
 #include "TimerManager.h"
-#include "Manager/TrafficLightQuest.h"
+#include "Quest/TrafficLightQuest.h"
 #include "CityVehiclePawn.h"
 #include "NiagaraDataInterfaceEmitterBinding.h"
 #include "Components/BoxComponent.h"
-#include "Manager/QuestsTypes.h"
+#include "Quest/QuestsTypes.h"
 
 ATrafficLightActor::ATrafficLightActor()
 {
@@ -42,6 +42,8 @@ void ATrafficLightActor::BeginPlay()
 	SwitchToRed();
 }
 
+
+//오버랩 시, 빨간 색이 아니라면 미션 성공, 빨간색이면 실패
 void ATrafficLightActor::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -67,6 +69,8 @@ void ATrafficLightActor::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AAct
 	}
 }
 
+
+//오버랩 종료 시 신호등 영역을 벗어난다.
 void ATrafficLightActor::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
@@ -79,6 +83,7 @@ void ATrafficLightActor::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, A
 	}
 }
 
+//신호등의 색깔을 바꾸고, 델리게이트 함수를 통해 알린다.
 void ATrafficLightActor::SetTrafficLightState(ETrafficLightState NewState)
 {
 	CurrentState = NewState;
@@ -88,9 +93,10 @@ void ATrafficLightActor::SetTrafficLightState(ETrafficLightState NewState)
 	GreenLight->SetVisibility(NewState == ETrafficLightState::Green);
 	
 	OnStateChanged.Broadcast(NewState);
-	//UE_LOG(LogTemp, Warning, TEXT(">>> TrafficLight state -> %d"), (int32)NewState);
 }
 
+
+//Quest 내부 내용을 활성화한다.
 void ATrafficLightActor::SetQuestInfo()
 {
 	QuestInfo.QuestType = EQuestClass::TrafficSignal;
@@ -100,6 +106,8 @@ void ATrafficLightActor::SetQuestInfo()
 
 }
 
+
+//각 신호 시간대로 신호등 색깔을 바꾸기 위한 함수들
 void ATrafficLightActor::SwitchToRed()
 {
 	SetTrafficLightState(ETrafficLightState::Red);

@@ -2,11 +2,12 @@
  
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Manager/TimeSubsystem.h"
+#include "Subsystem/TimeSubsystem.h"
 #include "WeatherTimeWidget.generated.h"
  
-// 전방선언 - RadialSlider.h include 없이 사용 (헤더 경로 이슈 우회)
+// 전방선언
 class URadialSlider;
+class UImage;
 class UTextBlock;
 class UButton;
 
@@ -19,6 +20,9 @@ public:
 	// 날씨 프리셋 - 실제 구현은 BP에서 오버라이드
 	UFUNCTION(BlueprintImplementableEvent, Category = "Weather")
 	void OnWeatherPresetChanged(int32 PresetIndex);
+	
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void CloseWidget();
  
 protected:
 	// -----------------------------------------------------------------------
@@ -27,6 +31,9 @@ protected:
  
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<URadialSlider> Time;
+	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> Timer;
  
 	UPROPERTY(meta = (BindWidgetOptional))
 	TObjectPtr<UTextBlock> TimeText;
@@ -41,6 +48,8 @@ protected:
  
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+	
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
  
 private:
 	UFUNCTION()
@@ -48,6 +57,8 @@ private:
  
 	UFUNCTION()
 	void HandleSliderValueChanged(float Value);
+	
+	TObjectPtr<UMaterialInstanceDynamic> TimerMID;
  
 	UFUNCTION() void HandleSliderMouseCaptureBegin();
 	UFUNCTION() void HandleSliderMouseCaptureEnd();

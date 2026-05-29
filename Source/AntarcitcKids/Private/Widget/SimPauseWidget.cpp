@@ -1,11 +1,14 @@
+// SimPauseWidget.cpp
+// Copyright (c) 2026 AntarcticKids. All rights reserved.
+
 #include "Widget/SimPauseWidget.h"
-#include "Manager/SimControlSubsystem.h"
+#include "Subsystem/SimControlSubsystem.h"
 #include "Framework/Application/SlateApplication.h"
 
 void USimPauseWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	SetIsFocusable(true); // ESC 키 입력 받으려면 필요
+	SetIsFocusable(true); // x 키 입력 받으려면 필요
 }
 
 void USimPauseWidget::CloseWidget()

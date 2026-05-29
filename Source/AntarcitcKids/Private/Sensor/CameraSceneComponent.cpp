@@ -11,7 +11,7 @@
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "TimerManager.h"
-#include "Manager/SensorSubSystem.h"
+#include "Subsystem/SensorSubSystem.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogCameraSensor, Log, All);
 

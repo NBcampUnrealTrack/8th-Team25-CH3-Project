@@ -15,11 +15,11 @@ public class AntarcitcKids : ModuleRules
 		{
 
 			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "ChaosVehicles",
-			"Landscape", "UMG", "AdvancedWidgets", "Slate", "SlateCore"
+			"Landscape", "UMG", "AdvancedWidgets", "Slate", "SlateCore", "MoviePlayer", "PreLoadScreen"
+			
 
 		});
 		
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
 		PrivateDependencyModuleNames.AddRange(new string[] { "Niagara","NiagaraCore" });
 	}
 }

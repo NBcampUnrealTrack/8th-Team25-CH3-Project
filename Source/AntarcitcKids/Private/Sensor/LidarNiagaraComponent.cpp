@@ -17,23 +17,29 @@ void ULidarNiagaraComponent::RenderPointCloudNiagara(const FLidarPointCloudData&
 {
 	if (!bIsActivate)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("bIsActive: %d"), bIsActivate);
 		return;
 	}
 	
-	/*UE_LOG(LogTemp, Warning, TEXT("RenderPointCloudNiagara 발동"));*/
-	DeactivateImmediate(); 
+	DeactivateImmediate(); //이전 영역 삭제
+	
+	
 	const int32 IntensityCount = PointCloud.Intensities.Num();
+	//강도 - 라이더 센서 어느 거리에서 정보를 수신받았는지 (가까울수록 - 높고, 멀수록 낮습니다)
+	//색깔의 강도 
+	
 	const int32 PointCount = PointCloud.PointCount;
 	
 	PendingColors.SetNum(PointCloud.PointCount);
 	//RESTRICT : 해당 함수 Scope 내에서 같은 메모리를 참조하지 않는다.
 	
+	
+	
 	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector(
 		this,
 		FName("PointCloudPositions"),
 		PointCloud.Points
-		);
+		); 
+	//NS에서 PointCloudPositions이라는 유저 변수에 해당 값을 넣어다오.
 	
 	
 	//PointCloud 색깔 설정
@@ -50,12 +56,7 @@ void ULidarNiagaraComponent::RenderPointCloudNiagara(const FLidarPointCloudData&
 		FName("PointCloudColors"),
 		PendingColors
 		);
-	
-	/*for (FLinearColor Color: PendingColors)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Color: R=%.2f G=%.2f B=%.2f A=%.2f"),
-	Color.R, Color.G, Color.B, Color.A);
-	}*/
+
 	
 	PendingCount = PointCount;
 	
@@ -63,10 +64,6 @@ void ULidarNiagaraComponent::RenderPointCloudNiagara(const FLidarPointCloudData&
 	SetIntParameter(TEXT("CloudPointCount"),PointCount);
 	Activate(true);
 	
-	if (this->IsActive())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Niagara 작동 !"));
-	}
 }
 
 void ULidarNiagaraComponent::NiagaraDeactivate()
