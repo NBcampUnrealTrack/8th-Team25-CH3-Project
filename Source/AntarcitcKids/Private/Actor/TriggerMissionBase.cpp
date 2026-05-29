@@ -109,12 +109,6 @@ void ATriggerMissionBase::OnAreaEndOverlap(UPrimitiveComponent* OverlappedComp, 
 		PlayerController = nullptr;
 		OnVehicleExited.Broadcast(this, Vehicle);
 		TurnOffQuestCamera();
-		
-	}
-	
-	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
-	{
-		OnVehicleExited.Broadcast(this, Vehicle);
 	}
 }
 
