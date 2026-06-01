@@ -31,6 +31,7 @@ ATrafficLightActor::ATrafficLightActor()
 	AreaCollision->OnComponentBeginOverlap.AddDynamic(this, &ATriggerMissionBase::OnAreaOverlap);
 	AreaCollision->OnComponentEndOverlap.AddDynamic(this, &ATriggerMissionBase::OnAreaEndOverlap);
 	
+	IsVehicleInArea = false;
 	
 }
 
@@ -42,6 +43,32 @@ void ATrafficLightActor::BeginPlay()
 	SwitchToRed();
 }
 
+//오버랩 시 최초 1회 신호 정보를 보낸다.
+void ATrafficLightActor::OnAreaOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	Super::OnAreaOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+	
+	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
+	{
+		UE_LOG(LogTemp, Warning, TEXT(">>> Vehicle ENTERED traffic light ZONE"));
+		OnStateChanged.Broadcast(CurrentState);
+		IsVehicleInArea = true;
+	}
+}
+
+//오버랩 종료 시 신호등 영역을 벗어난다.
+void ATrafficLightActor::OnAreaEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	Super::OnAreaEndOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex);
+	
+	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
+	{
+		UE_LOG(LogTemp, Warning, TEXT(">>> Vehicle EXITED traffic light ZONE"));
+		IsVehicleInArea = false;
+	}
+}
 
 //오버랩 시, 빨간 색이 아니라면 미션 성공, 빨간색이면 실패
 void ATrafficLightActor::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -69,20 +96,6 @@ void ATrafficLightActor::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AAct
 	}
 }
 
-
-//오버랩 종료 시 신호등 영역을 벗어난다.
-void ATrafficLightActor::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	Super::OnItemEndOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex);
-	
-	if (ACityVehiclePawn* Vehicle = Cast<ACityVehiclePawn>(OtherActor))
-	{
-		UE_LOG(LogTemp, Warning, TEXT(">>> Vehicle EXITED traffic light"));
-		OnTrafficLightCleared.Broadcast();
-	}
-}
-
 //신호등의 색깔을 바꾸고, 델리게이트 함수를 통해 알린다.
 void ATrafficLightActor::SetTrafficLightState(ETrafficLightState NewState)
 {
@@ -92,7 +105,10 @@ void ATrafficLightActor::SetTrafficLightState(ETrafficLightState NewState)
 	YellowLight->SetVisibility(NewState == ETrafficLightState::Yellow);
 	GreenLight->SetVisibility(NewState == ETrafficLightState::Green);
 	
-	OnStateChanged.Broadcast(NewState);
+	if (IsVehicleInArea)
+	{
+		OnStateChanged.Broadcast(NewState);
+	}
 }
 
 

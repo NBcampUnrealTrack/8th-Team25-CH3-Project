@@ -30,14 +30,10 @@ public:
 	ATrafficLightActor();
 	//퀘스트 영역을 확인하기 위한 델리게이트
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTrafficLightStateChanged, ETrafficLightState, NewState);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTrafficLightCleared);
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnTrafficLightStateChanged OnStateChanged;
 	
-	UPROPERTY(BlueprintAssignable)
-	FOnTrafficLightCleared OnTrafficLightCleared;
-
 protected:
 	virtual void BeginPlay() override;
 	
@@ -51,6 +47,20 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traffic Light")
 	UStaticMeshComponent* GreenLight;
 	
+	virtual void OnAreaOverlap(
+		UPrimitiveComponent* OverlappedComp, 
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, 
+		int32 OtherBodyIndex, 
+		bool bFromSweep, 
+		const FHitResult& SweepResult) override;
+	
+	virtual void OnAreaEndOverlap(
+		UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex) override;
+	
 	virtual void OnItemOverlap(
 		UPrimitiveComponent* OverlappedComp,
 		AActor* OtherActor,
@@ -58,16 +68,6 @@ protected:
 		int32 OtherBodyIndex,
 		bool bFromSweep,
 		const FHitResult& SweepResult) override;
-
-
-	virtual void OnItemEndOverlap(
-		UPrimitiveComponent* OverlappedComp,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex) override;
-	
-	
-	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Traffic Light")
 	float RedDuration = 5.0f;
@@ -84,6 +84,8 @@ private:
 	FTimerHandle TrafficLightTimerHandle;
 
 	ETrafficLightState CurrentState;
+	
+	bool IsVehicleInArea;
 
 	void SetTrafficLightState(ETrafficLightState NewState);
 
