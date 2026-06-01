@@ -15,4 +15,6 @@ class ANTARCITCKIDS_API ADigitalTwinGameModeBase : public AGameModeBase
 	
 public:
 	ADigitalTwinGameModeBase();
+	
+	virtual void BeginPlay() override;
 };
